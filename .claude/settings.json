@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run dev)",
+      "Bash(npm run build)",
+      "Bash(npm run preview)",
+      "Bash(npm run typecheck)",
+      "Bash(npx astro sync)",
+      "Bash(npx astro check)",
+      "Bash(npx astro --version)",
+      "Bash(npx tsc --noEmit)"
+    ]
+  }
+}

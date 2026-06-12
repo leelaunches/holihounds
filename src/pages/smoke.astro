@@ -1,0 +1,154 @@
+---
+/**
+ * Internal smoke test page — exercises every Phase 1 component to verify they
+ * render together. Marked noindex; deletable before launch.
+ *
+ * Sample data is inlined here on purpose — the smoke test must work whether or
+ * not the content collections are populated.
+ */
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import DogPolicyBox from '~/components/DogPolicyBox.astro';
+import AffiliateCTA from '~/components/AffiliateCTA.astro';
+import AffiliateDisclosure from '~/components/AffiliateDisclosure.astro';
+import FAQ from '~/components/FAQ.astro';
+import Callout from '~/components/Callout.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import ListingCard from '~/components/ListingCard.astro';
+import RegionCard from '~/components/RegionCard.astro';
+
+const sampleListing = {
+  id: 'cornwall/old-coastguard-lookout',
+  collection: 'listings',
+  data: {
+    name: 'The Old Coastguard Lookout',
+    type: 'cottage',
+    region: 'cornwall',
+    town: 'Port Isaac',
+    description:
+      "Built into the cliff above Port Isaac, this three-bedroom former coastguard lookout has the rarest thing on the north coast — a private gate that opens straight onto the South West Coast Path. Sea views run from Lobber Point all the way to Tintagel, and the working harbour is ten minutes down the steep streets.",
+    dog_policy:
+      'Up to two well-behaved dogs welcome throughout. Sykes pet supplement applies (shown at booking).',
+    amenities: ['Wood burner', 'Sea views', 'Private gate to coast path'],
+    price_indicator: '££',
+    affiliate_link: null,
+    affiliate_provider: 'sykes',
+    external_url:
+      'https://www.sykescottages.co.uk/cottage/Cornwall-Lobber-Point/The-Old-Coastguard-Lookout-1097255.html',
+    image: 'https://picsum.photos/seed/cornwall-cottage-stone/800/550',
+    image_alt: 'Coastguard cottage above Port Isaac harbour',
+    lat: null,
+    lng: null,
+    sleeps: 6,
+    bedrooms: 3,
+    pet_charge: 'Sykes supplement (shown at booking)',
+    max_dogs: 2,
+    enclosed_garden: true,
+    dogs_allowed_in: 'Throughout the property',
+    dog_extras: 'None stated by provider — bring your own',
+    featured: true,
+  },
+} as unknown as CollectionEntry<'listings'>;
+
+const sampleRegion = {
+  id: 'cornwall',
+  collection: 'regions',
+  data: {
+    name: 'Cornwall',
+    intro:
+      "Cornwall's combination of year-round dog beaches, fishing-village pubs and the South West Coast Path makes it the strongest dog-holiday region in England.",
+    description: 'Long-form description placeholder for smoke test.',
+    hero_image: 'https://picsum.photos/seed/cornwall-coastline/600/800',
+    best_for: ['Coastal walks', 'Year-round dog beaches', 'Working-harbour pubs'],
+    featured_listings: [],
+    related_regions: ['devon'],
+    meta_title: 'Dog-friendly Cornwall: complete guide',
+    meta_description: 'Dog-friendly cottages, pubs, beaches and walks in Cornwall.',
+  },
+} as unknown as CollectionEntry<'regions'>;
+---
+<BaseLayout
+  title="Smoke test"
+  description="Internal smoke test for component primitives — not for indexing."
+  noindex
+>
+  <div class="mx-auto max-w-(--container-content) px-6 py-12 space-y-10">
+    <Breadcrumbs
+      items={[
+        { name: 'Home', href: '/' },
+        { name: 'Smoke', href: '/smoke/' },
+      ]}
+    />
+    <AffiliateDisclosure />
+    <h1>Component smoke test</h1>
+    <p class="prose-reading">
+      Every primitive renders here so we can confirm the Phase 1 build before any real pages are wired up.
+    </p>
+
+    <section>
+      <h2>Listing card</h2>
+      <div class="max-w-md">
+        <ListingCard
+          listing={sampleListing}
+          href="/cornwall/cottages/old-coastguard-lookout/"
+        />
+      </div>
+    </section>
+
+    <section>
+      <h2>Region card</h2>
+      <div class="max-w-xs">
+        <RegionCard region={sampleRegion} count={12} />
+      </div>
+    </section>
+
+    <section>
+      <h2>Dog policy box</h2>
+      <DogPolicyBox
+        maxDogs={2}
+        petCharge="£25/stay"
+        enclosedGarden={true}
+        dogsAllowedIn="Throughout"
+        dogExtras="Bed, bowls, treats"
+      />
+    </section>
+
+    <section>
+      <h2>Affiliate CTA</h2>
+      <AffiliateCTA
+        provider="sykes"
+        identifier="test-1234"
+        label="Check availability"
+        fallbackUrl="https://example.com"
+      />
+    </section>
+
+    <section>
+      <h2>Callout</h2>
+      <Callout eyebrow="Best for" title="Beach lovers">
+        <p>Body copy goes here. Magazine-feel, generous spacing, no decorative icons.</p>
+      </Callout>
+    </section>
+
+    <section>
+      <h2>FAQ</h2>
+      <FAQ
+        items={[
+          { question: 'Are these cottages all dog-friendly?', answer: 'Yes — every listing has a published dog policy.' },
+          { question: 'Can I bring more than one dog?', answer: 'Most allow two; a few allow more. Check each listing.' },
+        ]}
+      />
+    </section>
+
+    <section>
+      <h2>Author byline (full)</h2>
+      <AuthorByline variant="full" />
+    </section>
+
+    <section>
+      <h2>Author byline (compact)</h2>
+      <AuthorByline />
+    </section>
+  </div>
+</BaseLayout>

@@ -1,0 +1,27 @@
+---
+import { SITE_NAME } from '~/lib/site';
+import { HEADER_VERTICALS } from '~/lib/nav';
+---
+<header class="border-b border-edge bg-cream">
+  <div class="mx-auto max-w-(--container-content) px-6 py-5 flex items-center justify-between gap-6">
+    <a href="/" class="no-underline">
+      <span class="font-serif text-xl text-ink hover:text-clay-deep transition-colors">
+        {SITE_NAME}
+      </span>
+    </a>
+    <nav aria-label="Primary">
+      <ul class="flex items-center gap-6 text-sm">
+        {HEADER_VERTICALS.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              class="no-underline text-text hover:text-clay-deep transition-colors"
+            >
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</header>

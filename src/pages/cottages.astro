@@ -1,0 +1,209 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import RegionCard from '~/components/RegionCard.astro';
+import ListingCard from '~/components/ListingCard.astro';
+import FAQ from '~/components/FAQ.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { article, breadcrumbList, faqPage, itemList } from '~/lib/schema';
+import { SITE_URL } from '~/lib/site';
+import { crumb, FOOTER_REGIONS } from '~/lib/nav';
+
+const cornwall = await getEntry('regions', 'cornwall');
+
+// All listings on the Cornwall cottages listicle (12 — includes the two
+// lodge-typed entries that earned editorial inclusion). The count is the
+// headline figure used everywhere else on the site.
+const cornwallListings = await getCollection(
+  'listings',
+  (e) => e.data.region === 'cornwall',
+);
+
+const featuredOrder = [
+  'cornwall/old-coastguard-lookout',
+  'cornwall/ocean-edge',
+  'cornwall/the-stable-boskensoe-barns',
+  'cornwall/lily-cottage',
+  'cornwall/the-poop-deck',
+  'cornwall/kerensa',
+];
+const featured = featuredOrder
+  .map((id) => cornwallListings.find((l) => l.id === id))
+  .filter((c): c is NonNullable<typeof c> => Boolean(c));
+
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Cottages', '/cottages/'),
+];
+
+const faqItems = [
+  {
+    question: 'Where in the UK has the strongest dog-friendly cottage stock?',
+    answer:
+      "Cornwall and the Lake District lead by sheer volume; Scotland (especially the Highlands and the Argyll coast) leads by access laws and walk variety; Norfolk and the Pembrokeshire coast follow on coast-path quality and year-round dog beaches. Yorkshire Dales and Northumberland are quieter than the headline names but tend to have stronger price-to-quality ratios. Our regional guides cover Cornwall in this iteration; the rest are queued for the next batch of sprints.",
+  },
+  {
+    question: 'Are access laws different in Scotland?',
+    answer:
+      "Yes, importantly. Scotland's Land Reform Act 2003 grants 'right to roam' over most uncultivated land — including coast, hills and moor — provided dogs are under proper control (during ground-nesting bird season, roughly April to July, that means on a lead). England and Wales have narrower rights via the CROW Act 2000: open access on registered open country and common land only, footpaths everywhere else. Practically, Scotland gives dog walkers significantly more off-path latitude.",
+  },
+  {
+    question: 'Is it better to book through an agency or direct from the owner?',
+    answer:
+      "Agency (Sykes, cottages.com, Hoseasons) is more reliable for dog policy disclosure — they standardise the small print into facets and policy boxes. Direct from owner can be cheaper if the platform-fee saving is passed on, and more flexible on dog-specific accommodations, but the quality of information varies wildly. For a first booking with a new owner, agency is the safer route. For repeat stays where you've established a relationship and know the property, direct is usually better value.",
+  },
+  {
+    question: 'Are hot tub cottages dog-friendly?',
+    answer:
+      'Some are, and the combination is genuinely hard to find — which is why most readers searching for it land on a dedicated guide rather than a regional one. See <a href="/dog-friendly-hot-tub-lodges/">our guide to dog-friendly hot tub lodges in the UK</a> for sixteen verified properties with private hot tubs and clear dog policies. Hot tubs and dogs co-exist fine in practice; most owners just ask for sensible cleanliness and that dogs aren\'t in the tub itself.',
+  },
+  {
+    question: "How can I tell if a 'dog-friendly' cottage is actually dog-friendly?",
+    answer:
+      "Look at three things on the listing. First, whether the dog policy is specific (max dogs, charge, garden status) or vague. Second, whether the welcome pack mentions actual provisions (beds, towels, treats) or just says 'dogs welcome'. Third, the location: a cottage with a footpath gate to a coast path is set up for dog walking; one with no nearby green space and a tarmac drive isn't, regardless of marketing.",
+  },
+];
+
+const pageUrl = '/cottages/';
+const pageTitle = 'Dog-friendly cottages in the UK';
+// 142 chars — under the 155-char Google truncation threshold.
+const pageDescription =
+  'What makes a cottage genuinely dog-friendly — UK regions, provider quirks, and the listing small print to actually verify. By Rachel Polden.';
+
+const heroImage = featured[0]?.data.image ?? '/images/og-default.jpg';
+
+const jsonLd = [
+  article({
+    headline: pageTitle,
+    description: pageDescription,
+    image: new URL(heroImage, SITE_URL).toString(),
+    datePublished: '2026-05-06',
+    url: pageUrl,
+  }),
+  faqPage(faqItems),
+  itemList(
+    featured.map((c) => ({
+      name: c.data.name,
+      url: `/cornwall/cottages/#${c.id.split('/').pop()}`,
+    })),
+  ),
+  breadcrumbList(breadcrumbs),
+];
+---
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  image={heroImage}
+  jsonLd={jsonLd}
+>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-8">
+      <p class="eyebrow">Cottages</p>
+      <h1 class="display mt-3">{pageTitle}</h1>
+      <div class="mt-6">
+        <AuthorByline />
+      </div>
+    </header>
+
+    <div class="prose-reading space-y-4 text-lg">
+      <p>
+        Most "dog-friendly" cottages aren't, really. They allow your dog through the door, ask for a fee, and leave you to figure out the rest. The good ones — the ones worth booking — are different in specifics: a fully enclosed garden checked against the photos rather than the marketing copy, a clear policy on max dogs and where in the house they're welcome, and a location that means walking out the front door rather than driving every time.
+      </p>
+      <p>
+        This guide covers what to look for, the regions where supply is strongest, and the providers most reliable for surfacing the small print. The regional cottage guides — currently Cornwall, with more in the queue — list verified properties one by one with the policy specifics most listings hide until checkout.
+      </p>
+    </div>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <p class="eyebrow">Where to look</p>
+      <h2 class="mt-2">Best regions for dog-friendly cottages</h2>
+      <p class="prose-reading mt-4">
+        Cornwall leads the regional coverage. Lake District, Snowdonia, Scotland, Yorkshire and Norfolk follow as those guides ship — each a listicle of verified properties with the dog policy specifics most sites leave out.
+      </p>
+
+      <div class="mt-8 grid gap-6 sm:grid-cols-2 md:grid-cols-3">
+        {cornwall && (
+          <RegionCard
+            region={cornwall}
+            count={12}
+            href="/cornwall/cottages/"
+          />
+        )}
+      </div>
+
+      {FOOTER_REGIONS.length === 1 && (
+        <p class="mt-6 text-sm text-muted">
+          More regional cottage guides will appear here as they ship.
+        </p>
+      )}
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>How cottage stock varies across the UK</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          Cornish stock — covered in detail on the regional guide — leans coastal, harbour-village, with stone-and-slate construction and good per-property dog policy disclosure on the major platforms. Elsewhere in the UK, the character shifts.
+        </p>
+        <p>
+          <strong>The Lake District and the Yorkshire Dales.</strong> Stone and slate dominate; properties tend to be older converted farmhouses with smaller enclosed gardens — many lakeland and Dales cottages open straight onto fells or village roads rather than fenced lawns. Walking is the strong card: the right-of-way network is dense, and most cottages back onto bridleway access. The trade-off worth knowing is the season — summer weekends bring real competition for off-lead-friendly walking on the popular routes.
+        </p>
+        <p>
+          <strong>Scotland (Highlands, Argyll, Galloway).</strong> Crofts and farmhouses on bigger plots; enclosed gardens are commoner than in the Lakes but smaller than the headline "acres of grounds" suggests in some listings. Stock is more spread out and harder to find than the south-west or the Lakes — fewer agencies, more direct-from-owner. Highland and Argyll properties trade dramatic-but-remote settings for off-season availability that England's busier regions don't have. (The access-law angle — right to roam — is in the FAQ below.)
+        </p>
+        <p>
+          <strong>Norfolk Broads and East Anglia.</strong> Converted barns and waterside cottages with more land per pound than coast-pricing regions; the Broads themselves have specific dog rules — lead requirements on towpaths through busy stretches, free-roam in the broader reserves. Coastline is mostly long, flat, dog-permissive beaches — Holkham, Brancaster, Wells-next-the-Sea — where the seasonal restrictions common at Cornwall's flagship beaches don't generally apply. The trade-off: less dramatic walking, flatter terrain, less variety.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Top dog-friendly cottage providers</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          Three big platforms and a handful of regional independents are worth knowing about.
+        </p>
+        <p>
+          <strong>Sykes Cottages</strong> has the largest dog-friendly UK inventory. Listings tend to be specific on max dogs and garden status. The major frustration: per-stay pet supplements don't show until you enter dates.
+        </p>
+        <p>
+          <strong>cottages.com</strong> is the second-largest by volume. "Pets stay free" is more common than on Sykes, but per-property restrictions (on-lead requirements, single-dog caps) are sometimes buried in the body copy rather than the search facets — read the full listing, not just the summary.
+        </p>
+        <p>
+          <strong>Hoseasons</strong> focuses on holiday parks, lodges and cabins rather than traditional cottages. Strong on hot-tub stock; pet policies vary by accommodation type within a single park, so confirm the specific unit when booking.
+        </p>
+        <p>
+          <strong>Regional independents</strong> are smaller agencies and direct-from-owner sites tied to a single area, with sharper inventories than the big platforms. Currently the site features Aspects Holidays in St Ives (Garth Cottage and Kerensa on the Cornwall listicle); others will be added as the regional guides ship.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Frequently asked questions</h2>
+      <FAQ items={faqItems} emitSchema={false} />
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <p class="eyebrow">From the regional guides</p>
+      <h2 class="mt-2">Cottages we've reviewed</h2>
+      <p class="prose-reading mt-4">
+        Six picks from the cottages currently on the site — all Cornwall in this iteration; the mix broadens as more regions ship.
+      </p>
+
+      <div class="mt-8 grid gap-6 sm:grid-cols-2 md:grid-cols-3">
+        {featured.map((c) => (
+          <ListingCard
+            listing={c}
+            href={`/cornwall/cottages/#${c.id.split('/').pop()}`}
+          />
+        ))}
+      </div>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <AuthorByline variant="full" />
+    </section>
+  </article>
+</BaseLayout>

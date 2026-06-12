@@ -1,0 +1,95 @@
+---
+import { SITE_NAME, SITE_URL, AUTHOR } from '~/lib/site';
+import Header from '~/components/Header.astro';
+import Footer from '~/components/Footer.astro';
+import '~/styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  canonical?: string;
+  noindex?: boolean;
+  /** One JSON-LD blob or an array — emitted as separate <script> tags. */
+  jsonLd?: object | object[];
+}
+
+const {
+  title,
+  description,
+  // Default OG image — Marazion / St Michael's Mount with dogs on the beach,
+  // by Ben Elliott on Unsplash. Used as the social-share thumbnail for pages
+  // that don't override (about, contact, privacy). Pages with their own hero
+  // (home, /cornwall/, listicle, hot tub money page) pass `image` explicitly.
+  image = 'https://images.unsplash.com/photo-1641119269354-1a112f25793f?w=1200&h=630&fit=crop&q=85',
+  canonical,
+  noindex = false,
+  jsonLd,
+} = Astro.props;
+
+const canonicalUrl = canonical ?? new URL(Astro.url.pathname, SITE_URL).toString();
+const ogImage = new URL(image, SITE_URL).toString();
+const fullTitle = title === SITE_NAME ? title : `${title} | ${SITE_NAME}`;
+const jsonLdBlobs = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
+---
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:locale" content="en_GB" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <meta name="author" content={AUTHOR.name} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap"
+    />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    {/*
+      Analytics: deliberately not running until the site is generating revenue
+      that justifies the ~$9/month Plausible cost. Plausible is the intended
+      tool (cookieless, GDPR-clean, no consent banner needed) — uncomment and
+      replace DOMAIN_HERE with the live domain (no protocol) once enabled.
+      The privacy policy reflects this current state.
+      <script defer data-domain="DOMAIN_HERE" src="https://plausible.io/js/script.js"></script>
+    */}
+
+    {jsonLdBlobs.map((blob) => (
+      <script is:inline type="application/ld+json" set:html={JSON.stringify(blob)} />
+    ))}
+  </head>
+  <body>
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:bg-forest focus:text-cream focus:px-4 focus:py-2"
+    >
+      Skip to main content
+    </a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

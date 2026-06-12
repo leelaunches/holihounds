@@ -1,0 +1,131 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+ * Design tokens — Tailwind v4 CSS-first theme.
+ * Colour palette: forest + clay + warm cream neutrals. No teal, no gradients.
+ * ------------------------------------------------------------------------- */
+
+@theme {
+  /* Brand */
+  --color-forest: #2C3E2D;
+  --color-forest-deep: #1F2C20;
+  --color-clay: #B85842;
+  --color-clay-deep: #963F2D;
+
+  /* Neutrals */
+  --color-cream: #F4EFE6;
+  --color-cream-soft: #FAF6EE;
+  --color-edge: #E0DAC9;
+  --color-ink: #1C1A17;
+  --color-text: #2C2925;
+  --color-muted: #6E6862;
+
+  /* Fonts */
+  --font-serif: "Fraunces", "Iowan Old Style", "Apple Garamond", Baskerville, "Times New Roman", serif;
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+
+  /* Type scale (16px base) */
+  --text-display: clamp(2.5rem, 5vw + 1rem, 4.5rem);
+  --text-body: 1.0625rem;
+
+  /* Container widths */
+  --container-prose: 720px;
+  --container-content: 1200px;
+
+  /* Radii — kept tight; this isn't a SaaS app */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+}
+
+/* ---------------------------------------------------------------------------
+ * Base typography & document defaults.
+ * ------------------------------------------------------------------------- */
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    color: var(--color-text);
+    background: var(--color-cream);
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    font-size: var(--text-body);
+    line-height: 1.65;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+    font-variation-settings: "opsz" 144, "SOFT" 25;
+    color: var(--color-ink);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+
+  h1 { font-size: 2.5rem; font-weight: 700; }
+  h2 { font-size: 1.875rem; font-weight: 600; }
+  h3 { font-size: 1.375rem; font-weight: 500; }
+  h4 { font-size: 1.125rem; font-weight: 500; }
+
+  p { text-wrap: pretty; }
+
+  a {
+    color: var(--color-forest-deep);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+    transition: color 120ms ease;
+  }
+
+  a:hover {
+    color: var(--color-clay-deep);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-forest);
+    outline-offset: 3px;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px solid var(--color-edge);
+  }
+
+  ::selection {
+    background: var(--color-forest);
+    color: var(--color-cream);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Utility classes used across components.
+ * ------------------------------------------------------------------------- */
+
+@layer components {
+  .eyebrow {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-muted);
+  }
+
+  .display {
+    font-size: var(--text-display);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+
+  .prose-reading {
+    max-width: 65ch;
+  }
+
+  .prose-reading p + p {
+    margin-top: 1.1em;
+  }
+}

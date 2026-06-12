@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" preserveAspectRatio="xMidYMid slice">
+  <rect width="1200" height="630" fill="#2C3E2D"/>
+  <text x="80" y="320" font-family="Georgia, 'Times New Roman', serif" font-size="92" fill="#F4EFE6" font-style="italic">Dog-Friendly UK</text>
+  <text x="80" y="380" font-family="Helvetica, Arial, sans-serif" font-size="26" fill="#F4EFE6" opacity="0.85">Editorial dog-friendly travel guides — Cornwall in full;</text>
+  <text x="80" y="416" font-family="Helvetica, Arial, sans-serif" font-size="26" fill="#F4EFE6" opacity="0.85">more regions shipping.</text>
+  <text x="80" y="560" font-family="Helvetica, Arial, sans-serif" font-size="18" fill="#F4EFE6" opacity="0.55" letter-spacing="3">REVIEWED BY RACHEL POLDEN</text>
+  <g transform="translate(990, 470) scale(0.9)" opacity="0.5">
+    <circle cx="50" cy="62" r="22" fill="#F4EFE6"/>
+    <ellipse cx="22" cy="42" rx="8" ry="11" fill="#F4EFE6"/>
+    <ellipse cx="40" cy="26" rx="8" ry="11" fill="#F4EFE6"/>
+    <ellipse cx="60" cy="26" rx="8" ry="11" fill="#F4EFE6"/>
+    <ellipse cx="78" cy="42" rx="8" ry="11" fill="#F4EFE6"/>
+  </g>
+</svg>

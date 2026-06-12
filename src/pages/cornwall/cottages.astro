@@ -1,0 +1,259 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import DogPolicyBox from '~/components/DogPolicyBox.astro';
+import AffiliateCTA from '~/components/AffiliateCTA.astro';
+import AffiliateDisclosure from '~/components/AffiliateDisclosure.astro';
+import FAQ from '~/components/FAQ.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { article, itemList, faqPage, breadcrumbList } from '~/lib/schema';
+import { SITE_URL } from '~/lib/site';
+import { crumb } from '~/lib/nav';
+
+// Pull all Cornwall listings (cottages + the two lodge-typed entries).
+// Order is set explicitly so the geographic flow on the page matches the
+// editorial intent (north → west → south → Lizard → Bodmin → St Ives).
+const all = await getCollection('listings', (entry) => entry.data.region === 'cornwall');
+const order = [
+  'cornwall/old-coastguard-lookout',
+  'cornwall/polwen',
+  'cornwall/ocean-edge',
+  'cornwall/the-stable-boskensoe-barns',
+  'cornwall/the-poop-deck',
+  'cornwall/lily-cottage',
+  'cornwall/the-granary-egloskerry',
+  'cornwall/treen-lansallos',
+  'cornwall/signature-cove-lodge',
+  'cornwall/skylark-2-manor-lakes',
+  'cornwall/garth-cottage',
+  'cornwall/kerensa',
+];
+const cottages = order
+  .map((id) => all.find((c) => c.id === id))
+  .filter((c): c is NonNullable<typeof c> => Boolean(c));
+
+const slugFor = (id: string) => id.split('/').pop()!;
+
+// Self-healing breadcrumb segments — `crumb()` only attaches an href when the
+// target route is in LIVE_ROUTES. Home and Cornwall render as plain text until
+// those pages ship.
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Cornwall', '/cornwall/'),
+  crumb('Cottages', '/cornwall/cottages/'),
+];
+
+const faqItems = [
+  {
+    question: 'Are dog-friendly cottages more expensive in Cornwall?',
+    answer:
+      "Sometimes — there's typically a per-stay or per-dog supplement (£20–£40 is normal in Cornwall, but anything from free to £80+ exists). Sykes and Hoseasons hide the supplement on the listing page until you enter dates. cottages.com tends to surface 'pets stay free' more often. The cottage rate itself isn't usually loaded for dog bookings — the supplement covers the extra cleaning.",
+  },
+  {
+    question: 'Can I bring more than one dog?',
+    answer:
+      "Most Cornish cottages allow two well-behaved dogs as the cap, with a few capping at one and a small minority allowing more on request. The cap is firm — 'two dogs' rarely means 'two-ish'. Single-dog properties are flagged in our individual entries above; if you have three, narrow your search to bigger rural lettings rather than village cottages.",
+  },
+  {
+    question: "What's typically included for dogs at a Cornish cottage?",
+    answer:
+      "Varies hugely — and the listing's small print is where to look. The strongest welcome packs include dog beds, towels, treats, bowls and waste bags (Ocean Edge above is the standout). Mid-range usually means towels and maybe biscuits. The weakest stops at 'dogs welcome'. Always check the listing's own description rather than the search facets, which often overstate.",
+  },
+  {
+    question: 'Are there year-round dog beaches in Cornwall?',
+    answer:
+      "Yes — and they're worth knowing. Most of Cornwall's flagship beaches restrict dogs from Easter to October. Year-round exceptions include Porthkidney Sands (St Ives Bay), Gwynver (the north end of Sennen Cove), Daymer Bay near Padstow, and several smaller coves on the Lizard and the south coast. The cottages above are positioned within walking distance of at least one year-round beach where possible.",
+  },
+  {
+    question: 'Are hot tub cottages in Cornwall dog-friendly?',
+    answer:
+      "Some of the best are. Signature Cove above is a holiday-park lodge with a private hot tub and two dogs welcome; for a more standalone option see our dedicated guide to dog-friendly hot tub lodges. Hot tubs and dogs co-exist fine in practice — the lodge owners just ask for sensible cleanliness and that dogs aren't in the tub.",
+  },
+];
+
+const pageUrl = '/cornwall/cottages/';
+const pageTitle = '12 best dog-friendly cottages in Cornwall';
+// 150 chars — under the 155-char Google truncation threshold.
+const pageDescription =
+  '12 verified dog-friendly cottages in Cornwall — Sykes, Hoseasons, cottages.com — with the dog policy specifics most sites leave out. By Rachel Polden.';
+
+const heroImage = cottages[0]?.data.image ?? '/images/og-default.jpg';
+
+const jsonLd = [
+  article({
+    headline: pageTitle,
+    description: pageDescription,
+    image: new URL(heroImage, SITE_URL).toString(),
+    datePublished: '2026-05-06',
+    url: pageUrl,
+  }),
+  itemList(
+    cottages.map((c) => ({
+      name: c.data.name,
+      url: `${pageUrl}#${slugFor(c.id)}`,
+    })),
+  ),
+  faqPage(faqItems),
+  breadcrumbList(breadcrumbs),
+];
+---
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  image={heroImage}
+  jsonLd={jsonLd}
+>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-8">
+      <p class="eyebrow">Cornwall</p>
+      <h1 class="display mt-3">{pageTitle}</h1>
+      <div class="mt-6">
+        <AuthorByline />
+      </div>
+    </header>
+
+    <div class="border-t border-b border-edge py-3 my-6">
+      <AffiliateDisclosure />
+    </div>
+
+    <div class="prose-reading space-y-4 text-lg">
+      <p>
+        Cornwall does dog-friendly self-catering better than anywhere else in England. The combination of year-round dog beaches, the South West Coast Path running the length of the county, and a tradition of harbour pubs that don't blink at a wet labrador puts the region in a league of its own.
+      </p>
+      <p>
+        The twelve below are the best of what's currently bookable through Sykes, cottages.com, Hoseasons and a couple of Cornish independents — chosen for the specifics rather than the marketing copy. Every one has been verified against the listing's small print: max dogs, pet charges, garden status, what's actually provided.
+      </p>
+      <p>
+        Two of the twelve aren't strictly cottages — a Platinum static caravan at Hengar Manor and a holiday-park lodge near Praa Sands — and we say so up front in their entries; they earned their place on the strength of their dog setups.
+      </p>
+    </div>
+
+    <nav aria-label="Cottage list" class="mt-12 border-t border-edge pt-8">
+      <p class="eyebrow mb-4">Jump to a cottage</p>
+      <ol class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm">
+        {cottages.map((c, i) => (
+          <li>
+            <a href={`#${slugFor(c.id)}`} class="text-text">
+              {i + 1}. {c.data.name}
+              <span class="text-muted"> — {c.data.town}</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+
+    <section class="mt-16 space-y-20">
+      {cottages.map((c, i) => (
+        <article id={slugFor(c.id)} class="scroll-mt-8 border-t border-edge pt-12">
+          <p class="eyebrow">{c.data.town}</p>
+          <h2 class="mt-2">{i + 1}. {c.data.name}</h2>
+
+          <div class="mt-6 aspect-[16/11] overflow-hidden bg-cream-soft border border-edge">
+            <img
+              src={c.data.image}
+              alt={c.data.image_alt ?? c.data.name}
+              loading="lazy"
+              class="h-full w-full object-cover"
+            />
+          </div>
+
+          <div class="prose-reading mt-6">
+            <p>{c.data.description}</p>
+          </div>
+
+          <DogPolicyBox
+            maxDogs={c.data.max_dogs}
+            petCharge={c.data.pet_charge}
+            enclosedGarden={c.data.enclosed_garden}
+            gardenNote={c.data.garden_note}
+            dogsAllowedIn={c.data.dogs_allowed_in}
+            dogExtras={c.data.dog_extras}
+          />
+
+          <p class="text-sm text-muted">
+            Sleeps {c.data.sleeps}
+            {c.data.bedrooms && ` · ${c.data.bedrooms} bed${c.data.bedrooms === 1 ? '' : 's'}`}
+            {c.data.price_indicator && ` · ${c.data.price_indicator}`}
+          </p>
+
+          <div class="mt-6">
+            <AffiliateCTA
+              provider={c.data.affiliate_provider ?? 'sykes'}
+              identifier={slugFor(c.id)}
+              fallbackUrl={c.data.external_url ?? undefined}
+            />
+          </div>
+        </article>
+      ))}
+    </section>
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <h2>What to look for in a dog-friendly Cornish cottage</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          After reading enough listings to learn which language is solid and which is fluff, three things separate genuinely dog-friendly cottages from the ones that just allow dogs.
+        </p>
+        <p>
+          <strong>An enclosed garden, with the small print read.</strong> "Garden" on its own means nothing — half the listings on cottages.com have ponds, sloped boundaries or unfenced verges to a road. Look for explicit "fully enclosed" language, and check the photos.
+        </p>
+        <p>
+          <strong>A clear dog policy on paper.</strong> Max number of dogs, pet supplement, where dogs are allowed in the house. Sykes and the bigger agencies hide the supplement until the booking page, which is annoying but consistent. Vague language ("dogs welcome", "doggy extras") usually means the actual provisions are thin.
+        </p>
+        <p>
+          <strong>Walking from the door.</strong> A coast-path gate, a footpath to the beach, an enclosed exercise area on site — anything that means you can step out without driving. The cottages on this list have at least one of these. The ones on the rest of the internet often don't.
+        </p>
+        <p>
+          If a listing won't tell you the supplement, the max dogs, or whether the garden is enclosed, that's a signal — not necessarily that the cottage is bad, but that the owners don't think specifying matters. They do.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <h2>Best Cornish areas for dogs</h2>
+      <div class="prose-reading mt-6 space-y-8">
+        <div>
+          <h3>North Coast</h3>
+          <p class="mt-2">
+            From Bude down through Boscastle, Tintagel, Port Isaac and Padstow, the north coast is where most of the picture-postcard expectations meet reality. Steep streets, working harbours, and the South West Coast Path on the cliff above. Three of the cottages above sit here — The Old Coastguard Lookout, Polwen and Lily Cottage — between them giving you the harbour view, the footpath-to-beach setup, and the quiet inland market town.
+          </p>
+        </div>
+        <div>
+          <h3>West Cornwall (Penwith)</h3>
+          <p class="mt-2">
+            West past Penzance, the land narrows to the Penwith peninsula — wilder, more weather-beaten, and home to two of Cornwall's strongest year-round dog beaches at Porthkidney and Gwynver. St Ives stays open all winter; Sennen feels like the end of the country. The three cottages here are Ocean Edge on the cliff at Sennen Cove, plus Garth Cottage and Kerensa in St Ives — one elevated above the town, one a few minutes from the harbour.
+          </p>
+        </div>
+        <div>
+          <h3>South Coast</h3>
+          <p class="mt-2">
+            The south Cornish coast — Falmouth round to Looe, the Helford and Fowey rivers between — runs more wooded and sheltered than the north. Smaller harbour villages, less wind, more woodland walks down to coves rather than clifftop scrambles. The Stable at Boskensoe Barns sits above the Helford with a fenced dog exercise paddock that earns its place on this list alone; Treen at Lansallos is a fifteen-minute woodland walk from a National Trust cove.
+          </p>
+        </div>
+        <div>
+          <h3>The Lizard</h3>
+          <p class="mt-2">
+            The Lizard peninsula, jutting south of the Helford, is officially England's southernmost mainland point and feels milder for it — gardens flower a few weeks earlier, the rain comes through faster, and the coast path connects a string of unhyped coves with year-round dog access. The Poop Deck above Coverack sits on the eastern flank, plus Signature Cove just west of the Lizard near Praa Sands.
+          </p>
+        </div>
+        <div>
+          <h3>Bodmin Moor &amp; inland</h3>
+          <p class="mt-2">
+            Inland, the moor offers something the coast doesn't — open grazing, ancient stone, and dogs off-lead in big sky country. The Granary near Launceston gives you ten acres of shared grounds and a private lake; Skylark 2 at Manor Lakes is a budget option on a holiday park with thirty-five acres around it and Bodmin Moor on the doorstep. Both are easy reaches to the north coast on a weather-permitting day.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <h2>Frequently asked questions</h2>
+      <FAQ items={faqItems} emitSchema={false} />
+    </section>
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <AuthorByline variant="full" />
+    </section>
+  </article>
+</BaseLayout>

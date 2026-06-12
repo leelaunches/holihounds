@@ -1,0 +1,33 @@
+---
+/**
+ * Renders an affiliate CTA using the {{AFFILIATE:provider:identifier}} token
+ * convention. The token is replaced at deploy time (see AFFILIATES.md) — for
+ * Sprint 1 the link is non-functional. Optional fallback URL surfaces the
+ * property's own website as a backup.
+ */
+
+interface Props {
+  provider: string;
+  identifier: string;
+  fallbackUrl?: string;
+  label?: string;
+}
+
+const { provider, identifier, fallbackUrl, label = 'Check availability' } = Astro.props;
+const href = `{{AFFILIATE:${provider}:${identifier}}}`;
+---
+<div class="flex flex-col sm:flex-row sm:items-center gap-4">
+  <a
+    href={href}
+    rel="sponsored nofollow noopener"
+    data-affiliate-provider={provider}
+    class="inline-flex items-center justify-center bg-clay px-6 py-3.5 text-white no-underline font-medium transition-colors hover:bg-clay-deep"
+  >
+    {label}
+  </a>
+  {fallbackUrl && (
+    <a href={fallbackUrl} rel="noopener" class="text-sm">
+      Or visit the property's own website
+    </a>
+  )}
+</div>

@@ -1,0 +1,63 @@
+---
+import { SITE_NAME, AUTHOR, SITE_TAGLINE } from '~/lib/site';
+import { FOOTER_VERTICALS, FOOTER_REGIONS, FOOTER_UTILITY, liveHref } from '~/lib/nav';
+
+const year = new Date().getFullYear();
+const authorHref = liveHref(AUTHOR.url);
+---
+<footer class="mt-24 border-t border-edge bg-cream-soft">
+  <div class="mx-auto max-w-(--container-content) px-6 py-12 grid gap-10 md:grid-cols-3">
+    <div>
+      <p class="font-serif text-lg text-ink mb-3">{SITE_NAME}</p>
+      <p class="text-sm text-muted">{SITE_TAGLINE}</p>
+    </div>
+
+    <nav aria-label="Browse by category">
+      <p class="eyebrow mb-3">Browse</p>
+      <ul class="flex flex-col gap-2 text-sm">
+        {FOOTER_VERTICALS.map((item) => (
+          <li><a href={item.href} class="text-text">{item.label}</a></li>
+        ))}
+        <li class="text-muted text-xs pt-1">
+          {FOOTER_VERTICALS.length === 0
+            ? 'Categories will appear here as they ship.'
+            : 'More categories added as they ship.'}
+        </li>
+      </ul>
+    </nav>
+
+    <nav aria-label="Browse by region">
+      <p class="eyebrow mb-3">Regions</p>
+      <ul class="flex flex-col gap-2 text-sm">
+        {FOOTER_REGIONS.map((item) => (
+          <li><a href={item.href}>{item.label}</a></li>
+        ))}
+        <li class="text-muted text-xs pt-1">
+          {FOOTER_REGIONS.length === 0
+            ? 'Regions will appear here as they ship.'
+            : 'More regions added as they ship.'}
+        </li>
+      </ul>
+    </nav>
+  </div>
+
+  <div class="border-t border-edge">
+    <div class="mx-auto max-w-(--container-content) px-6 py-6 text-xs text-muted flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+      <p>
+        © {year} {SITE_NAME}. Words by{' '}
+        {authorHref ? (
+          <a href={authorHref}>{AUTHOR.name}</a>
+        ) : (
+          <span>{AUTHOR.name}</span>
+        )}.
+      </p>
+      {FOOTER_UTILITY.length > 0 && (
+        <ul class="flex gap-4">
+          {FOOTER_UTILITY.map((link) => (
+            <li><a href={link.href}>{link.name}</a></li>
+          ))}
+        </ul>
+      )}
+    </div>
+  </div>
+</footer>

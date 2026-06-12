@@ -1,0 +1,134 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import { article, breadcrumbList } from '~/lib/schema';
+import { SITE_URL, AUTHOR } from '~/lib/site';
+import { crumb } from '~/lib/nav';
+
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('About', '/about/'),
+];
+
+const pageUrl = '/about/';
+const pageTitle = 'About Rachel Polden and Holihounds';
+const pageDescription =
+  'About Rachel Polden and Holihounds — the editorial standard, verification process, and what the site covers.';
+
+// Initials for the persona-photo placeholder (large variant).
+const initials = AUTHOR.name
+  .split(' ')
+  .map((p) => p[0])
+  .join('')
+  .slice(0, 2);
+
+const jsonLd = [
+  article({
+    headline: pageTitle,
+    description: pageDescription,
+    image: new URL('/images/og-default.jpg', SITE_URL).toString(),
+    datePublished: '2026-05-06',
+    url: pageUrl,
+  }),
+  breadcrumbList(breadcrumbs),
+];
+---
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  jsonLd={jsonLd}
+>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-10">
+      <p class="eyebrow">About</p>
+      <h1 class="display mt-3">About</h1>
+    </header>
+
+    <div class="flex items-start gap-6 border-y border-edge py-8 mb-10">
+      <span
+        aria-hidden="true"
+        class="flex h-24 w-24 shrink-0 items-center justify-center rounded-full bg-forest text-cream text-2xl tracking-wider font-serif"
+      >
+        {initials}
+      </span>
+      <div>
+        <p class="eyebrow mb-2">Editor and author</p>
+        <p class="font-serif text-xl text-ink">Rachel Polden</p>
+        <p class="text-sm text-muted mt-1">{AUTHOR.shortBio}</p>
+      </div>
+    </div>
+
+    <div class="prose-reading space-y-12 text-lg">
+      <section>
+        <h2>Who's writing this</h2>
+        <div class="space-y-4 mt-4">
+          <p>
+            I'm Rachel Polden. I live in a small market town in mid-Devon with two retired racing greyhounds, Fern and Maisie. They're large, brindle, mostly horizontal, and entirely the reason this site exists.
+          </p>
+          <p>
+            Before Holihounds I worked as a commissioning editor for a UK travel magazine. I read a lot of property listings; I know how marketing copy is built and where it bends the truth. I also know what an honest travel guide looks like when one survives long enough to be useful — the ones with named beaches, named pubs, named caveats, all sourced and verifiable.
+          </p>
+        </div>
+      </section>
+
+      <section>
+        <h2>Why this site exists</h2>
+        <div class="space-y-4 mt-4">
+          <p>
+            Most dog-friendly travel guides on the UK internet aren't really guides. They list properties marked "pet friendly" on the booking platforms — Sykes, Hoseasons, cottages.com — rephrase the marketing copy into a paragraph or two, and call it research. The supplements that hide until checkout, the garden status that the listing won't quite confirm, the side gaps and the holiday-park unit-class bookings — all the small print that determines whether a property actually works with a dog — most of it is missing.
+          </p>
+          <p>
+            The result is that the most-trafficked dog-friendly travel pages in the UK lead readers into the same problems they were trying to avoid. Wrong cottage. Wrong fee. Wrong dog-allowed area. Trust hits with each one.
+          </p>
+          <p>
+            Holihounds is built to reverse that pattern.
+          </p>
+        </div>
+      </section>
+
+      <section>
+        <h2>The editorial standard</h2>
+        <div class="space-y-4 mt-4">
+          <p>
+            Every cottage, lodge or pub listed on this site has been verified against its actual source listing — twice. The first pass is the research: candidates are gathered with the dog policy specifics — max dogs, pet charge, garden enclosure, where dogs are allowed in the property, what's actually provided. The second pass is independent verification: a separate review of every concrete claim against the live listing, with mismatches flagged.
+          </p>
+          <p>
+            Where a source says nothing, the entry says "not stated" or "varies by property" — never an invented specific. Where a holiday park markets a unit-class booking as a named lodge, the entry says so up front. Where a "fully enclosed" garden has a side gap, the entry tells you to mind it. Where a beach is restricted in summer, the entry says when.
+          </p>
+          <p>
+            This isn't speculation — it's how the entries on the site were actually built. The first 12 cottage entries went through both passes before launch, and the verification pass surfaced one hard data error, one stale promotional claim, and one parking misdescription. Each was corrected before any of the entries went live.
+          </p>
+          <p>
+            The voice across the site is mine. The byline is mine. The accountability for getting it right sits with me.
+          </p>
+        </div>
+      </section>
+
+      <section>
+        <h2>What's covered</h2>
+        <div class="space-y-4 mt-4">
+          <p>
+            Cornwall is the first region fully covered, with 12 verified dog-friendly cottages on the <a href="/cornwall/cottages/">regional listicle</a> plus the <a href="/cornwall/">regional guide</a> that covers them in context. The <a href="/cottages/">cottages vertical hub</a> explains what to look for and how to read provider small print at the UK level. The <a href="/dog-friendly-hot-tub-lodges/">hot tub lodges money page</a> lists 16 verified UK lodges with private hot tubs and clear dog policies — the hardest UK self-catering combination to find.
+          </p>
+          <p>
+            More regions (Lake District, Snowdonia, Scotland, Yorkshire, Norfolk and others) and more verticals (pubs, hotels, restaurants, beaches, walks) are queued. The growth signals at the bottom of every section reflect what's actually next, in priority order.
+          </p>
+        </div>
+      </section>
+
+      <section>
+        <h2>Corrections and contact</h2>
+        <div class="space-y-4 mt-4">
+          <p>
+            If you've stayed somewhere I've covered and the listing's accuracy has slipped, tell me. If you know a property I should be looking at, tell me. If you spot anything on this site that doesn't hold up against its source, definitely tell me.
+          </p>
+          <p>
+            See the <a href="/contact/">contact page</a> for how to reach me.
+          </p>
+        </div>
+      </section>
+    </div>
+  </article>
+</BaseLayout>

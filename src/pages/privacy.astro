@@ -1,0 +1,194 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { breadcrumbList } from '~/lib/schema';
+import { crumb } from '~/lib/nav';
+
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Privacy', '/privacy/'),
+];
+
+const pageUrl = '/privacy/';
+const pageTitle = 'Privacy policy';
+const pageDescription =
+  'Holihounds privacy policy — cookieless analytics, no tracking, UK GDPR rights, contact for subject access requests.';
+
+const lastUpdated = '27 May 2026';
+
+const jsonLd = [breadcrumbList(breadcrumbs)];
+---
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  jsonLd={jsonLd}
+>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-6">
+      <p class="eyebrow">Legal</p>
+      <h1 class="display mt-3">Privacy policy</h1>
+      <p class="text-sm text-muted mt-4">Last updated: {lastUpdated}</p>
+    </header>
+
+    <div class="prose-reading space-y-10 text-lg">
+      <section>
+        <p>
+          This policy explains what personal data Holihounds collects, why, how it's used, and the rights you have under UK GDPR. It's written to be readable rather than legally elaborate; if something here is unclear, email me at the address in the contact details below.
+        </p>
+      </section>
+
+      <section>
+        <h2>1. Who we are</h2>
+        <div class="space-y-3 mt-3">
+          <p>
+            Holihounds is operated by Rachel Polden, based in mid-Devon. For data protection purposes, Rachel Polden is the <strong>data controller</strong>.
+          </p>
+          <p>
+            You can reach the data controller by emailing <strong>hello@holihounds.com</strong>.
+          </p>
+        </div>
+      </section>
+
+      <section>
+        <h2>2. What data we collect</h2>
+        <div class="space-y-3 mt-3">
+          <p>This site collects very little personal data. Specifically:</p>
+          <ul class="space-y-3 list-disc pl-6">
+            <li>
+              <strong>Analytics data:</strong> this site does not currently use any analytics. If we add analytics in the future, we plan to use a cookieless, privacy-focused tool — likely Plausible Analytics — and we'll update this policy at that point to reflect what data is then collected. (Plausible doesn't use cookies and doesn't collect personally identifiable information.)
+            </li>
+            <li>
+              <strong>Email correspondence:</strong> if you contact me by email, your email address and the contents of your message are received and stored by my email provider so I can respond.
+            </li>
+            <li>
+              <strong>Affiliate click data:</strong> if you click an affiliate link and proceed to book on a third-party site (Sykes, Hoseasons, cottages.com, Aspects Holidays, or other partners), the destination sets its own cookies and tracking — controlled by them, not by this site. Their privacy policy applies to that interaction. I receive aggregated data from the affiliate platform about which clicks resulted in bookings, but no personal information about who clicked.
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>3. Why we collect it (lawful basis under UK GDPR)</h2>
+        <div class="space-y-3 mt-3">
+          <p>The lawful basis for processing the data above is:</p>
+          <ul class="space-y-3 list-disc pl-6">
+            <li>
+              <strong>Legitimate interests</strong> (Article 6(1)(f) UK GDPR): would apply to any future analytics — to understand which pages are useful to readers and improve content. We don't currently rely on this basis because no analytics are running. If we add analytics later (cookieless, anonymous), the legitimate-interest assessment would conclude minimal privacy impact and that readers' interests are not overridden.
+            </li>
+            <li>
+              <strong>Performance of services</strong> (Article 6(1)(b) UK GDPR): for email correspondence — to respond to your questions or feedback.
+            </li>
+            <li>
+              <strong>Consent</strong> (Article 6(1)(a) UK GDPR): for any future newsletter signup. We don't have one yet, but if we add one, consent will be explicitly requested and you'll be able to withdraw it at any time.
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>4. Third parties we use</h2>
+        <div class="space-y-3 mt-3">
+          <p>Several third parties are involved in operating this site:</p>
+          <ul class="space-y-3 list-disc pl-6">
+            <li>
+              <strong>Cloudflare</strong> hosts the site. Their privacy policy is at <a href="https://www.cloudflare.com/privacypolicy/" rel="noopener">cloudflare.com/privacypolicy</a>. They may log basic technical information about visitors (IP address, browser type) for security and performance purposes.
+            </li>
+            <li>
+              <strong>Plausible Analytics</strong> is our intended future analytics tool — not currently active. Their privacy policy (for when it is) is at <a href="https://plausible.io/privacy" rel="noopener">plausible.io/privacy</a>.
+            </li>
+            <li>
+              <strong>Google Fonts</strong> serves the fonts used on the site (Fraunces and Inter). When you load a page, your browser requests fonts from Google's CDN, which logs basic technical information. Google's privacy policy applies.
+            </li>
+            <li>
+              <strong>Affiliate platforms</strong> (Sykes, Hoseasons, cottages.com, Aspects Holidays, etc.): when you click through to a property listing, you leave this site and are subject to the destination's privacy policy and cookies. We have no control over their data practices.
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h2>5. Cookies</h2>
+        <div class="space-y-3 mt-3">
+          <p>
+            This site does not set cookies of its own. Plausible Analytics is cookieless. Cloudflare may set a small number of essential security cookies that don't track you across sites.
+          </p>
+          <p>
+            If you click through to an affiliate platform (Sykes, Hoseasons, cottages.com, etc.), that platform sets its own cookies. These are governed by the destination's cookie policy, not ours.
+          </p>
+        </div>
+      </section>
+
+      <section>
+        <h2>6. How long we keep data</h2>
+        <ul class="space-y-3 list-disc pl-6 mt-3">
+          <li><strong>Analytics data:</strong> not applicable — no analytics currently in use. If added later, retention will be per the analytics tool's default (Plausible's is rolling and not personally identifiable).</li>
+          <li><strong>Email correspondence:</strong> retained for as long as needed to respond and for a reasonable period afterwards (typically up to two years) in case of follow-up. Then deleted.</li>
+          <li><strong>Affiliate aggregate data:</strong> retained per the affiliate platform's policy.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>7. Your rights under UK GDPR</h2>
+        <div class="space-y-3 mt-3">
+          <p>You have the right to:</p>
+          <ul class="space-y-2 list-disc pl-6">
+            <li><strong>Access</strong> the personal data we hold about you (subject access request)</li>
+            <li><strong>Rectify</strong> inaccurate personal data</li>
+            <li><strong>Erase</strong> personal data ("right to be forgotten") in certain circumstances</li>
+            <li><strong>Restrict</strong> processing of personal data</li>
+            <li><strong>Object</strong> to processing based on legitimate interests</li>
+            <li><strong>Data portability</strong> — receive your personal data in a structured, machine-readable format</li>
+            <li><strong>Withdraw consent</strong> at any time where processing is based on consent</li>
+          </ul>
+          <p>
+            To exercise any of these rights, email <strong>hello@holihounds.com</strong> with the subject line "Data Subject Request". I aim to respond within one month, as required by UK GDPR.
+          </p>
+        </div>
+      </section>
+
+      <section>
+        <h2>8. Children's data</h2>
+        <p class="mt-3">
+          This site is not directed at children under 13. We do not knowingly collect personal data from children. If you believe a child has provided us with personal data, please contact us and we will delete it.
+        </p>
+      </section>
+
+      <section>
+        <h2>9. International transfers</h2>
+        <p class="mt-3">
+          Some of the third parties listed above (notably Cloudflare and Google) may process data outside the UK. Where this occurs, those processors are required under their own UK and EU compliance frameworks to ensure equivalent levels of data protection apply.
+        </p>
+      </section>
+
+      <section>
+        <h2>10. Complaints to the ICO</h2>
+        <div class="space-y-3 mt-3">
+          <p>
+            If you believe this site has not handled your data correctly, you have the right to lodge a complaint with the <strong>Information Commissioner's Office</strong> (ICO) — the UK's data protection regulator.
+          </p>
+          <ul class="space-y-1 list-disc pl-6">
+            <li>Website: <a href="https://ico.org.uk" rel="noopener">ico.org.uk</a></li>
+            <li>Helpline: 0303 123 1113</li>
+          </ul>
+          <p>
+            Before escalating to the ICO, I'd appreciate the chance to address your concern directly — email me at the address above.
+          </p>
+        </div>
+      </section>
+
+      <section>
+        <h2>11. Changes to this policy</h2>
+        <p class="mt-3">
+          This policy may be updated as the site evolves (analytics integration, contact form launch, etc.). The "last updated" date at the top of this page reflects the latest revision. Significant changes will be flagged on the home page.
+        </p>
+      </section>
+    </div>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <AuthorByline variant="compact" />
+    </section>
+  </article>
+</BaseLayout>

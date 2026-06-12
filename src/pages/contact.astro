@@ -1,0 +1,70 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { breadcrumbList } from '~/lib/schema';
+import { crumb } from '~/lib/nav';
+
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Contact', '/contact/'),
+];
+
+const pageUrl = '/contact/';
+const pageTitle = 'Contact Holihounds';
+const pageDescription =
+  'How to reach Holihounds — corrections, tips on properties, reader experience reports. Email Rachel Polden directly.';
+
+const jsonLd = [breadcrumbList(breadcrumbs)];
+---
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  jsonLd={jsonLd}
+>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-10">
+      <p class="eyebrow">Contact</p>
+      <h1 class="display mt-3">Get in touch</h1>
+    </header>
+
+    <div class="prose-reading space-y-6 text-lg">
+      <p>
+        Email is the only way to reach me at the moment — a contact form is in the queue.
+      </p>
+
+      <div class="border-y border-edge py-6 my-6">
+        <p class="eyebrow mb-2">Email</p>
+        <p class="font-serif text-xl text-ink">
+          hello@holihounds.com
+        </p>
+      </div>
+
+      <p><strong>I'll respond personally to:</strong></p>
+      <ul class="space-y-2 list-disc pl-6">
+        <li>
+          <strong>Corrections</strong> on any entry. If something on this site doesn't hold up against its source, I want to know.
+        </li>
+        <li>
+          <strong>Properties I should be looking at</strong> — especially independent stock, regional agencies, and the harder-to-find dog credentials.
+        </li>
+        <li>
+          <strong>Reader experience reports.</strong> If you've stayed at a property I've written up and the reality didn't match the page, that matters more than any provider's marketing copy.
+        </li>
+      </ul>
+
+      <p class="pt-4"><strong>What I can't respond to in any useful way:</strong></p>
+      <ul class="space-y-2 list-disc pl-6">
+        <li>Generic SEO / link-building / guest-post outreach. Goes straight to spam.</li>
+        <li>Affiliate partnership pitches that haven't verified the actual dog policy first.</li>
+        <li>Anything asking me to soften a caveat on a published entry in exchange for promotion. The whole site is built on that not being possible.</li>
+      </ul>
+    </div>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <AuthorByline variant="compact" />
+    </section>
+  </article>
+</BaseLayout>

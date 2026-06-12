@@ -1,0 +1,71 @@
+---
+import { AUTHOR } from '~/lib/site';
+import { liveHref } from '~/lib/nav';
+
+interface Props {
+  variant?: 'compact' | 'full';
+}
+const { variant = 'compact' } = Astro.props;
+
+// Initials block stands in until a licensed headshot is added.
+const initials = AUTHOR.name
+  .split(' ')
+  .map((p) => p[0])
+  .join('')
+  .slice(0, 2);
+
+// Self-healing: only render the persona link when the about page has shipped.
+// Otherwise render the byline as plain text — the name is informative either way.
+const personHref = liveHref(AUTHOR.url);
+---
+{variant === 'compact' ? (
+  personHref ? (
+    <a href={personHref} class="inline-flex items-center gap-3 no-underline group">
+      <span
+        aria-hidden="true"
+        class="flex h-10 w-10 items-center justify-center rounded-full bg-forest text-cream text-sm tracking-wider font-serif"
+      >
+        {initials}
+      </span>
+      <span>
+        <span class="block text-xs uppercase tracking-wider text-muted">Words by</span>
+        <span class="block text-ink group-hover:text-clay-deep transition-colors">{AUTHOR.name}</span>
+      </span>
+    </a>
+  ) : (
+    <div class="inline-flex items-center gap-3">
+      <span
+        aria-hidden="true"
+        class="flex h-10 w-10 items-center justify-center rounded-full bg-forest text-cream text-sm tracking-wider font-serif"
+      >
+        {initials}
+      </span>
+      <span>
+        <span class="block text-xs uppercase tracking-wider text-muted">Words by</span>
+        <span class="block text-ink">{AUTHOR.name}</span>
+      </span>
+    </div>
+  )
+) : (
+  <div class="flex items-start gap-5 border-t border-edge pt-8">
+    <span
+      aria-hidden="true"
+      class="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-forest text-cream text-lg tracking-wider font-serif"
+    >
+      {initials}
+    </span>
+    <div>
+      <p class="eyebrow mb-1">About the author</p>
+      <h3 class="mb-2">
+        {personHref ? (
+          <a href={personHref} class="no-underline hover:text-clay-deep transition-colors">
+            {AUTHOR.name}
+          </a>
+        ) : (
+          <span>{AUTHOR.name}</span>
+        )}
+      </h3>
+      <p class="prose-reading text-sm">{AUTHOR.description}</p>
+    </div>
+  </div>
+)}

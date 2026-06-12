@@ -1,0 +1,180 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import RegionCard from '~/components/RegionCard.astro';
+import ListingCard from '~/components/ListingCard.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { SITE_URL, SITE_NAME, AUTHOR } from '~/lib/site';
+
+const cornwall = await getEntry('regions', 'cornwall');
+const allListings = await getCollection('listings');
+
+// Three editor's picks for the home page. Deliberately broader than the
+// Cornwall regional hub's "Best for…" trio — these show category + provider
+// + geographic range across the whole site, not just one region.
+//   1. Old Coastguard Lookout — Cornwall cottage with the strongest editorial
+//      hook (gate to coast path)
+//   2. Woodend Croft — Aberdeenshire, Sykes Gem 2024 Gold winner, hot tub
+//   3. Kernock Cottages — Cornwall independent, dedicated dog estate
+const FEATURED_PICKS: { id: string; href: string }[] = [
+  {
+    id: 'cornwall/old-coastguard-lookout',
+    href: '/cornwall/cottages/#old-coastguard-lookout',
+  },
+  {
+    id: 'scotland/woodend-croft-pitmedden',
+    href: '/dog-friendly-hot-tub-lodges/#woodend-croft-pitmedden',
+  },
+  {
+    id: 'cornwall/kernock-cottages',
+    href: '/dog-friendly-hot-tub-lodges/#kernock-cottages',
+  },
+];
+type Pick = { entry: CollectionEntry<'listings'>; href: string };
+const picks: Pick[] = FEATURED_PICKS
+  .map(({ id, href }) => {
+    const entry = allListings.find((l) => l.id === id);
+    return entry ? { entry, href } : null;
+  })
+  .filter((p): p is Pick => Boolean(p));
+
+const pageUrl = '/';
+const pageTitle = SITE_NAME;
+// 150 chars — under the 155-char Google truncation threshold.
+const pageDescription =
+  'UK dog-friendly travel guide with dog policy specifics actually verified — cottage and lodge recommendations from Rachel Polden. Cornwall in full.';
+
+// Home page JSON-LD: WebSite + Organization (publisher relationship for E-E-A-T).
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: SITE_NAME,
+  url: SITE_URL,
+  description: pageDescription,
+};
+
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: SITE_NAME,
+  url: SITE_URL,
+  founder: {
+    '@type': 'Person',
+    name: AUTHOR.name,
+    description: AUTHOR.description,
+    url: new URL(AUTHOR.url, SITE_URL).toString(),
+  },
+};
+
+const jsonLd = [websiteSchema, organizationSchema];
+---
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  canonical={SITE_URL + '/'}
+  image="https://images.unsplash.com/photo-1644281211883-47001c3ea058?w=1600&h=900&fit=crop&q=85"
+  jsonLd={jsonLd}
+>
+  <section class="bg-cream-soft border-b border-edge">
+    <div class="mx-auto max-w-(--container-prose) px-6 py-20 md:py-28">
+      <h1 class="display">Find dog-friendly Britain.</h1>
+      <p class="mt-6 text-lg md:text-xl max-w-prose">
+        Pubs, cottages, hotels and beaches that actually welcome dogs, by region — with the small print verified against the listings, not rephrased from the marketing copy.
+      </p>
+    </div>
+  </section>
+
+  <article class="mx-auto max-w-(--container-prose) px-6 py-16 space-y-20">
+
+    <section>
+      <p class="eyebrow">About</p>
+      <h2 class="mt-2">Why this guide exists</h2>
+      <div class="prose-reading mt-6 space-y-4 text-lg">
+        <p>
+          I'm Rachel Polden — I write Holihounds from a small market town in mid-Devon, where I live with two retired racing greyhounds, Fern and Maisie. Before this site I worked as a commissioning editor for a travel magazine; I know what passes for an editorial standard and what doesn't.
+        </p>
+        <p>
+          Most dog-friendly travel guides on the UK internet aren't really. They list properties marked "pet friendly" on the booking platforms, rephrase the marketing copy, and call it research. The supplements, the garden status, the small print that determines whether a property actually works with a dog — most of it is missing.
+        </p>
+        <p>
+          This site reverses that. Every cottage, lodge or pub I write up has been verified against its actual listing — max dogs, pet charge, garden enclosure, where dogs are allowed, what's provided. Where the source is vague, the entry says so rather than inventing plausible specifics. Where a holiday park markets a unit-class booking as a "lodge", the entry says so. Where a "fully enclosed" garden has a side gap, the entry tells you to mind it.
+        </p>
+        <p>
+          Cornwall is fully covered as of the May 2026 launch. The other regions and verticals follow as their guides ship.
+        </p>
+      </div>
+    </section>
+
+    <section>
+      <p class="eyebrow">Browse</p>
+      <h2 class="mt-2">By region</h2>
+      <div class="mt-6 max-w-sm">
+        {cornwall && (
+          <RegionCard region={cornwall} count={12} href="/cornwall/" />
+        )}
+      </div>
+      <p class="mt-6 text-sm text-muted">More regions added as they ship.</p>
+    </section>
+
+    <section>
+      <p class="eyebrow">Browse</p>
+      <h2 class="mt-2">By category</h2>
+      <div class="mt-6 max-w-sm">
+        <a
+          href="/cottages/"
+          class="group block h-full bg-cream-soft border border-edge p-6 no-underline"
+        >
+          <p class="eyebrow">Vertical guide</p>
+          <h3 class="mt-2 group-hover:text-clay-deep transition-colors">
+            Dog-friendly cottages
+          </h3>
+          <p class="mt-3 text-sm">
+            What makes a cottage genuinely dog-friendly, the regions where supply is strongest, and how to read the listing small print.
+          </p>
+        </a>
+      </div>
+      <p class="mt-6 text-sm text-muted">
+        Pubs, hotels, restaurants, beaches and walks added as their guides ship.
+      </p>
+    </section>
+  </article>
+
+  <section class="bg-forest text-cream">
+    <div class="mx-auto max-w-(--container-prose) px-6 py-20 md:py-24">
+      <p class="eyebrow text-cream/70">Editor's pick</p>
+      <h2 class="mt-2 text-cream text-3xl md:text-4xl">
+        Dog-friendly hot tub lodges UK
+      </h2>
+      <p class="mt-4 text-cream/90 max-w-prose text-lg">
+        Sixteen verified UK lodges with private hot tubs and dog policies that actually hold up in practice. The hardest UK self-catering combination to find, in one place.
+      </p>
+      <a
+        href="/dog-friendly-hot-tub-lodges/"
+        class="inline-block mt-8 border-2 border-cream text-cream px-6 py-3.5 no-underline font-medium hover:bg-cream hover:text-forest transition-colors"
+      >
+        See the guide
+      </a>
+    </div>
+  </section>
+
+  <article class="mx-auto max-w-(--container-prose) px-6 py-16 space-y-20">
+
+    <section>
+      <p class="eyebrow">Editor's picks</p>
+      <h2 class="mt-2">From the guides</h2>
+      <p class="mt-3 text-sm text-muted max-w-prose">
+        Three picks across the site — a Cornish cottage, a Scottish award-winner, and an independent dog-purpose-built estate. Each links to the full entry on its parent guide.
+      </p>
+      <div class="mt-8 grid gap-6 sm:grid-cols-2 md:grid-cols-3">
+        {picks.map(({ entry, href }) => (
+          <ListingCard listing={entry} href={href} />
+        ))}
+      </div>
+    </section>
+
+    <section class="border-t border-edge pt-12">
+      <AuthorByline variant="full" />
+    </section>
+  </article>
+</BaseLayout>

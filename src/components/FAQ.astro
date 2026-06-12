@@ -1,0 +1,31 @@
+---
+import { faqPage } from '~/lib/schema';
+
+interface FaqItem { question: string; answer: string }
+interface Props {
+  items: FaqItem[];
+  /** Set false if the parent page already emits its own FAQPage JSON-LD. */
+  emitSchema?: boolean;
+}
+
+const { items, emitSchema = true } = Astro.props;
+const ld = emitSchema ? faqPage(items) : null;
+
+// Answers are author-controlled HTML — they can contain inline links and
+// basic markup (<a>, <strong>, <em>). Google's FAQPage schema explicitly
+// allows HTML in the answer field, so the JSON-LD output keeps the markup.
+---
+<section class="my-12">
+  <div class="flex flex-col">
+    {items.map((item) => (
+      <details class="group border-b border-edge py-4">
+        <summary class="flex cursor-pointer items-center justify-between gap-4 list-none [&::-webkit-details-marker]:hidden">
+          <span class="font-serif text-lg text-ink">{item.question}</span>
+          <span aria-hidden="true" class="text-2xl text-muted transition-transform group-open:rotate-90">›</span>
+        </summary>
+        <div class="prose-reading mt-3 text-sm" set:html={item.answer}></div>
+      </details>
+    ))}
+  </div>
+</section>
+{ld && <script is:inline type="application/ld+json" set:html={JSON.stringify(ld)} />}

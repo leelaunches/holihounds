@@ -1,0 +1,51 @@
+---
+interface Props {
+  maxDogs?: number | null;
+  petCharge?: string | null;
+  enclosedGarden?: boolean | null;
+  /**
+   * Free-text override for the Garden value. When supplied, it replaces the
+   * boolean's auto-rendered text — use this to carry caveats the boolean is
+   * too binary for (side-gap warnings, gravel surface, "decking only", etc.).
+   */
+  gardenNote?: string | null;
+  dogsAllowedIn?: string | null;
+  dogExtras?: string | null;
+}
+
+const {
+  maxDogs,
+  petCharge,
+  enclosedGarden,
+  gardenNote,
+  dogsAllowedIn,
+  dogExtras,
+} = Astro.props;
+
+function gardenText(v: boolean | null | undefined, note: string | null | undefined): string {
+  if (note) return note;
+  if (v === true) return 'Yes, fully enclosed';
+  if (v === false) return 'Not fully enclosed — check listing';
+  return 'Not stated by provider';
+}
+
+const items: { label: string; value: string; wide?: boolean }[] = [];
+if (maxDogs !== undefined) items.push({ label: 'Max dogs', value: maxDogs == null ? '—' : String(maxDogs) });
+if (petCharge !== undefined) items.push({ label: 'Pet charge', value: petCharge ?? '—' });
+if (enclosedGarden !== undefined || gardenNote !== undefined) {
+  items.push({ label: 'Garden', value: gardenText(enclosedGarden, gardenNote), wide: Boolean(gardenNote) });
+}
+if (dogsAllowedIn !== undefined) items.push({ label: 'Where allowed', value: dogsAllowedIn ?? '—' });
+if (dogExtras !== undefined) items.push({ label: 'Provided', value: dogExtras ?? '—', wide: true });
+---
+<aside class="border-2 border-forest bg-cream-soft p-6 my-6">
+  <p class="eyebrow text-forest mb-3">Dog policy</p>
+  <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 text-sm">
+    {items.map((item) => (
+      <div class:list={[item.wide && 'sm:col-span-2']}>
+        <dt class="eyebrow text-muted mb-1">{item.label}</dt>
+        <dd>{item.value}</dd>
+      </div>
+    ))}
+  </dl>
+</aside>

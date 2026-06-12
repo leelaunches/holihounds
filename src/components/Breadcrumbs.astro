@@ -1,0 +1,40 @@
+---
+import { breadcrumbList } from '~/lib/schema';
+
+interface Crumb {
+  name: string;
+  /** Omit when the target page hasn't shipped yet — renders as plain text. */
+  href?: string;
+}
+
+interface Props {
+  items: Crumb[];
+  /** Set false if the parent layout is already emitting BreadcrumbList JSON-LD. */
+  emitSchema?: boolean;
+}
+
+const { items, emitSchema = true } = Astro.props;
+const ld = emitSchema
+  ? breadcrumbList(items.map((i) => ({ name: i.name, url: i.href })))
+  : null;
+---
+<nav aria-label="Breadcrumb" class="text-sm text-muted">
+  <ol class="flex flex-wrap items-center gap-1.5">
+    {items.map((item, i) => {
+      const isLast = i === items.length - 1;
+      return (
+        <li class="flex items-center gap-1.5">
+          {isLast ? (
+            <span aria-current="page" class="text-text">{item.name}</span>
+          ) : item.href ? (
+            <a href={item.href}>{item.name}</a>
+          ) : (
+            <span>{item.name}</span>
+          )}
+          {!isLast && <span aria-hidden="true">›</span>}
+        </li>
+      );
+    })}
+  </ol>
+</nav>
+{ld && <script is:inline type="application/ld+json" set:html={JSON.stringify(ld)} />}

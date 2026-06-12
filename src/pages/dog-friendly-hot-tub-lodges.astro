@@ -1,0 +1,259 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import DogPolicyBox from '~/components/DogPolicyBox.astro';
+import AffiliateCTA from '~/components/AffiliateCTA.astro';
+import AffiliateDisclosure from '~/components/AffiliateDisclosure.astro';
+import FAQ from '~/components/FAQ.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { article, breadcrumbList, faqPage, itemList } from '~/lib/schema';
+import { SITE_URL } from '~/lib/site';
+import { crumb } from '~/lib/nav';
+
+/**
+ * Dog-friendly hot tub lodges money page — Phase 2.7.
+ *
+ * Listings filter by `tags.includes('hot-tub')` so the page auto-populates as
+ * lodge entries are added to the content collection. Currently 1 of 15
+ * verified (Signature Cove); the remaining 14 land after the verification
+ * pass completes. The status banner at the top of the listings section tells
+ * readers what's there now vs the eventual count.
+ */
+
+const allHotTubProperties = await getCollection(
+  'listings',
+  (e) => e.data.tags.includes('hot-tub'),
+);
+
+// Explicit geographic order — Lake District / Cumbria → Pennines → Northumberland
+// → Scotland → Wales → Cornwall. The 14 not-yet-shipped entries land here as
+// .md files are added post-verification.
+const lodgeOrder = [
+  'cumbria/black-dog-lodge',
+  'cumbria/limefitt-lodge',
+  'cumbria/brockwood-hall-windermere-lodge',
+  'cumbria/fell-foot',
+  'durham/foxes-den',
+  'northumberland/lodge-32-otterburn',
+  'northumberland/restharrow-lodge',
+  'northumberland/griffon-lodge-felmoor',
+  'scotland/little-lodge-galloway',
+  'scotland/moorhen-lodge-kessock',
+  'scotland/loch-lomond-classic-4-bed',
+  'scotland/woodend-croft-pitmedden',
+  'wales/y-felin-coed-cadw',
+  'cornwall/signature-cove-lodge',
+  'cornwall/tregoad-luxury-3-bed',
+  'cornwall/kernock-cottages',
+];
+
+const sortedLodges = lodgeOrder
+  .map((id) => allHotTubProperties.find((l) => l.id === id))
+  .filter((l): l is NonNullable<typeof l> => Boolean(l));
+
+const TARGET_LODGE_COUNT = 16;
+
+const slugFor = (id: string) => id.split('/').pop()!;
+
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Hot tub lodges', '/dog-friendly-hot-tub-lodges/'),
+];
+
+const faqItems = [
+  {
+    question: 'Are dogs allowed in the hot tub itself?',
+    answer:
+      "No — and most lodge rentals say so explicitly in the booking conditions. Hot tubs need clean water at controlled temperatures, and dogs introduce hair, oils and bacteria that throw the chemistry off. The garden, the lodge interior and often the decking around the tub are dog-friendly. The water inside the tub is not.",
+  },
+  {
+    question: 'How is the hot tub cleaned between guests?',
+    answer:
+      "On most properties, the tub is fully drained, scrubbed and refilled between bookings — that's standard for UK lodge stock. Some operators run additional sanitisation cycles. Most also test water chemistry before each new arrival. If this matters to you, the booking confirmation usually states the cleaning protocol; ask if it doesn't.",
+  },
+  {
+    question: 'Private hot tub vs shared — does it matter for dog owners?',
+    answer:
+      "Yes, significantly. Private (in-unit, just yours) hot tubs let you use them at any time without negotiating with other guests' dogs or schedules. Shared (lodge-park common-area) tubs usually have rules that exclude dogs from the surrounding area entirely, defeating the point. Every lodge in the list below has a private hot tub.",
+  },
+  {
+    question: 'Are hot tub lodges good year-round or is it summer only?',
+    answer:
+      "Year-round, generally — hot tubs in winter are arguably better than in summer. The biggest year-round advantage of a hot tub lodge for dog owners is wet-weather flexibility: a January storm becomes manageable when you can sit in the tub watching it. Lodges that close seasonally are usually flagged on the listing; most don't.",
+  },
+  {
+    question: 'When do dog-friendly hot tub lodges book up?',
+    answer:
+      "Earlier than equivalent non-hot-tub stock. Peak weeks (school holidays, bank holiday weekends) typically book 6–12 months out for the strongest properties; off-peak weekends can be available 2–4 weeks ahead. The combination of hot tub plus dog-friendly is one of the hardest UK self-catering categories to book last-minute, especially in the Lake District and Highlands.",
+  },
+  {
+    question: 'Are there any hot tub lodges where dogs are allowed in the actual hot tub?',
+    answer:
+      "Almost none. A handful of independent owners run dedicated 'dog-friendly hot tub' setups where the tub itself is shared with dogs, but these are rare and usually clearly advertised. Booking-platform stock (Sykes, Hoseasons, cottages.com) universally requires dogs to stay out of the tub. If the listing doesn't explicitly mention it, assume dogs aren't permitted in the tub.",
+  },
+];
+
+const pageUrl = '/dog-friendly-hot-tub-lodges/';
+const pageTitle = 'Dog-friendly hot tub lodges UK: 2026 guide';
+// 131 chars — under the 155-char Google truncation threshold.
+const pageDescription =
+  '16 verified UK lodges with private hot tubs and dog policies that hold up — Sykes, Hoseasons and independents. By Rachel Polden.';
+
+// Fallback hero image until the listings drop in and we use the first lodge's image.
+const heroImage = 'https://images.unsplash.com/photo-1633512424746-0cb5240e064d?w=1600&h=900&fit=crop&q=85';
+
+const jsonLd = [
+  article({
+    headline: pageTitle,
+    description: pageDescription,
+    image: new URL(heroImage, SITE_URL).toString(),
+    datePublished: '2026-05-06',
+    url: pageUrl,
+  }),
+  faqPage(faqItems),
+  breadcrumbList(breadcrumbs),
+  ...(sortedLodges.length > 0
+    ? [itemList(sortedLodges.map((l) => ({ name: l.data.name, url: `${pageUrl}#${slugFor(l.id)}` })))]
+    : []),
+];
+---
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  image={heroImage}
+  jsonLd={jsonLd}
+>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-8">
+      <p class="eyebrow">Hot tub lodges</p>
+      <h1 class="display mt-3">{pageTitle}</h1>
+      <div class="mt-6">
+        <AuthorByline />
+      </div>
+    </header>
+
+    <div class="border-t border-b border-edge py-3 my-6">
+      <AffiliateDisclosure />
+    </div>
+
+    <div class="prose-reading space-y-4 text-lg">
+      <p>
+        The combination of dog-friendly and private hot tub is genuinely hard to find — which is why people search this specifically rather than browsing self-catering generally. Most lodge stock that allows dogs has shared hot tubs, and the surrounding area is often dog-restricted, defeating the point. Most stock with private hot tubs doesn't allow dogs at all.
+      </p>
+      <p>
+        The lodges below all clear both bars: a private hot tub in your unit, plus a clear dog policy with the small print verified against the listing. Provider mix is Sykes-heavy (the platform with by far the deepest UK private-tub dog-friendly inventory), with Hoseasons, an independent and a single Welsh smallholding making up the rest. East Anglia and the Peak District are gaps in this iteration — research couldn't surface verified private-tub dog-friendly units there that met our standards.
+      </p>
+    </div>
+
+    <section class="mt-16">
+      {sortedLodges.length < TARGET_LODGE_COUNT && (
+        <div class="border-2 border-dashed border-edge bg-cream-soft p-6 text-sm text-muted text-center">
+          {sortedLodges.length} of {TARGET_LODGE_COUNT} verified lodges currently shown — verification of the remaining
+          {' '}{TARGET_LODGE_COUNT - sortedLodges.length} is in progress. The full listicle lands once each clears the
+          {' '}source-URL verification pass.
+        </div>
+      )}
+
+      {sortedLodges.length > 0 && (
+        <div class="mt-12 space-y-20">
+          {sortedLodges.map((lodge, i) => (
+            <article id={slugFor(lodge.id)} class="scroll-mt-8 border-t border-edge pt-12">
+              <p class="eyebrow">{lodge.data.town}</p>
+              <h2 class="mt-2">{i + 1}. {lodge.data.name}</h2>
+
+              <div class="mt-6 aspect-[16/11] overflow-hidden bg-cream-soft border border-edge">
+                <img
+                  src={lodge.data.image}
+                  alt={lodge.data.image_alt ?? lodge.data.name}
+                  loading="lazy"
+                  class="h-full w-full object-cover"
+                />
+              </div>
+
+              <div class="prose-reading mt-6">
+                <p>{lodge.data.description}</p>
+              </div>
+
+              <DogPolicyBox
+                maxDogs={lodge.data.max_dogs}
+                petCharge={lodge.data.pet_charge}
+                enclosedGarden={lodge.data.enclosed_garden}
+                gardenNote={lodge.data.garden_note}
+                dogsAllowedIn={lodge.data.dogs_allowed_in}
+                dogExtras={lodge.data.dog_extras}
+              />
+
+              <p class="text-sm text-muted">
+                Sleeps {lodge.data.sleeps}
+                {lodge.data.bedrooms && ` · ${lodge.data.bedrooms} bed${lodge.data.bedrooms === 1 ? '' : 's'}`}
+                {lodge.data.price_indicator && ` · ${lodge.data.price_indicator}`}
+              </p>
+
+              <div class="mt-6">
+                <AffiliateCTA
+                  provider={lodge.data.affiliate_provider ?? 'sykes'}
+                  identifier={slugFor(lodge.id)}
+                  fallbackUrl={lodge.data.external_url ?? undefined}
+                />
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>What to expect from a dog-friendly hot tub lodge</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          Hot tubs and dog-friendly stays don't always sit comfortably together — but when they do, the combination is one of the strongest UK self-catering experiences on offer. Three things to expect.
+        </p>
+        <p>
+          <strong>The dog stays out of the tub.</strong> Universally true on the booking-platform stock. Dogs go in the lodge, the garden and often the decking; the tub itself is for humans only. This is etiquette and chemistry rather than meanness — dog hair and oils throw hot tub water balance off in ways that are expensive to fix.
+        </p>
+        <p>
+          <strong>The tub is cleaned and refilled between bookings.</strong> Standard across UK lodge stock; you arrive to a freshly-filled, chemically-balanced tub. Some operators run additional sanitisation cycles. Booking confirmations usually state the protocol — ask if yours doesn't.
+        </p>
+        <p>
+          <strong>Outdoor space matters more than indoor.</strong> Hot tub lodges concentrate the social experience outdoors — decking, fire pits, garden seating around the tub. The strongest dog-friendly hot tub lodges have a fenced or otherwise-enclosed garden, so you can let the dog stretch out near the tub without managing them on a lead. Listings without enclosed outdoor space make hot tub time more stressful than relaxing.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Booking tips</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          <strong>Book early for peak weeks.</strong> Dog-friendly hot tub lodges in the Lake District and Scottish Highlands routinely book 6–12 months ahead for school holidays, bank holiday weekends and Christmas/New Year. Off-season midweek (Tuesday–Thursday) availability is usually still open 2–4 weeks out, especially November–March outside the Christmas window.
+        </p>
+        <p>
+          <strong>Off-peak savings are real.</strong> Mid-week stays in November, January and February typically run 30–50% below peak rates on Sykes and Hoseasons. The hot tub experience is arguably better in winter — a cold night sharpens the soak — and the dog-friendly walking is less competitive on the popular paths.
+        </p>
+        <p>
+          <strong>Provider dog-policy comparison.</strong> Sykes Cottages tends to surface garden enclosure and max dogs cleanly but hides the pet supplement until checkout. Hoseasons is best for holiday-park lodges with private hot tubs, but the per-unit policy varies — confirm the specific lodge code at booking, not just the park. cottages.com runs sharper deals on "pets stay free" but the listing small print is thinner.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Frequently asked questions</h2>
+      <FAQ items={faqItems} emitSchema={false} />
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Related guides</h2>
+      <ul class="mt-4 grid gap-3 sm:grid-cols-2 text-sm">
+        <li><a href="/cottages/">Dog-friendly cottages in the UK</a></li>
+        <li><a href="/cornwall/">Dog-friendly Cornwall: complete guide</a></li>
+        <li><a href="/cornwall/cottages/">12 best dog-friendly cottages in Cornwall</a></li>
+      </ul>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <AuthorByline variant="full" />
+    </section>
+  </article>
+</BaseLayout>

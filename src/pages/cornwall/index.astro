@@ -1,0 +1,182 @@
+---
+import { getEntry, getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import ListingCard from '~/components/ListingCard.astro';
+import Callout from '~/components/Callout.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { article, breadcrumbList, place } from '~/lib/schema';
+import { SITE_URL } from '~/lib/site';
+import { crumb } from '~/lib/nav';
+
+const cornwall = await getEntry('regions', 'cornwall');
+if (!cornwall) throw new Error('Cornwall region entry missing — check src/content/regions/cornwall.md');
+
+const allCornwallListings = await getCollection(
+  'listings',
+  (e) => e.data.region === 'cornwall',
+);
+
+// Three editor's picks for the regional hub teaser. Each was chosen for a
+// distinct hook so the trio shows the *range* of what's on the listicle, not
+// just three of the same flavour.
+const featuredOrder = [
+  'cornwall/ocean-edge',
+  'cornwall/the-stable-boskensoe-barns',
+  'cornwall/lily-cottage',
+];
+const featured = featuredOrder
+  .map((id) => allCornwallListings.find((l) => l.id === id))
+  .filter((c): c is NonNullable<typeof c> => Boolean(c));
+
+// The Cornwall cottages listicle is a curated 12 — not every cornwall-region
+// listing belongs on it (Tregoad and Kernock are hot-tub-money-page lodges,
+// not on the regional cottage listicle). Hardcoding the editorial count here.
+// If the listicle ever expands, update this constant + the order array in
+// /src/pages/cornwall/cottages.astro together.
+const cottageCount = 12;
+
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Cornwall', '/cornwall/'),
+];
+
+const pageUrl = '/cornwall/';
+const pageTitle = cornwall.data.meta_title;
+const pageDescription = cornwall.data.meta_description;
+
+const jsonLd = [
+  article({
+    headline: 'Dog-friendly Cornwall: complete guide',
+    description: pageDescription,
+    image: new URL(cornwall.data.hero_image, SITE_URL).toString(),
+    datePublished: '2026-05-06',
+    url: pageUrl,
+  }),
+  place({
+    name: cornwall.data.name,
+    description: cornwall.data.description,
+    image: new URL(cornwall.data.hero_image, SITE_URL).toString(),
+  }),
+  breadcrumbList(breadcrumbs),
+];
+---
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  image={cornwall.data.hero_image}
+  jsonLd={jsonLd}
+>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-8">
+      <p class="eyebrow">Region</p>
+      <h1 class="display mt-3">Dog-friendly Cornwall: complete guide</h1>
+      <div class="mt-6">
+        <AuthorByline />
+      </div>
+    </header>
+
+    <div class="aspect-[16/9] overflow-hidden bg-cream-soft border border-edge mb-10">
+      <img
+        src={cornwall.data.hero_image}
+        alt="Cornwall coastline"
+        class="h-full w-full object-cover"
+        loading="eager"
+      />
+    </div>
+
+    <div class="prose-reading space-y-4 text-lg">
+      <p>
+        Cornwall is the strongest dog-holiday county in England, by a noticeable margin. The reasons are mostly geographical — close to 300 miles of South West Coast Path along its shores (296 by the SWCP Association's count), the warmest sea temperatures the UK can offer come May, and a long history of harbour towns where dogs in pubs are the default rather than the exception. But it goes further: several of the country's strongest year-round dog beaches sit on its coasts, at points where most English flagships go restricted from Easter to October.
+      </p>
+      <p>
+        This guide leads with the cottages — twelve verified properties across Sykes, cottages.com, Hoseasons and a couple of Cornish independents, researched against the listing small print rather than the marketing summary. Pubs, hotels, beaches and walks follow as those guides ship. Where source data is vague — a Sykes pet supplement that hides until booking, a cottages.com "doggy welcome pack" that varies by property — we say so.
+      </p>
+    </div>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <p class="eyebrow">Where to stay</p>
+      <h2 class="mt-2">Cottages</h2>
+      <p class="prose-reading mt-4">
+        Twelve verified dog-friendly cottages, varied across the north coast, west Cornwall, the Lizard, the south coast and Bodmin Moor. Each entry has the dog policy specifics — max dogs, pet supplement, garden status, what's actually provided — and editorial caveats baked in where the listing's small print warrants them.
+      </p>
+
+      <div class="mt-8 grid gap-6 md:grid-cols-3">
+        {featured.map((c) => (
+          <ListingCard
+            listing={c}
+            href={`/cornwall/cottages/#${c.id.split('/').pop()}`}
+          />
+        ))}
+      </div>
+
+      <p class="mt-8">
+        <a href="/cornwall/cottages/" class="text-text">
+          See all {cottageCount} dog-friendly cottages in Cornwall →
+        </a>
+      </p>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <p class="eyebrow">Editor's picks</p>
+      <h2 class="mt-2">Best for…</h2>
+      <div class="mt-8 grid gap-6 md:grid-cols-3">
+        <Callout eyebrow="Best for" title="Beach lovers">
+          <p>
+            Ocean Edge sits on the cliff at Sennen Cove with the Gwynver dog beach 0.4 miles below — one of Cornwall's strongest year-round dog beaches. Two dogs welcome, full welcome pack of beds, bowls, treats and poop bags.
+          </p>
+          <p class="mt-3">
+            <a href="/cornwall/cottages/#ocean-edge" class="text-text">See Ocean Edge →</a>
+          </p>
+        </Callout>
+        <Callout eyebrow="Best for" title="The rough-weather day">
+          <p>
+            The Stable at Boskensoe Barns has a dedicated 50×50-metre dog exercise area on site, fenced to six feet, so weather doesn't dictate your day. Plus a wood burner with complimentary fuel for when it does.
+          </p>
+          <p class="mt-3">
+            <a href="/cornwall/cottages/#the-stable-boskensoe-barns" class="text-text">See The Stable →</a>
+          </p>
+        </Callout>
+        <Callout eyebrow="Best for" title="Car-free travel">
+          <p>
+            Kerensa on Wesley Place sits in central St Ives, harbour five minutes' walk away, supermarket round the corner. Skips the parking nightmare and gives you a base near a year-round dog beach (Porthkidney).
+          </p>
+          <p class="mt-3">
+            <a href="/cornwall/cottages/#kerensa" class="text-text">See Kerensa →</a>
+          </p>
+        </Callout>
+      </div>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Travelling to Cornwall with a dog</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          The drive to Cornwall is long for anyone, longer with a dog. From the M5/M4 corridor, count five hours minimum to most of the county, six to seven if you're heading to Penwith. Plan stops accordingly.
+        </p>
+        <p>
+          Gloucester Services on the M5 is the best dog stop on the route — a proper grass field rather than a tarmac strip, locally-sourced food, and bowls of water at the entrance. Southbound, Exeter Services is the cleanest of a thinner line-up. Once you cross the Tamar at Saltash, services thin out further; the better stops are off the A30 in lay-bys with views.
+        </p>
+        <p>
+          Bringing your own water for the dog matters more than for you — the heat in Cornish car parks builds fast on a sunny day, even in May. A couple of small bowls, a microfibre dog towel for sandy paws on the way home, and a tarpaulin or seat cover for the boot will save a lot of post-trip cleaning.
+        </p>
+        <p>
+          Two further notes: most Cornish lanes are single-track with passing places, which is harder than expected with a roof box loaded; and the Padstow–Rock ferry across the Camel Estuary is the standard way to skip the long road loop with a dog in tow.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Adjacent regions</h2>
+      <p class="prose-reading mt-4">
+        Cornwall pairs naturally with <strong>Devon</strong> to the east — they share much of the same accommodation stock and shoreline character — and with <strong>Somerset</strong> to the north, which shares the M5 corridor and several of the better service-station dog stops. Both are in the queue for regional guide treatment; not yet linkable.
+      </p>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <AuthorByline variant="full" />
+    </section>
+  </article>
+</BaseLayout>
