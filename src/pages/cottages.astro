@@ -11,26 +11,28 @@ import { SITE_URL } from '~/lib/site';
 import { crumb, FOOTER_REGIONS } from '~/lib/nav';
 
 const cornwall = await getEntry('regions', 'cornwall');
+const lakeDistrict = await getEntry('regions', 'lake-district');
 
-// All listings on the Cornwall cottages listicle (12 — includes the two
-// lodge-typed entries that earned editorial inclusion). The count is the
-// headline figure used everywhere else on the site.
-const cornwallListings = await getCollection(
-  'listings',
-  (e) => e.data.region === 'cornwall',
-);
+// All listings across regions — find-by-id below selects the featured mix.
+const allListings = await getCollection('listings');
 
+// Six editor's picks, three per shipped region, so the grid shows the breadth
+// of coverage rather than a single county.
 const featuredOrder = [
   'cornwall/old-coastguard-lookout',
   'cornwall/ocean-edge',
   'cornwall/the-stable-boskensoe-barns',
-  'cornwall/lily-cottage',
-  'cornwall/the-poop-deck',
-  'cornwall/kerensa',
+  'lake-district/fellside-lodge',
+  'lake-district/daisy-cottage',
+  'lake-district/dale-view',
 ];
 const featured = featuredOrder
-  .map((id) => cornwallListings.find((l) => l.id === id))
+  .map((id) => allListings.find((l) => l.id === id))
   .filter((c): c is NonNullable<typeof c> => Boolean(c));
+
+// Each featured card links to the listicle the cottage actually appears on.
+const listicleHrefFor = (id: string) =>
+  id.startsWith('cornwall/') ? '/cornwall/cottages/' : '/lake-district/cottages/';
 
 const breadcrumbs = [
   crumb('Home', '/'),
@@ -85,7 +87,7 @@ const jsonLd = [
   itemList(
     featured.map((c) => ({
       name: c.data.name,
-      url: `/cornwall/cottages/#${c.id.split('/').pop()}`,
+      url: `${listicleHrefFor(c.id)}#${c.id.split('/').pop()}`,
     })),
   ),
   breadcrumbList(breadcrumbs),
@@ -113,7 +115,7 @@ const jsonLd = [
         Most "dog-friendly" cottages aren't, really. They allow your dog through the door, ask for a fee, and leave you to figure out the rest. The good ones — the ones worth booking — are different in specifics: a fully enclosed garden checked against the photos rather than the marketing copy, a clear policy on max dogs and where in the house they're welcome, and a location that means walking out the front door rather than driving every time.
       </p>
       <p>
-        This guide covers what to look for, the regions where supply is strongest, and the providers most reliable for surfacing the small print. The regional cottage guides — currently Cornwall, with more in the queue — list verified properties one by one with the policy specifics most listings hide until checkout.
+        This guide covers what to look for, the regions where supply is strongest, and the providers most reliable for surfacing the small print. The regional cottage guides — Cornwall and the Lake District so far, with more in the queue — list verified properties one by one with the policy specifics most listings hide until checkout.
       </p>
     </div>
 
@@ -121,7 +123,7 @@ const jsonLd = [
       <p class="eyebrow">Where to look</p>
       <h2 class="mt-2">Best regions for dog-friendly cottages</h2>
       <p class="prose-reading mt-4">
-        Cornwall leads the regional coverage. Lake District, Snowdonia, Scotland, Yorkshire and Norfolk follow as those guides ship — each a listicle of verified properties with the dog policy specifics most sites leave out.
+        Cornwall and the Lake District lead the regional coverage. Snowdonia, Scotland, Yorkshire and Norfolk follow as those guides ship — each a listicle of verified properties with the dog policy specifics most sites leave out.
       </p>
 
       <div class="mt-8 grid gap-6 sm:grid-cols-2 md:grid-cols-3">
@@ -130,6 +132,13 @@ const jsonLd = [
             region={cornwall}
             count={12}
             href="/cornwall/cottages/"
+          />
+        )}
+        {lakeDistrict && (
+          <RegionCard
+            region={lakeDistrict}
+            count={12}
+            href="/lake-district/cottages/"
           />
         )}
       </div>
@@ -189,14 +198,14 @@ const jsonLd = [
       <p class="eyebrow">From the regional guides</p>
       <h2 class="mt-2">Cottages we've reviewed</h2>
       <p class="prose-reading mt-4">
-        Six picks from the cottages currently on the site — all Cornwall in this iteration; the mix broadens as more regions ship.
+        Six picks from the cottages currently on the site — three from Cornwall, three from the Lake District; the mix broadens as more regions ship.
       </p>
 
       <div class="mt-8 grid gap-6 sm:grid-cols-2 md:grid-cols-3">
         {featured.map((c) => (
           <ListingCard
             listing={c}
-            href={`/cornwall/cottages/#${c.id.split('/').pop()}`}
+            href={`${listicleHrefFor(c.id)}#${c.id.split('/').pop()}`}
           />
         ))}
       </div>

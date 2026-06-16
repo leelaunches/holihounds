@@ -1,0 +1,177 @@
+---
+import { getEntry, getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import ListingCard from '~/components/ListingCard.astro';
+import Callout from '~/components/Callout.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { article, breadcrumbList, place } from '~/lib/schema';
+import { SITE_URL } from '~/lib/site';
+import { crumb } from '~/lib/nav';
+
+const lakeDistrict = await getEntry('regions', 'lake-district');
+if (!lakeDistrict) throw new Error('Lake District region entry missing — check src/content/regions/lake-district.md');
+
+// Pull all listings (no region filter): the 12th cottage on the Lake District
+// listicle is `cumbria/fell-foot` — region-tagged `cumbria` so it also serves
+// the hot-tub money page — so a region filter would miss it. IDs are unique
+// full paths, so find-by-id is the safe lookup.
+const allListings = await getCollection('listings');
+
+// Three editor's picks for the regional hub teaser — each a distinct hook so
+// the trio shows the range of the listicle, not three of the same flavour.
+const featuredOrder = [
+  'lake-district/fellside-lodge',
+  'lake-district/daisy-cottage',
+  'lake-district/dale-view',
+];
+const featured = featuredOrder
+  .map((id) => allListings.find((l) => l.id === id))
+  .filter((c): c is NonNullable<typeof c> => Boolean(c));
+
+// The Lake District cottages listicle is a curated 12. Hardcoding the editorial
+// count here; if the listicle ever expands, update this constant + the order
+// array in /src/pages/lake-district/cottages.astro together.
+const cottageCount = 12;
+
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Lake District', '/lake-district/'),
+];
+
+const pageUrl = '/lake-district/';
+const pageTitle = lakeDistrict.data.meta_title;
+const pageDescription = lakeDistrict.data.meta_description;
+
+const jsonLd = [
+  article({
+    headline: 'Dog-friendly Lake District: complete guide',
+    description: pageDescription,
+    image: new URL(lakeDistrict.data.hero_image, SITE_URL).toString(),
+    datePublished: '2026-06-14',
+    url: pageUrl,
+  }),
+  place({
+    name: lakeDistrict.data.name,
+    description: lakeDistrict.data.description,
+    image: new URL(lakeDistrict.data.hero_image, SITE_URL).toString(),
+  }),
+  breadcrumbList(breadcrumbs),
+];
+---
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  image={lakeDistrict.data.hero_image}
+  jsonLd={jsonLd}
+>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-8">
+      <p class="eyebrow">Region</p>
+      <h1 class="display mt-3">Dog-friendly Lake District: complete guide</h1>
+      <div class="mt-6">
+        <AuthorByline />
+      </div>
+    </header>
+
+    <div class="aspect-[16/9] overflow-hidden bg-cream-soft border border-edge mb-10">
+      <img
+        src={lakeDistrict.data.hero_image}
+        alt="Lake District fells above Derwentwater"
+        class="h-full w-full object-cover"
+        loading="eager"
+      />
+    </div>
+
+    <div class="prose-reading space-y-4 text-lg">
+      <p>
+        The Lake District is the most natural dog-walking region in England, and it isn't especially close. Some 900 square miles of national park, a dense right-of-way network that climbs straight off the valley floors onto open fell, and a culture of pubs and cafés that long ago stopped treating a wet dog as anything unusual. Where Cornwall's appeal is its coast, Cumbria's is its altitude — the off-lead ridge walk is the whole reason people come, and the dog gets as much out of it as you do.
+      </p>
+      <p>
+        This guide leads with the cottages — twelve verified properties across Sykes, cottages.com and a couple of others, researched against the listing small print rather than the marketing summary. Pubs, fell walks and lakeside routes follow as those guides ship. The Lakes reward a particular kind of cottage — boot room, drying space, a genuinely enclosed garden for the evening — and we flag where a listing has those and, just as usefully, where it quietly doesn't.
+      </p>
+    </div>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <p class="eyebrow">Where to stay</p>
+      <h2 class="mt-2">Cottages</h2>
+      <p class="prose-reading mt-4">
+        Twelve verified dog-friendly cottages, spread from the Windermere shore through the central valleys to Ullswater, the northern fells and the quiet western dales of Eskdale and Wasdale. Each entry has the dog policy specifics — max dogs, pet supplement, garden status, what's actually provided — and editorial caveats baked in where the listing's small print warrants them.
+      </p>
+
+      <div class="mt-8 grid gap-6 md:grid-cols-3">
+        {featured.map((c) => (
+          <ListingCard
+            listing={c}
+            href={`/lake-district/cottages/#${c.id.split('/').pop()}`}
+          />
+        ))}
+      </div>
+
+      <p class="mt-8">
+        <a href="/lake-district/cottages/" class="text-text">
+          See all {cottageCount} dog-friendly cottages in the Lake District →
+        </a>
+      </p>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <p class="eyebrow">Editor's picks</p>
+      <h2 class="mt-2">Best for…</h2>
+      <div class="mt-8 grid gap-6 md:grid-cols-3">
+        <Callout eyebrow="Best for" title="The post-fell clean-up">
+          <p>
+            Fellside Lodge in Bowness has a proper dog-wash station — shampoo, dryer and towels — which after a Cumbrian fell day is worth more than any welcome hamper. Be aware the "garden" is a paved courtyard, not lawn.
+          </p>
+          <p class="mt-3">
+            <a href="/lake-district/cottages/#fellside-lodge" class="text-text">See Fellside Lodge →</a>
+          </p>
+        </Callout>
+        <Callout eyebrow="Best for" title="A bigger group">
+          <p>
+            Dale View at Little Langdale sleeps eight across four bedrooms with an enclosed lawned garden — and, at the time of writing, takes two dogs free of charge. Confirm that last bit at booking; cottages.com's free-pet status moves about.
+          </p>
+          <p class="mt-3">
+            <a href="/lake-district/cottages/#dale-view" class="text-text">See Dale View →</a>
+          </p>
+        </Callout>
+        <Callout eyebrow="Best for" title="The day that won't suit the dog">
+          <p>
+            Blencathra at Mungrisdale is the rare cottage with on-site kennels — useful for the one outing where a dog genuinely can't come. Enclosed garden, fell walks from the door, one dog only.
+          </p>
+          <p class="mt-3">
+            <a href="/lake-district/cottages/#blencathra" class="text-text">See Blencathra →</a>
+          </p>
+        </Callout>
+      </div>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Travelling to the Lake District with a dog</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          The Lakes are an easier drive than Cornwall for most of England — the M6 runs right up the eastern edge, with junctions 36 (for Windermere and the south lakes), 40 (Penrith, for Ullswater and the north) and the A66 across the top. From the Midlands count three hours, from London four to five. The motorway access is the region's quiet advantage: you're rarely more than forty minutes off a junction.
+        </p>
+        <p>
+          Tebay Services on the M6 — northbound and southbound, between junctions 38 and 39 — is the best motorway dog stop in the country, a family-run farm-shop services with a real grassed area, a duck pond and locally-reared food. It's worth timing the journey around. Once you turn off the M6 the roads narrow quickly; the passes (Kirkstone, Wrynose, Hardknott) are spectacular and genuinely steep, so a nervous dog and a loaded roof box are better routed the long way round on the valley A-roads.
+        </p>
+        <p>
+          Two practical notes. Lakeland weather turns fast and wet — a microfibre dog towel and a boot liner earn their place more here than anywhere. And the honeypot car parks (Tarn Hows, Buttermere, the Langdales) fill by half-nine on a fine summer morning, so an early start or a cottage within walking distance of a trailhead saves the daily parking scramble.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Adjacent regions</h2>
+      <p class="prose-reading mt-4">
+        The Lake District pairs naturally with the <strong>Yorkshire Dales</strong> to the south-east — similar stone-and-slate cottage stock, the same dense footpath network, and quieter fells for a change of pace — and with <strong>Northumberland</strong> and the <strong>Scottish Borders</strong> to the north, both an easy reach up the M6 and A1 for a two-centre trip. All are in the queue for regional guide treatment; not yet linkable.
+      </p>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <AuthorByline variant="full" />
+    </section>
+  </article>
+</BaseLayout>

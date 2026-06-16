@@ -13,19 +13,30 @@ If you're a photographer listed here and would prefer your image not be used, em
 | The Old Coastguard Lookout (Port Isaac, Cornwall) | Greg Willson | [unsplash.com/photos/2R6tC-JiQ9M](https://unsplash.com/photos/2R6tC-JiQ9M) |
 | Polwen (Harlyn Bay, Cornwall) | Nick Palmer | [unsplash.com/photos/fcnomhOcPHw](https://unsplash.com/photos/fcnomhOcPHw) |
 | Ocean Edge (Sennen Cove, Cornwall) | Ben Elliott | [unsplash.com/photos/vpl8o5ERCAo](https://unsplash.com/photos/vpl8o5ERCAo) |
-| The Stable, Boskensoe Barns (Mawnan Smith, Cornwall) | *placeholder — picsum.photos pending image-sourcing follow-up* | — |
+| The Stable, Boskensoe Barns (Mawnan Smith, Cornwall) | Bruce Barrow | [unsplash.com/photos/rMnFawuRQ3M](https://unsplash.com/photos/rMnFawuRQ3M) |
 | The Poop Deck (Coverack, Cornwall) | Greg Willson | [unsplash.com/photos/G0ln1l3Wths](https://unsplash.com/photos/G0ln1l3Wths) |
 | Lily Cottage (Camelford, Cornwall) | Jacob Bennett | [unsplash.com/photos/caEVJoY-jKM](https://unsplash.com/photos/caEVJoY-jKM) |
-| The Granary (Egloskerry, Cornwall) | *placeholder — picsum.photos pending image-sourcing follow-up* | — |
+| The Granary (Egloskerry, Cornwall) | Tanya Barrow | [unsplash.com/photos/F_pZ-4cbRcw](https://unsplash.com/photos/F_pZ-4cbRcw) |
 | Treen (Lansallos, Cornwall) | Karen Cann | [unsplash.com/photos/fmMLDe90iT0](https://unsplash.com/photos/fmMLDe90iT0) |
 | Signature Cove Lodge (Praa Sands, Cornwall) | Sophie Grieve-Williams | [unsplash.com/photos/ozb0D8Foio4](https://unsplash.com/photos/ozb0D8Foio4) |
-| Skylark 2 at Manor Lakes (St Tudy, Bodmin) | *placeholder — picsum.photos pending image-sourcing follow-up* | — |
+| Skylark 2 at Manor Lakes (St Tudy, Bodmin) | Kevin Dowling | [unsplash.com/photos/MHFLVqp4l8s](https://unsplash.com/photos/MHFLVqp4l8s) |
 | Garth Cottage (Higher St Ives, Cornwall) | Malcolm Lightbody | [unsplash.com/photos/Kf0I5QS1AqM](https://unsplash.com/photos/Kf0I5QS1AqM) |
 | Kerensa (St Ives Town, Cornwall) | Simon Morley | [unsplash.com/photos/OkxSDJFZeGo](https://unsplash.com/photos/OkxSDJFZeGo) |
 | Black Dog Lodge (Windermere, Cumbria) | Jonny Gios | [unsplash.com/photos/UdP-znSy4RE](https://unsplash.com/photos/UdP-znSy4RE) |
 | Limefitt Lodge (Windermere, Cumbria) | Jonny Gios | [unsplash.com/photos/s_0gUea1XN4](https://unsplash.com/photos/s_0gUea1XN4) |
 | Windermere Lodge at Brockwood Hall (Millom, Cumbria) | Felix Mulderrig | [unsplash.com/photos/L5082bbTkNg](https://unsplash.com/photos/L5082bbTkNg) |
 | Fell Foot (Eskdale, Cumbria) | Jonny Gios | [unsplash.com/photos/YluL8l-VeTo](https://unsplash.com/photos/YluL8l-VeTo) |
+| Fellside Lodge (Bowness-on-Windermere, Cumbria) | Marie M | [unsplash.com/photos/1BX4_UmP6W8](https://unsplash.com/photos/1BX4_UmP6W8) |
+| Acorn Cottage (Bowness-on-Windermere, Cumbria) | Marie M | [unsplash.com/photos/XJtoRBddeOU](https://unsplash.com/photos/XJtoRBddeOU) |
+| Daisy Cottage (Grasmere, Cumbria) | Marie M | [unsplash.com/photos/XZ9Bm3wPH_o](https://unsplash.com/photos/XZ9Bm3wPH_o) |
+| Dale View (Little Langdale, Cumbria) | Steven Brown | [unsplash.com/photos/aKFqHd5voUI](https://unsplash.com/photos/aKFqHd5voUI) |
+| Holly Tree Cottage (Coniston, Cumbria) | Michael Windsor | [unsplash.com/photos/-s_Nx6Pzpw4](https://unsplash.com/photos/-s_Nx6Pzpw4) |
+| Barnstead (Pooley Bridge, Cumbria) | Maria Ilves | [unsplash.com/photos/asEXRRyGt9g](https://unsplash.com/photos/asEXRRyGt9g) |
+| Watendlath (Keswick, Cumbria) | Rodion Kutsaiev | [unsplash.com/photos/4_qOcgA6wL0](https://unsplash.com/photos/4_qOcgA6wL0) |
+| Blencathra (Mungrisdale, Cumbria) | Veronica White | [unsplash.com/photos/byZIkoVXl0s](https://unsplash.com/photos/byZIkoVXl0s) |
+| Dalegarth Hall Farm Cottage 1 (Boot, Eskdale, Cumbria) | James Qualtrough | [unsplash.com/photos/AfVCGCgnt3w](https://unsplash.com/photos/AfVCGCgnt3w) |
+| Mill Cottage (Gosforth, Cumbria) | Marie M | [unsplash.com/photos/f_CWFcR6TFg](https://unsplash.com/photos/f_CWFcR6TFg) |
+| 7 Railway Cottages (Newby Bridge, Cumbria) | Alex Preusser | [unsplash.com/photos/z1cU2_NumF8](https://unsplash.com/photos/z1cU2_NumF8) |
 | Foxes Den (Winston, County Durham) | Jeffrey Zhang | [unsplash.com/photos/Z_2qqVJKvYc](https://unsplash.com/photos/Z_2qqVJKvYc) |
 | Lodge 32 at Otterburn Hall (Northumberland) | Andrew Ridley | [unsplash.com/photos/ihKYrB6gBXk](https://unsplash.com/photos/ihKYrB6gBXk) |
 | Restharrow Lodge (Bamburgh, Northumberland) | Bruce Edwards | [unsplash.com/photos/teiujpipKds](https://unsplash.com/photos/teiujpipKds) |
@@ -43,6 +54,7 @@ If you're a photographer listed here and would prefer your image not be used, em
 | Page | Photographer | Source |
 |---|---|---|
 | `/cornwall/` regional hero | Danilo D'Agostino | [unsplash.com/photos/Imv3xp-W14A](https://unsplash.com/photos/Imv3xp-W14A) |
+| `/lake-district/` regional hero | James Armes | [unsplash.com/photos/RPAQRgD5YMY](https://unsplash.com/photos/RPAQRgD5YMY) |
 | `/cottages/` vertical hub hero | reuses Old Coastguard Lookout image (Greg Willson) | — |
 | `/dog-friendly-hot-tub-lodges/` money page hero | Sophie Grieve-Williams | [unsplash.com/photos/ozb0D8Foio4](https://unsplash.com/photos/ozb0D8Foio4) |
 | `/` home page hero (og:image) | Ben Elliott | [unsplash.com/photos/uVakwt4EHMU](https://unsplash.com/photos/uVakwt4EHMU) |
@@ -55,20 +67,22 @@ If you're a photographer listed here and would prefer your image not be used, em
 
 ---
 
-## Pending — three listings still on picsum placeholder
+## Picsum placeholders — all resolved (14 Jun 2026)
 
-The following three listings still use picsum because the image-sourcing agent couldn't find a verified Unsplash photo that met our standards:
+The three previously-held Cornwall placeholders were cleared in the Lake District image pass, each with a type-accurate Unsplash photo verified by eye:
 
-- **The Stable, Boskensoe Barns (Mawnan Smith, Cornwall)** — best Unsplash candidate was a Welsh stone barn at the St Fagans museum. Visually defensible (the architectural language reads identically) but geographically wrong. Held back per editorial accuracy standard.
-- **The Granary (Egloskerry, Cornwall)** — best candidate was Lanhydrock House (Bodmin), a grand stately home rather than a small granary conversion. Property-type mismatch.
-- **Skylark 2 at Manor Lakes (St Tudy, Bodmin)** — agent found a viable West Bay (Dorset) caravan-park candidate but the canonical image URL didn't surface cleanly. Worth re-fetching.
+- **The Stable, Boskensoe Barns** — now an English rural stone barn with wooden doors (Bruce Barrow), the correct building type.
+- **The Granary (Egloskerry)** — now a small converted stone farm building on a grassy hillside (Tanya Barrow), not a stately home.
+- **Skylark 2 at Manor Lakes** — now a row of cream UK static caravans on a holiday park (Kevin Dowling), an honest match for a Platinum static caravan (no log-cabin oversell).
 
-These three should be revisited in a follow-up image-sourcing pass.
+No content listing or page hero remains on picsum. (The only picsum references left are in `src/pages/smoke.astro`, an internal build-smoke-test fixture, by design.)
 
 ## Photographer concentrations
 
-- **Ben Elliott** — 3 uses (Ocean Edge, home hero, OG image). Most-used UK photographer in this set.
+- **Marie M** — 4 Lake District cottages (Fellside Lodge, Acorn, Daisy, Mill Cottage). Now the most-used photographer in the set; she shot a coherent series of Cumbrian white/stone cottages. They are spread across the listicle (positions 1, 2, 3 and 11) and use distinct compositions (white terrace, white-with-garage, stone-house-by-river, white-with-red-door), but if the Lake District page ever feels visually repetitive, swap one of the three white-cottage shots first.
+- **Ben Elliott** — 3 uses (Ocean Edge, home hero, OG image).
+- **Jonny Gios** — 3 Cumbria uses (Black Dog, Limefitt, Fell Foot) — all hot-tub-page lodges, deliberately kept off the Lake District cottage listicle for variety.
 - **Greg Willson** — 2 Cornwall listings (Old Coastguard Lookout, The Poop Deck).
-- **Jonny Gios** — 3 Cumbria uses (Black Dog, Limefitt, Fell Foot).
 - **Karen Cann** — 2 Cornwall listings (Treen, Tregoad).
+- **Bruce Barrow & Tanya Barrow** — one Cornwall stone-barn listing each (The Stable, The Granary); similar rustic-barn subject matter, but distinct photos.
 - **Sophie Grieve-Williams** — appears twice (Signature Cove listing thumbnail and money page hero — same photo at different sizes). Worth a manual swap if visual duplication on the money page becomes noticeable.

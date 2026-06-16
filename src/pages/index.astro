@@ -8,6 +8,7 @@ import AuthorByline from '~/components/AuthorByline.astro';
 import { SITE_URL, SITE_NAME, AUTHOR } from '~/lib/site';
 
 const cornwall = await getEntry('regions', 'cornwall');
+const lakeDistrict = await getEntry('regions', 'lake-district');
 const allListings = await getCollection('listings');
 
 // Three editor's picks for the home page. Deliberately broader than the
@@ -41,9 +42,9 @@ const picks: Pick[] = FEATURED_PICKS
 
 const pageUrl = '/';
 const pageTitle = SITE_NAME;
-// 150 chars — under the 155-char Google truncation threshold.
+// 139 chars — under the 155-char Google truncation threshold.
 const pageDescription =
-  'UK dog-friendly travel guide with dog policy specifics actually verified — cottage and lodge recommendations from Rachel Polden. Cornwall in full.';
+  'UK dog-friendly travel guide with dog policy specifics verified — cottage and lodge picks from Rachel Polden. Cornwall & the Lake District.';
 
 // Home page JSON-LD: WebSite + Organization (publisher relationship for E-E-A-T).
 const websiteSchema = {
@@ -101,7 +102,7 @@ const jsonLd = [websiteSchema, organizationSchema];
           This site reverses that. Every cottage, lodge or pub I write up has been verified against its actual listing — max dogs, pet charge, garden enclosure, where dogs are allowed, what's provided. Where the source is vague, the entry says so rather than inventing plausible specifics. Where a holiday park markets a unit-class booking as a "lodge", the entry says so. Where a "fully enclosed" garden has a side gap, the entry tells you to mind it.
         </p>
         <p>
-          Cornwall is fully covered as of the May 2026 launch. The other regions and verticals follow as their guides ship.
+          Cornwall and the Lake District are fully covered — twelve verified cottages each. The other regions and verticals follow as their guides ship.
         </p>
       </div>
     </section>
@@ -109,9 +110,12 @@ const jsonLd = [websiteSchema, organizationSchema];
     <section>
       <p class="eyebrow">Browse</p>
       <h2 class="mt-2">By region</h2>
-      <div class="mt-6 max-w-sm">
+      <div class="mt-6 grid gap-6 sm:grid-cols-2 max-w-xl">
         {cornwall && (
           <RegionCard region={cornwall} count={12} href="/cornwall/" />
+        )}
+        {lakeDistrict && (
+          <RegionCard region={lakeDistrict} count={12} href="/lake-district/" />
         )}
       </div>
       <p class="mt-6 text-sm text-muted">More regions added as they ship.</p>

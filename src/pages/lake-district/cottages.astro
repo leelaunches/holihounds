@@ -1,0 +1,261 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import DogPolicyBox from '~/components/DogPolicyBox.astro';
+import AffiliateCTA from '~/components/AffiliateCTA.astro';
+import AffiliateDisclosure from '~/components/AffiliateDisclosure.astro';
+import FAQ from '~/components/FAQ.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { article, itemList, faqPage, breadcrumbList } from '~/lib/schema';
+import { SITE_URL } from '~/lib/site';
+import { crumb } from '~/lib/nav';
+
+// Pull ALL listings (no region filter). The 12th cottage — Fell Foot — is
+// region-tagged `cumbria` because it also serves the hot-tub money page, so a
+// `region === 'lake-district'` filter would drop it. IDs are unique full paths,
+// so the explicit order array below is the single source of selection + order.
+// Geographic flow: Windermere → central valleys → Ullswater → northern fells →
+// western dales (Eskdale/Wasdale) → southern Windermere.
+const all = await getCollection('listings');
+const order = [
+  'lake-district/fellside-lodge',
+  'lake-district/acorn-cottage',
+  'lake-district/daisy-cottage',
+  'lake-district/dale-view',
+  'lake-district/holly-tree-cottage',
+  'lake-district/barnstead',
+  'lake-district/watendlath',
+  'lake-district/blencathra',
+  'lake-district/dalegarth-hall-farm-cottage-1',
+  'cumbria/fell-foot',
+  'lake-district/mill-cottage',
+  'lake-district/7-railway-cottages',
+];
+const cottages = order
+  .map((id) => all.find((c) => c.id === id))
+  .filter((c): c is NonNullable<typeof c> => Boolean(c));
+
+const slugFor = (id: string) => id.split('/').pop()!;
+
+// Self-healing breadcrumb segments — `crumb()` only attaches an href when the
+// target route is in LIVE_ROUTES.
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Lake District', '/lake-district/'),
+  crumb('Cottages', '/lake-district/cottages/'),
+];
+
+const faqItems = [
+  {
+    question: 'Are dog-friendly cottages more expensive in the Lake District?',
+    answer:
+      "Usually there's a pet supplement rather than a loaded room rate — £20–£40 per stay is typical on Sykes and Hoseasons, and it stays hidden on the listing until you enter dates. cottages.com surfaces 'pets stay free' more often (several cottages on this list do), but that status moves seasonally, so confirm it at booking. The supplement covers extra cleaning; it rarely scales with the length of stay.",
+  },
+  {
+    question: 'Can I bring more than one dog?',
+    answer:
+      "Most Lakeland cottages cap at two well-behaved dogs, with a meaningful minority — often the smaller village cottages and railway-side lets — capping at one. The cap is firm. Single-dog properties on this list are flagged in their individual entries above (Acorn, Blencathra and 7 Railway Cottages among them). If you travel with three, focus on the larger rural farmhouses rather than the village two-bedrooms.",
+  },
+  {
+    question: 'Which cottages here have a genuinely enclosed garden?',
+    answer:
+      "Not all of them — and we say so plainly. Daisy Cottage, Dale View, Holly Tree, Watendlath, Blencathra, Fell Foot and 7 Railway Cottages have explicitly enclosed outdoor space. Barnstead (open patio) and Dalegarth (open front garden) are not enclosed, and Fellside Lodge's 'garden' is a paved courtyard, not lawn. Mill Cottage doesn't state its enclosure at all, so we've left it as unconfirmed — ask cottages.com if a secure boundary matters for your dog.",
+  },
+  {
+    question: 'Where are the best off-lead fell walks for dogs?',
+    answer:
+      "The lower fells around the cottage bases here all give good off-lead walking outside the spring lambing season (roughly March to May, when a lead is essential on any grazing land). Latrigg above Keswick, Loughrigg between Grasmere and Ambleside, the Ullswater shore path from Pooley Bridge, and the gentler Eskdale and Wasdale valley floors are all manageable with a dog. Keep to leads near livestock and during nesting season on the open fell.",
+  },
+  {
+    question: 'Is the Lake District good for dogs in bad weather?',
+    answer:
+      "It rains a lot here — that's why the boot room and drying facilities on these listings matter more than the welcome hamper. The cottages we've picked lean towards practical wet-weather setups: Fellside Lodge's dog-wash station, the boot rooms at Daisy and 7 Railway Cottages, the hose and drying towel at Dalegarth, and Holly Tree's open fire. For the rare day a dog can't come out at all, Blencathra has on-site kennels.",
+  },
+];
+
+const pageUrl = '/lake-district/cottages/';
+const pageTitle = '12 best dog-friendly cottages in the Lake District';
+// 151 chars — under the 155-char Google truncation threshold.
+const pageDescription =
+  '12 verified dog-friendly Lake District cottages — Sykes, cottages.com — with the dog policy specifics most sites leave out. By Rachel Polden.';
+
+const heroImage = cottages[0]?.data.image ?? '/images/og-default.jpg';
+
+const jsonLd = [
+  article({
+    headline: pageTitle,
+    description: pageDescription,
+    image: new URL(heroImage, SITE_URL).toString(),
+    datePublished: '2026-06-14',
+    url: pageUrl,
+  }),
+  itemList(
+    cottages.map((c) => ({
+      name: c.data.name,
+      url: `${pageUrl}#${slugFor(c.id)}`,
+    })),
+  ),
+  faqPage(faqItems),
+  breadcrumbList(breadcrumbs),
+];
+---
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  image={heroImage}
+  jsonLd={jsonLd}
+>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-8">
+      <p class="eyebrow">Lake District</p>
+      <h1 class="display mt-3">{pageTitle}</h1>
+      <div class="mt-6">
+        <AuthorByline />
+      </div>
+    </header>
+
+    <div class="border-t border-b border-edge py-3 my-6">
+      <AffiliateDisclosure />
+    </div>
+
+    <div class="prose-reading space-y-4 text-lg">
+      <p>
+        The Lake District does dog-walking better than anywhere in England, and the self-catering stock has caught up. Boot rooms, drying space and enclosed gardens are the norm rather than the exception here — because the owners know exactly what a Cumbrian fell day does to a dog, and to a hallway floor.
+      </p>
+      <p>
+        The twelve below are the best of what's currently bookable through Sykes, cottages.com and a couple of others — chosen for the specifics rather than the marketing copy. Every one has been verified against the listing's small print: max dogs, pet charges, garden status, what's actually provided. Where a listing is vague — an unstated enclosure, an unspecified "doggy extra" — we say so rather than guess.
+      </p>
+      <p>
+        One of the twelve, Fell Foot, is also on our dog-friendly hot tub lodges guide; it earns its place here on the strength of its boot room, enclosed grounds and standalone setting, hot tub aside.
+      </p>
+    </div>
+
+    <nav aria-label="Cottage list" class="mt-12 border-t border-edge pt-8">
+      <p class="eyebrow mb-4">Jump to a cottage</p>
+      <ol class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm">
+        {cottages.map((c, i) => (
+          <li>
+            <a href={`#${slugFor(c.id)}`} class="text-text">
+              {i + 1}. {c.data.name}
+              <span class="text-muted"> — {c.data.town}</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+
+    <section class="mt-16 space-y-20">
+      {cottages.map((c, i) => (
+        <article id={slugFor(c.id)} class="scroll-mt-8 border-t border-edge pt-12">
+          <p class="eyebrow">{c.data.town}</p>
+          <h2 class="mt-2">{i + 1}. {c.data.name}</h2>
+
+          <div class="mt-6 aspect-[16/11] overflow-hidden bg-cream-soft border border-edge">
+            <img
+              src={c.data.image}
+              alt={c.data.image_alt ?? c.data.name}
+              loading="lazy"
+              class="h-full w-full object-cover"
+            />
+          </div>
+
+          <div class="prose-reading mt-6">
+            <p>{c.data.description}</p>
+          </div>
+
+          <DogPolicyBox
+            maxDogs={c.data.max_dogs}
+            petCharge={c.data.pet_charge}
+            enclosedGarden={c.data.enclosed_garden}
+            gardenNote={c.data.garden_note}
+            dogsAllowedIn={c.data.dogs_allowed_in}
+            dogExtras={c.data.dog_extras}
+          />
+
+          <p class="text-sm text-muted">
+            Sleeps {c.data.sleeps}
+            {c.data.bedrooms && ` · ${c.data.bedrooms} bed${c.data.bedrooms === 1 ? '' : 's'}`}
+            {c.data.price_indicator && ` · ${c.data.price_indicator}`}
+          </p>
+
+          <div class="mt-6">
+            <AffiliateCTA
+              provider={c.data.affiliate_provider ?? 'sykes'}
+              identifier={slugFor(c.id)}
+              fallbackUrl={c.data.external_url ?? undefined}
+            />
+          </div>
+        </article>
+      ))}
+    </section>
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <h2>What to look for in a dog-friendly Lakeland cottage</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          The Lakes have their own checklist, distinct from a coastal cottage. After reading enough Cumbrian listings to learn which language is solid and which is fluff, four things separate the genuinely dog-ready from the ones that just allow dogs.
+        </p>
+        <p>
+          <strong>Somewhere to clean a wet, muddy dog.</strong> This is the Lakeland-specific one. A boot room, an outdoor hose, a dog-wash station, a utility with a hard floor — anything that means the dog and its day's worth of fell mud don't go straight onto the carpet. Fellside Lodge's dog-wash station and Dalegarth's hose are the kind of detail that matters here far more than a hamper of treats.
+        </p>
+        <p>
+          <strong>An enclosed garden, with the small print read.</strong> "Garden" means nothing on its own — several cottages here have open patios, paved courtyards or unfenced frontage onto a lane. Look for explicit "fully enclosed" language and check the photos. We've flagged, cottage by cottage, which are genuinely enclosed and which aren't.
+        </p>
+        <p>
+          <strong>Where in the house the dog can go.</strong> Lakeland owners are often stricter than coastal ones — several here are ground-floor-only, or living-areas-but-not-bedrooms, or no-furniture. None of that is a dealbreaker, but it's worth knowing before you arrive with a dog that sleeps on the bed at home.
+        </p>
+        <p>
+          <strong>Walking from the door.</strong> A fell gate, a valley footpath, a lakeside path — the Lakes' right-of-way network is dense, and the best cottages back straight onto it. The ones on this list mostly do; it's what lets you skip the honeypot-car-park scramble on a fine morning.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <h2>Best Lake District areas for dogs</h2>
+      <div class="prose-reading mt-6 space-y-8">
+        <div>
+          <h3>Windermere &amp; the south</h3>
+          <p class="mt-2">
+            The busiest, most accessible corner — Bowness and Windermere town, the steamer piers, the southern lake. Plenty of dog-friendly cafés and the easiest motorway access in the park. Three cottages here: Fellside Lodge and Acorn in Bowness, and 7 Railway Cottages down at Newby Bridge, where the Lakeside &amp; Haverthwaite steam railway runs past the garden.
+          </p>
+        </div>
+        <div>
+          <h3>Central lakes &amp; valleys</h3>
+          <p class="mt-2">
+            Grasmere, Coniston and the Langdales — the heart of the walking country, with Loughrigg, the Coniston fells and the Langdale Pikes all within reach. Daisy Cottage in Grasmere, Holly Tree in Coniston and Dale View at Little Langdale sit here, each within a short walk of a dog-friendly pub and a footpath onto the fell.
+          </p>
+        </div>
+        <div>
+          <h3>Ullswater &amp; the north-east</h3>
+          <p class="mt-2">
+            Ullswater is the quieter, arguably more beautiful of the big lakes, with a flat lakeside path from Pooley Bridge that's ideal for a steady dog walk and a steamer that takes dogs. Barnstead sits a few minutes from the shore at Pooley Bridge — single-level, three pubs nearby, though an open patio rather than an enclosed garden.
+          </p>
+        </div>
+        <div>
+          <h3>Keswick &amp; the northern fells</h3>
+          <p class="mt-2">
+            Keswick is the north's hub — Derwentwater on the doorstep, Latrigg and the Skiddaw foothills behind, a town thoroughly used to dogs. Watendlath sits in Keswick itself with the owners' dog-friendly pub five minutes away; Blencathra, out at quiet Mungrisdale, has fell walks from the door and the rare backup of on-site kennels.
+          </p>
+        </div>
+        <div>
+          <h3>Western valleys — Eskdale &amp; Wasdale</h3>
+          <p class="mt-2">
+            The west is the wild, under-visited Lake District — Eskdale's little steam railway, Wasdale's deepest-lake-and-highest-mountain drama, and a fraction of the central-lakes crowds. Dalegarth Hall Farm Cottage and Fell Foot sit in Eskdale; Mill Cottage at Gosforth is the gateway to Wasdale. Stock up before you head out here — shops and pubs are sparse.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <h2>Frequently asked questions</h2>
+      <FAQ items={faqItems} emitSchema={false} />
+    </section>
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <AuthorByline variant="full" />
+    </section>
+  </article>
+</BaseLayout>

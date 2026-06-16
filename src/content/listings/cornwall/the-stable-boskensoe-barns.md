@@ -19,7 +19,7 @@ price_indicator: "££"
 affiliate_provider: sykes
 affiliate_link: null
 external_url: https://www.sykescottages.co.uk/cottage/Cornwall-Mawnan-Smith/The-Stable-Boskensoe-Barns-966635.html
-image: https://picsum.photos/seed/the-stable-boskensoe/800/550
+image: https://images.unsplash.com/photo-1766651896966-4e0db045944b?w=800&h=550&fit=crop&q=80
 image_alt: Barn conversion near Mawnan Smith above the Helford River
 sleeps: 4
 bedrooms: 2

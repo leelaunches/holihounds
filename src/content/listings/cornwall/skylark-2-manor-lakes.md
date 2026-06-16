@@ -14,7 +14,7 @@ price_indicator: "£"
 affiliate_provider: hoseasons
 affiliate_link: null
 external_url: https://www.hoseasons.co.uk/accom/manor-lakes-at-hengar-manor-mala/skylark-2-pet-lp26402
-image: https://picsum.photos/seed/manor-lakes-bodmin/800/550
+image: https://images.unsplash.com/photo-1750698242388-51627cb26a4c?w=800&h=550&fit=crop&q=80
 image_alt: Static caravan on a holiday park near Bodmin Moor
 sleeps: 4
 bedrooms: 2

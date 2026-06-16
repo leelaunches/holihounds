@@ -19,7 +19,7 @@ price_indicator: "£"
 affiliate_provider: cottages.com
 affiliate_link: null
 external_url: https://www.cottages.com/cottages/the-granary-tno
-image: https://picsum.photos/seed/the-granary-egloskerry/800/550
+image: https://images.unsplash.com/photo-1767463129930-f18e453710ed?w=800&h=550&fit=crop&q=80
 image_alt: Granary conversion on Bodmin Moor's eastern edge
 sleeps: 4
 bedrooms: 2
