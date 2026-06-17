@@ -1,0 +1,215 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import BeachAccessBox from '~/components/BeachAccessBox.astro';
+import FAQ from '~/components/FAQ.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { article, itemList, faqPage, breadcrumbList } from '~/lib/schema';
+import { SITE_URL } from '~/lib/site';
+import { crumb } from '~/lib/nav';
+
+const all = await getCollection('beaches', (b) => b.data.region === 'cornwall');
+
+// Lead with the beaches a dog owner can use ALL YEAR — the most valuable to
+// readers — then part-of-beach, then the seasonal-ban beaches. Within a tier,
+// featured first, then alphabetical. Data-driven, so no hardcoded order list.
+const ACCESS_RANK: Record<string, number> = { 'year-round': 0, 'lake-shore': 0, partial: 1, seasonal: 2 };
+const beaches = all.sort((a, b) => {
+  const r = (ACCESS_RANK[a.data.dog_access] ?? 9) - (ACCESS_RANK[b.data.dog_access] ?? 9);
+  if (r !== 0) return r;
+  if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
+  return a.data.name.localeCompare(b.data.name);
+});
+
+// Resolve nearby_cottages ids to {name, href} so each beach can point readers
+// at where to stay — the interlink from these traffic pages to the cottage
+// money pages.
+const listings = await getCollection('listings');
+const slugFor = (id: string) => id.split('/').pop()!;
+const cottageHref = (id: string) =>
+  `${id.startsWith('cornwall/') ? '/cornwall/cottages/' : '/lake-district/cottages/'}#${slugFor(id)}`;
+const nearbyFor = (ids: string[]) =>
+  ids
+    .map((id) => {
+      const l = listings.find((x) => x.id === id);
+      return l ? { name: l.data.name, href: cottageHref(id) } : null;
+    })
+    .filter((x): x is { name: string; href: string } => Boolean(x));
+
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Cornwall', '/cornwall/'),
+  crumb('Beaches', '/cornwall/beaches/'),
+];
+
+const faqItems = [
+  {
+    question: 'Which Cornwall beaches allow dogs all year round?',
+    answer:
+      "A useful minority do — and they're the ones worth planning around. The year-round dog beaches on this list let you turn up in August without checking a calendar; the rest restrict dogs over summer. Year-round access tends to be the quieter coves and the dog-walking-community beaches rather than the flagship resort sands. Each entry above states its access plainly, and we lead the list with the year-round ones.",
+  },
+  {
+    question: 'When are dogs banned on Cornish beaches?',
+    answer:
+      "Most seasonal bans run over the summer — commonly some window between Easter and 1 October, often only during daytime hours (roughly 10am–6pm), so early mornings and evenings are usually fine even on restricted beaches. The exact dates and hours are set by Cornwall Council and reviewed each year, and they vary beach to beach. Always check the on-beach signage or the council's current restriction page before you travel — we flag the dates we have, but they can change.",
+  },
+  {
+    question: 'Are dogs allowed on the beach off the lead in Cornwall?',
+    answer:
+      "On the year-round and out-of-season beaches, generally yes, where it's safe and your dog is under control. In summer, near other people, or close to nesting birds on the cliffs, keep them on a lead. The South West Coast Path that links these beaches crosses grazing land in places, so a lead matters there too. Off-lead freedom on the sand is one of the real pleasures of an out-of-season Cornish dog holiday.",
+  },
+  {
+    question: 'Can my dog swim safely at Cornish beaches?',
+    answer:
+      "Mostly, with the same caution you'd use yourself. Watch for rip currents on the bigger surf beaches (the lifeguard flags apply to dogs too), keep an eye on the tide on beaches that cut off, and rinse salt and sand off afterwards. The sheltered south-coast and estuary beaches are calmer for a nervous swimmer than the north-coast surf. Bring fresh drinking water — dogs that drink seawater get sick.",
+  },
+  {
+    question: 'Where should I stay for a dog beach holiday in Cornwall?',
+    answer:
+      'Pick a base within walking distance of a year-round dog beach so you\'re not driving every morning. Several of our <a href="/cornwall/cottages/">dog-friendly Cornwall cottages</a> are positioned for exactly this — Ocean Edge above Gwynver at Sennen, the St Ives cottages near Porthkidney — and each beach above links to the nearest ones under "where to stay".',
+  },
+];
+
+const pageUrl = '/cornwall/beaches/';
+const pageTitle = 'Dog-friendly beaches in Cornwall';
+// 151 chars — under the 155-char Google truncation threshold.
+const pageDescription =
+  'Dog-friendly Cornwall beaches with the seasonal dog-ban dates spelled out — which allow dogs year-round, which restrict over summer. By Rachel Polden.';
+
+const heroImage = beaches[0]?.data.image ?? '/images/og-default.jpg';
+
+const jsonLd = [
+  article({
+    headline: pageTitle,
+    description: pageDescription,
+    image: new URL(heroImage, SITE_URL).toString(),
+    datePublished: '2026-06-14',
+    url: pageUrl,
+  }),
+  itemList(
+    beaches.map((b) => ({
+      name: b.data.name,
+      url: `${pageUrl}#${slugFor(b.id)}`,
+    })),
+  ),
+  faqPage(faqItems),
+  breadcrumbList(breadcrumbs),
+];
+---
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  image={heroImage}
+  jsonLd={jsonLd}
+>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-8">
+      <p class="eyebrow">Cornwall</p>
+      <h1 class="display mt-3">{pageTitle}</h1>
+      <div class="mt-6">
+        <AuthorByline />
+      </div>
+    </header>
+
+    <div class="prose-reading space-y-4 text-lg">
+      <p>
+        Cornwall has more genuinely dog-friendly beach than anywhere in England — but the rules are a moving target. Most of the flagship beaches ban dogs over the summer, the dates are set beach-by-beach by the council and reviewed every year, and the signage is often the only place they're spelled out. This guide does the one thing most beach lists don't: it leads with the beaches you can use <strong>all year</strong>, and states the seasonal dates for the rest.
+      </p>
+      <p>
+        Everything below is sorted by access — year-round dog beaches first, then the part-dog-friendly ones, then the summer-restricted big names. Each entry has the restriction in plain terms, parking, a nearby dog-friendly pub where we found one, and where to stay within reach. One standing caveat: dog restrictions change, so treat the dates as a guide and check the on-beach signs before you commit your day to it.
+      </p>
+    </div>
+
+    {beaches.length > 0 && (
+      <nav aria-label="Beach list" class="mt-12 border-t border-edge pt-8">
+        <p class="eyebrow mb-4">Jump to a beach</p>
+        <ol class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm">
+          {beaches.map((b, i) => (
+            <li>
+              <a href={`#${slugFor(b.id)}`} class="text-text">
+                {i + 1}. {b.data.name}
+                <span class="text-muted"> — {b.data.location}</span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+    )}
+
+    <section class="mt-16 space-y-20">
+      {beaches.map((b, i) => {
+        const nearby = nearbyFor(b.data.nearby_cottages);
+        return (
+          <article id={slugFor(b.id)} class="scroll-mt-8 border-t border-edge pt-12">
+            <p class="eyebrow">{b.data.location}</p>
+            <h2 class="mt-2">{i + 1}. {b.data.name}</h2>
+
+            <div class="mt-6 aspect-[16/11] overflow-hidden bg-cream-soft border border-edge">
+              <img
+                src={b.data.image}
+                alt={b.data.image_alt ?? b.data.name}
+                loading="lazy"
+                class="h-full w-full object-cover"
+              />
+            </div>
+
+            <div class="prose-reading mt-6">
+              <p>{b.data.description}</p>
+            </div>
+
+            <BeachAccessBox
+              dogAccess={b.data.dog_access}
+              dogRestriction={b.data.dog_restriction}
+              restrictionDetail={b.data.restriction_detail}
+              parking={b.data.parking}
+              facilities={b.data.facilities}
+              nearestPub={b.data.nearest_pub}
+              safetyNote={b.data.safety_note}
+            />
+
+            {nearby.length > 0 && (
+              <p class="text-sm mt-4">
+                <span class="text-muted">Where to stay nearby: </span>
+                {nearby.map((c, j) => (
+                  <>
+                    <a href={c.href} class="text-text">{c.name}</a>{j < nearby.length - 1 ? ', ' : ''}
+                  </>
+                ))}
+              </p>
+            )}
+          </article>
+        );
+      })}
+    </section>
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <h2>How dog rules work on Cornish beaches</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          Cornwall's beach dog restrictions are set by Cornwall Council under public space protection orders, and they're reviewed annually — which is exactly why a list like this dates quickly if it isn't honest about it. Three patterns are worth knowing before you go.
+        </p>
+        <p>
+          <strong>The summer ban is the default, not the exception.</strong> Most of the popular beaches restrict dogs across the main season — commonly somewhere between Easter and the start of October. The year-round beaches are the minority, which is why they're worth seeking out and why this list leads with them.
+        </p>
+        <p>
+          <strong>The hours often matter as much as the dates.</strong> Plenty of "restricted" beaches only ban dogs during the day (roughly 10am–6pm). Get there for an early-morning walk or an evening one and you're usually fine, even in August. If your dog's happy with a dawn run, the whole coast opens up.
+        </p>
+        <p>
+          <strong>The sign on the beach is the final word.</strong> Council dates shift, individual beaches get added or dropped, and a guide written in spring can be wrong by August. We state the dates we have and flag where we're unsure — but the byelaw notice at the access point is what's actually enforced. Check it.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <h2>Frequently asked questions</h2>
+      <FAQ items={faqItems} emitSchema={false} />
+    </section>
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <AuthorByline variant="full" />
+    </section>
+  </article>
+</BaseLayout>

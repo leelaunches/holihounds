@@ -1,0 +1,183 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import RegionCard from '~/components/RegionCard.astro';
+import FAQ from '~/components/FAQ.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { article, breadcrumbList, faqPage, itemList } from '~/lib/schema';
+import { SITE_URL } from '~/lib/site';
+import { crumb } from '~/lib/nav';
+
+const cornwall = await getEntry('regions', 'cornwall');
+const lakeDistrict = await getEntry('regions', 'lake-district');
+
+const allBeaches = await getCollection('beaches');
+const cornwallCount = allBeaches.filter((b) => b.data.region === 'cornwall').length;
+const lakeCount = allBeaches.filter((b) => b.data.region === 'lake-district').length;
+
+const slugFor = (id: string) => id.split('/').pop()!;
+const beachHref = (id: string) =>
+  `${id.startsWith('cornwall/') ? '/cornwall/beaches/' : '/lake-district/beaches/'}#${slugFor(id)}`;
+
+// Featured beaches across both regions for the teaser grid.
+const featured = allBeaches.filter((b) => b.data.featured);
+
+const accessLabel: Record<string, string> = {
+  'year-round': 'Year-round',
+  seasonal: 'Seasonal',
+  partial: 'Part of beach',
+  'lake-shore': 'No seasonal ban',
+};
+const badgeClass: Record<string, string> = {
+  'year-round': 'bg-forest text-cream',
+  'lake-shore': 'bg-forest text-cream',
+  seasonal: 'bg-clay text-cream',
+  partial: 'bg-edge text-text',
+};
+
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Beaches', '/beaches/'),
+];
+
+const faqItems = [
+  {
+    question: 'Why are dogs banned from so many UK beaches in summer?',
+    answer:
+      "Most seasonal beach dog bans are set by the local council under a Public Space Protection Order, on public-health and amenity grounds, and they typically run across the main tourist season — often roughly Easter or May to the end of September, frequently only during the day. England and Wales are stricter than Scotland, where access laws are far more permissive. The bans are reviewed periodically and the dates move, so the only reliable source is the current council page or the sign at the beach.",
+  },
+  {
+    question: 'How do I find a beach that allows dogs all year?',
+    answer:
+      "Look past the flagship resort beaches — the year-round dog beaches tend to be the quieter coves, estuary beaches and the ones with an established dog-walking community rather than the Blue Flag tourist sands, which carry the longest bans. Our regional guides lead with the year-round beaches for exactly this reason. As a rule of thumb, the bigger and more famous the beach, the more likely it bans dogs over summer.",
+  },
+  {
+    question: 'Do the Lake District lakes have dog restrictions like the coast?',
+    answer:
+      'No — and that\'s the useful surprise. Lake District lake shores have no seasonal dog-ban system equivalent to the coastal councils’, so you can walk and swim a dog on a Lakeland shore in August as freely as in winter. The real cautions there are blue-green algae in warm spells, water depth and cold, and keeping dogs on a lead near livestock and nesting birds. See our <a href="/lake-district/beaches/">Lake District lake shores guide</a>.',
+  },
+  {
+    question: 'Can my dog swim safely at the beach?',
+    answer:
+      "Usually, with sensible care. At the coast, respect the lifeguard flags and watch for rip currents and a cutting-off tide; in the lakes, watch for blue-green algae and cold deep water. Everywhere: bring fresh drinking water so they're not tempted to drink salt or lake water, and rinse them off afterwards. Match the water to the dog — sheltered coves and shallow shingle for nervous or older dogs, not the big surf or a deep cold drop-off.",
+  },
+];
+
+const pageUrl = '/beaches/';
+const pageTitle = 'Dog-friendly beaches in the UK';
+// 149 chars — under the 155-char Google truncation threshold.
+const pageDescription =
+  'Dog-friendly UK beaches with the seasonal dog-ban dates actually spelled out — which allow dogs year-round, which restrict over summer. By Rachel Polden.';
+
+const heroImage = featured[0]?.data.image ?? cornwall?.data.hero_image ?? '/images/og-default.jpg';
+
+const jsonLd = [
+  article({
+    headline: pageTitle,
+    description: pageDescription,
+    image: new URL(heroImage, SITE_URL).toString(),
+    datePublished: '2026-06-14',
+    url: pageUrl,
+  }),
+  faqPage(faqItems),
+  itemList(
+    featured.map((b) => ({ name: b.data.name, url: beachHref(b.id) })),
+  ),
+  breadcrumbList(breadcrumbs),
+];
+---
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  image={heroImage}
+  jsonLd={jsonLd}
+>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-8">
+      <p class="eyebrow">Beaches</p>
+      <h1 class="display mt-3">{pageTitle}</h1>
+      <div class="mt-6">
+        <AuthorByline />
+      </div>
+    </header>
+
+    <div class="prose-reading space-y-4 text-lg">
+      <p>
+        "Dog-friendly beach" is one of the most misleading phrases in UK travel. Most of the famous ones ban dogs across the entire summer — the exact window set beach-by-beach by the council, reviewed every year, and often spelled out nowhere but the sign at the top of the steps. Turn up on the wrong day and you're walking back to the car. This guide does the boring, essential thing: it states the access for each beach, and leads with the ones you can use all year.
+      </p>
+      <p>
+        Two regions so far, and they're a study in contrast. Cornwall has England's best beach coast for dogs but the most restrictions to navigate; the Lake District has no sea at all, lake shores instead — and no seasonal bans, just the water itself to respect. More regions follow as their guides ship.
+      </p>
+    </div>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <p class="eyebrow">Where to look</p>
+      <h2 class="mt-2">Dog-friendly beaches by region</h2>
+      <p class="prose-reading mt-4">
+        Each regional guide lists verified beaches with the dog restriction in plain terms — year-round or summer-banned — plus parking, a nearby dog-friendly pub, and where to stay within reach.
+      </p>
+
+      <div class="mt-8 grid gap-6 sm:grid-cols-2 md:grid-cols-3">
+        {cornwall && (
+          <RegionCard region={cornwall} count={cornwallCount} href="/cornwall/beaches/" />
+        )}
+        {lakeDistrict && (
+          <RegionCard region={lakeDistrict} count={lakeCount} href="/lake-district/beaches/" />
+        )}
+      </div>
+    </section>
+
+    {featured.length > 0 && (
+      <section class="mt-16 border-t border-edge pt-12">
+        <p class="eyebrow">Editor's picks</p>
+        <h2 class="mt-2">Year-round dog beaches worth the drive</h2>
+        <div class="mt-8 grid gap-6 sm:grid-cols-2 md:grid-cols-3">
+          {featured.map((b) => (
+            <a href={beachHref(b.id)} class="group block no-underline">
+              <div class="aspect-[16/11] overflow-hidden bg-cream-soft border border-edge">
+                <img src={b.data.image} alt={b.data.image_alt ?? b.data.name} loading="lazy" class="h-full w-full object-cover" />
+              </div>
+              <div class="pt-3">
+                <span class:list={['text-xs font-semibold uppercase tracking-wide px-2 py-0.5', badgeClass[b.data.dog_access]]}>
+                  {accessLabel[b.data.dog_access]}
+                </span>
+                <h3 class="mt-2 group-hover:text-clay-deep transition-colors">{b.data.name}</h3>
+                <p class="text-sm text-muted">{b.data.location}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>How dog rules work on UK beaches</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          The single most useful thing to understand is that beach dog access in Britain is local, seasonal and inconsistent — there's no national rule.
+        </p>
+        <p>
+          <strong>England and Wales — seasonal council bans.</strong> Most popular beaches carry a Public Space Protection Order banning dogs across the summer, commonly between Easter or mid-May and the end of September, and often only during daylight hours. Year-round dog beaches exist but are the minority, and they're what's worth planning a trip around. The dates are reviewed periodically and vary beach to beach — always the sign, never your memory.
+        </p>
+        <p>
+          <strong>Scotland — far more permissive.</strong> Scotland's access laws give dogs much wider beach freedom, with restrictions the exception rather than the rule. (Scotland's coast is queued for a future guide.)
+        </p>
+        <p>
+          <strong>Inland water — usually unrestricted, but check the water.</strong> Lakes, tarns and rivers rarely carry beach-style dog bans, which makes regions like the Lake District easy for dogs year-round. The thing to watch isn't a calendar but blue-green algae, cold deep water, and a lead around livestock and nesting birds.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Frequently asked questions</h2>
+      <FAQ items={faqItems} emitSchema={false} />
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <AuthorByline variant="full" />
+    </section>
+  </article>
+</BaseLayout>

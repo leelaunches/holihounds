@@ -1,0 +1,66 @@
+---
+/**
+ * Beach access summary box — the beaches equivalent of DogPolicyBox.
+ * The headline is the dog restriction (year-round vs a seasonal ban), shown
+ * both as a colour-coded badge (forest = unrestricted, clay = seasonal ban,
+ * neutral = part-of-beach) and as the exact detail. `restriction_detail`
+ * carries the dates/hours and the "check before travel" caveat.
+ */
+interface Props {
+  dogAccess: 'year-round' | 'seasonal' | 'partial' | 'lake-shore';
+  dogRestriction: string;
+  restrictionDetail?: string | null;
+  parking?: string | null;
+  facilities?: string[];
+  nearestPub?: string | null;
+  safetyNote?: string | null;
+}
+
+const {
+  dogAccess,
+  dogRestriction,
+  restrictionDetail,
+  parking,
+  facilities = [],
+  nearestPub,
+  safetyNote,
+} = Astro.props;
+
+const accessLabel: Record<Props['dogAccess'], string> = {
+  'year-round': 'Year-round',
+  seasonal: 'Seasonal restriction',
+  partial: 'Part of beach',
+  'lake-shore': 'No seasonal ban',
+};
+
+const badgeClass: Record<Props['dogAccess'], string> = {
+  'year-round': 'bg-forest text-cream',
+  'lake-shore': 'bg-forest text-cream',
+  seasonal: 'bg-clay text-cream',
+  partial: 'bg-edge text-text',
+};
+
+const items: { label: string; value: string; wide?: boolean }[] = [];
+items.push({ label: 'Dog restriction', value: dogRestriction, wide: true });
+if (restrictionDetail) items.push({ label: 'The detail', value: restrictionDetail, wide: true });
+if (parking) items.push({ label: 'Parking', value: parking });
+if (nearestPub) items.push({ label: 'Nearest dog-friendly pub', value: nearestPub });
+if (facilities.length) items.push({ label: 'Facilities', value: facilities.join(' · '), wide: true });
+if (safetyNote) items.push({ label: 'Water safety', value: safetyNote, wide: true });
+---
+<aside class="border-2 border-forest bg-cream-soft p-6 my-6">
+  <div class="flex items-center justify-between gap-4 mb-4">
+    <p class="eyebrow text-forest">Dog access</p>
+    <span class:list={['text-xs font-semibold uppercase tracking-wide px-3 py-1', badgeClass[dogAccess]]}>
+      {accessLabel[dogAccess]}
+    </span>
+  </div>
+  <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 text-sm">
+    {items.map((item) => (
+      <div class:list={[item.wide && 'sm:col-span-2']}>
+        <dt class="eyebrow text-muted mb-1">{item.label}</dt>
+        <dd>{item.value}</dd>
+      </div>
+    ))}
+  </dl>
+</aside>

@@ -1,0 +1,212 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import BeachAccessBox from '~/components/BeachAccessBox.astro';
+import FAQ from '~/components/FAQ.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { article, itemList, faqPage, breadcrumbList } from '~/lib/schema';
+import { SITE_URL } from '~/lib/site';
+import { crumb } from '~/lib/nav';
+
+const all = await getCollection('beaches', (b) => b.data.region === 'lake-district');
+
+// Lake shores are almost all unrestricted year-round, so the access sort barely
+// reorders here — featured first, then alphabetical — but we keep the same
+// data-driven ordering as Cornwall for consistency.
+const ACCESS_RANK: Record<string, number> = { 'year-round': 0, 'lake-shore': 0, partial: 1, seasonal: 2 };
+const beaches = all.sort((a, b) => {
+  const r = (ACCESS_RANK[a.data.dog_access] ?? 9) - (ACCESS_RANK[b.data.dog_access] ?? 9);
+  if (r !== 0) return r;
+  if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
+  return a.data.name.localeCompare(b.data.name);
+});
+
+const listings = await getCollection('listings');
+const slugFor = (id: string) => id.split('/').pop()!;
+const cottageHref = (id: string) =>
+  `${id.startsWith('cornwall/') ? '/cornwall/cottages/' : '/lake-district/cottages/'}#${slugFor(id)}`;
+const nearbyFor = (ids: string[]) =>
+  ids
+    .map((id) => {
+      const l = listings.find((x) => x.id === id);
+      return l ? { name: l.data.name, href: cottageHref(id) } : null;
+    })
+    .filter((x): x is { name: string; href: string } => Boolean(x));
+
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Lake District', '/lake-district/'),
+  crumb('Beaches', '/lake-district/beaches/'),
+];
+
+const faqItems = [
+  {
+    question: 'Does the Lake District have dog-friendly beaches?',
+    answer:
+      "Not sea beaches — it's landlocked — but the lakes have shingle and sand shores, bays and grassy foreshores where dogs swim, paddle and run, and (unlike the Cornish coast) they generally have no seasonal dog ban. So the honest answer is better than the question assumes: you can walk a dog on a Lakeland shore in August as freely as in February. The spots above are the ones with an actual shore to get into the water from, plus parking and a walk.",
+  },
+  {
+    question: 'Are dogs allowed off the lead on Lake District shores?',
+    answer:
+      "Usually, where it's safe — there's no blanket beach ban as on the coast. The real constraints are livestock (a lead near grazing sheep is essential, and lambing season roughly March–May is strictest) and ground-nesting birds on open fell and some shorelines in spring and early summer. On the popular lakeshore parks, watch for boat-launch traffic and other dogs. Beyond that, off-lead swimming is part of the appeal.",
+  },
+  {
+    question: 'Is it safe for dogs to swim in Lake District lakes?',
+    answer:
+      "Generally yes, with two real cautions. First, blue-green algae: several lakes report blooms in warm spells, and it's genuinely dangerous — even fatal — to dogs that swim in or drink affected water. Look for scummy, paint-like green water and heed warning signs; when in doubt, keep them out. Second, cold and depth: lakes get deep and cold fast, and a dog can tire further out than it looks. Rinse off afterwards and bring drinking water so they're not tempted to drink lake water.",
+  },
+  {
+    question: 'What is blue-green algae and how do I avoid it?',
+    answer:
+      "Blue-green algae (cyanobacteria) blooms in still, nutrient-rich water during warm, calm weather, usually late summer. It can look like green or turquoise scum, paint-like streaks, or a pea-soup tinge near the shore. It's toxic to dogs — ingestion (including licking it off their coat) can cause rapid, serious illness. Check for warning notices at popular spots, avoid water that looks scummy or discoloured, and if your dog does swim in suspect water, wash them and contact a vet if they show symptoms. The Lake District National Park and the UK Centre for Ecology & Hydrology track blooms in season.",
+  },
+  {
+    question: 'Where should I stay for a lakeshore dog holiday?',
+    answer:
+      'Base yourself near the lake you want — Windermere and Ullswater for easy shores and facilities, the quieter western lakes for space. Several of our <a href="/lake-district/cottages/">dog-friendly Lake District cottages</a> sit within reach of a swimmable shore, and each spot above links to the nearest ones under "where to stay".',
+  },
+];
+
+const pageUrl = '/lake-district/beaches/';
+const pageTitle = 'Dog-friendly beaches in the Lake District';
+// 153 chars — under the 155-char Google truncation threshold.
+const pageDescription =
+  'Dog-friendly Lake District lake shores for swimming and paddling — no seasonal bans, but the blue-green algae small print spelled out. By Rachel Polden.';
+
+const heroImage = beaches[0]?.data.image ?? '/images/og-default.jpg';
+
+const jsonLd = [
+  article({
+    headline: pageTitle,
+    description: pageDescription,
+    image: new URL(heroImage, SITE_URL).toString(),
+    datePublished: '2026-06-14',
+    url: pageUrl,
+  }),
+  itemList(
+    beaches.map((b) => ({
+      name: b.data.name,
+      url: `${pageUrl}#${slugFor(b.id)}`,
+    })),
+  ),
+  faqPage(faqItems),
+  breadcrumbList(breadcrumbs),
+];
+---
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  image={heroImage}
+  jsonLd={jsonLd}
+>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-8">
+      <p class="eyebrow">Lake District</p>
+      <h1 class="display mt-3">{pageTitle}</h1>
+      <div class="mt-6">
+        <AuthorByline />
+      </div>
+    </header>
+
+    <div class="prose-reading space-y-4 text-lg">
+      <p>
+        The Lake District has no sea — but it has water everywhere, and the shingle bays and grassy foreshores around the lakes are some of the best dog-swimming in England. Here's the part most people don't realise until they arrive: unlike the Cornish coast, Lakeland shores have <strong>no seasonal dog ban</strong>. You can let a dog into Windermere in August as freely as in February. The catch isn't a calendar — it's the water itself.
+      </p>
+      <p>
+        Each spot below has an actual shore to get into the lake from, with parking and a walk attached. What we flag instead of ban dates is the genuine small print for swimming dogs: blue-green algae (dangerous, and it comes and goes in warm spells), cold and depth, and where livestock or nesting birds mean a lead. Lead with the water safety and the Lakes are a near-perfect dog-swimming region.
+      </p>
+    </div>
+
+    {beaches.length > 0 && (
+      <nav aria-label="Shore list" class="mt-12 border-t border-edge pt-8">
+        <p class="eyebrow mb-4">Jump to a spot</p>
+        <ol class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm">
+          {beaches.map((b, i) => (
+            <li>
+              <a href={`#${slugFor(b.id)}`} class="text-text">
+                {i + 1}. {b.data.name}
+                <span class="text-muted"> — {b.data.location}</span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+    )}
+
+    <section class="mt-16 space-y-20">
+      {beaches.map((b, i) => {
+        const nearby = nearbyFor(b.data.nearby_cottages);
+        return (
+          <article id={slugFor(b.id)} class="scroll-mt-8 border-t border-edge pt-12">
+            <p class="eyebrow">{b.data.location}</p>
+            <h2 class="mt-2">{i + 1}. {b.data.name}</h2>
+
+            <div class="mt-6 aspect-[16/11] overflow-hidden bg-cream-soft border border-edge">
+              <img
+                src={b.data.image}
+                alt={b.data.image_alt ?? b.data.name}
+                loading="lazy"
+                class="h-full w-full object-cover"
+              />
+            </div>
+
+            <div class="prose-reading mt-6">
+              <p>{b.data.description}</p>
+            </div>
+
+            <BeachAccessBox
+              dogAccess={b.data.dog_access}
+              dogRestriction={b.data.dog_restriction}
+              restrictionDetail={b.data.restriction_detail}
+              parking={b.data.parking}
+              facilities={b.data.facilities}
+              nearestPub={b.data.nearest_pub}
+              safetyNote={b.data.safety_note}
+            />
+
+            {nearby.length > 0 && (
+              <p class="text-sm mt-4">
+                <span class="text-muted">Where to stay nearby: </span>
+                {nearby.map((c, j) => (
+                  <>
+                    <a href={c.href} class="text-text">{c.name}</a>{j < nearby.length - 1 ? ', ' : ''}
+                  </>
+                ))}
+              </p>
+            )}
+          </article>
+        );
+      })}
+    </section>
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <h2>Swimming a dog safely in the lakes</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          There's no seasonal ban to plan around here, so the planning is all about the water. Three things matter more than dates.
+        </p>
+        <p>
+          <strong>Blue-green algae is the real hazard.</strong> In warm, still spells — usually late summer — several lakes develop cyanobacteria blooms that are toxic to dogs, sometimes fatally and fast. It looks like green or turquoise scum, paint-like streaks, or a pea-soup tinge near the shore. Heed warning signs, avoid discoloured water, and if in any doubt, keep the dog out and find a moving-water spot instead.
+        </p>
+        <p>
+          <strong>Cold and depth catch dogs out.</strong> Lakes drop off and chill fast; a keen swimmer can tire further from shore than it looks, and cold water saps strength quickly. Throw toys parallel to the shore rather than straight out, and don't let a tired dog keep going.
+        </p>
+        <p>
+          <strong>Livestock and nesting birds set the lead rule.</strong> There's no beach ban, but a lead is essential near grazing sheep (strictest in spring lambing) and around ground-nesting birds on some shorelines and the open fell in spring and early summer. Away from those, off-lead is the norm.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <h2>Frequently asked questions</h2>
+      <FAQ items={faqItems} emitSchema={false} />
+    </section>
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <AuthorByline variant="full" />
+    </section>
+  </article>
+</BaseLayout>

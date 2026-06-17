@@ -79,4 +79,45 @@ const pages = defineCollection({
   }),
 });
 
-export const collections = { regions, listings, pages };
+/**
+ * Dog-friendly beaches and lakeshore swimming spots. Kept distinct from
+ * `listings` because beaches aren't bookable affiliate products — they're
+ * traffic/authority pages that interlink back to the cottage money pages via
+ * `nearby_cottages` (an array of listing ids).
+ *
+ * The headline field is `dog_restriction`: most Cornish beaches ban dogs for
+ * part of the year, and getting those dates right is the whole editorial point.
+ * `dog_access` is the machine-readable category used for badging/filtering;
+ * `restriction_detail` carries the exact dates/hours plus the source caveat
+ * (council restrictions are reviewed annually — always hedged "check before
+ * travel"). IDs derive from the file path, e.g. `cornwall/gwynver`.
+ */
+const beaches = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/beaches' }),
+  schema: z.object({
+    name: z.string(),
+    region: z.string(),
+    location: z.string(),
+    description: z.string(),
+    /** Machine-readable access category, drives the access-box badge + colour. */
+    dog_access: z.enum(['year-round', 'seasonal', 'partial', 'lake-shore']),
+    /** Headline access summary, e.g. "Year-round" or "Dogs banned 1 Jul–31 Aug". */
+    dog_restriction: z.string(),
+    /** Exact dates/hours + the "verify before travel" caveat when seasonal. */
+    restriction_detail: z.string().nullable().default(null),
+    /** Water-safety note — algae, currents, boat traffic (esp. lake shores). */
+    safety_note: z.string().nullable().default(null),
+    parking: z.string().nullable().default(null),
+    facilities: z.array(z.string()).default([]),
+    nearest_pub: z.string().nullable().default(null),
+    /** Listing ids to interlink to the cottage money pages, e.g. `cornwall/ocean-edge`. */
+    nearby_cottages: z.array(z.string()).default([]),
+    image: z.string(),
+    image_alt: z.string().optional(),
+    lat: z.number().nullable().default(null),
+    lng: z.number().nullable().default(null),
+    featured: z.boolean().default(false),
+  }),
+});
+
+export const collections = { regions, listings, pages, beaches };

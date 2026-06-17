@@ -49,6 +49,35 @@ If you're a photographer listed here and would prefer your image not be used, em
 | Tregoad Luxury 3-Bed Lodge (Looe, Cornwall) | Karen Cann | [unsplash.com/photos/ON3aQD32bPo](https://unsplash.com/photos/ON3aQD32bPo) |
 | Kernock Cottages (Saltash, Cornwall) | Benjamin Price | [unsplash.com/photos/74wSzN6Uues](https://unsplash.com/photos/74wSzN6Uues) |
 
+## Beach thumbnails (16:11)
+
+Representative coast and lakeshore photos (not the exact named beach in every case — same convention as the listing thumbnails). Each verified by eye to read as the right region.
+
+| Beach | Photographer | Source |
+|---|---|---|
+| Daymer Bay (Rock, Cornwall) | Simon Godfrey | [unsplash.com/photos/13z0zAU98rw](https://unsplash.com/photos/13z0zAU98rw) |
+| Gwenver (Sennen, Cornwall) | Mohammad Usaid Abbasi | [unsplash.com/photos/9QNaGeF2CKY](https://unsplash.com/photos/9QNaGeF2CKY) |
+| Gwithian Towans & Godrevy (Hayle, Cornwall) | Ben Hutchings | [unsplash.com/photos/L8je6eanIFs](https://unsplash.com/photos/L8je6eanIFs) |
+| Sandymouth (Bude, Cornwall) | James Moore | [unsplash.com/photos/9dpKJy7KBKM](https://unsplash.com/photos/9dpKJy7KBKM) |
+| Constantine Bay (Padstow, Cornwall) | Helen Brook | [unsplash.com/photos/wYHS_kZk9_4](https://unsplash.com/photos/wYHS_kZk9_4) |
+| Harlyn Bay (Padstow, Cornwall) | Andrew Hall | [unsplash.com/photos/8DWjJVKsubQ](https://unsplash.com/photos/8DWjJVKsubQ) |
+| Plaidy Beach (Looe, Cornwall) | Pierre Goiffon | [unsplash.com/photos/PZoEjh9QcWo](https://unsplash.com/photos/PZoEjh9QcWo) |
+| Kennack Sands (Lizard, Cornwall) | Lāsma Artmane | [unsplash.com/photos/2-fxklcxepI](https://unsplash.com/photos/2-fxklcxepI) |
+| Gyllyngvase (Falmouth, Cornwall) | Isabelle Salomon | [unsplash.com/photos/efHSr_Ff-nc](https://unsplash.com/photos/efHSr_Ff-nc) |
+| Maenporth (Falmouth, Cornwall) | Kristina Paparo | [unsplash.com/photos/D6ag28wvuT8](https://unsplash.com/photos/D6ag28wvuT8) |
+| Polzeath (Wadebridge, Cornwall) | Karl Bewick | [unsplash.com/photos/eVTcuqZTxhM](https://unsplash.com/photos/eVTcuqZTxhM) |
+| Sennen Cove (Penwith, Cornwall) | Magda Vrabetz | [unsplash.com/photos/5ihGwCeMRn4](https://unsplash.com/photos/5ihGwCeMRn4) |
+| Fell Foot (Windermere, Cumbria) | Jonny Gios | [unsplash.com/photos/uUFLMTcJdsU](https://unsplash.com/photos/uUFLMTcJdsU) |
+| Calfclose Bay (Derwentwater, Cumbria) | Jonny Gios | [unsplash.com/photos/o8OinsyBiZc](https://unsplash.com/photos/o8OinsyBiZc) |
+| Millerground (Windermere, Cumbria) | Arpita Ghosh | [unsplash.com/photos/UMJMcTp91Ks](https://unsplash.com/photos/UMJMcTp91Ks) |
+| Brown Howe (Coniston Water, Cumbria) | Jonny Gios | [unsplash.com/photos/UiUBMY64N2c](https://unsplash.com/photos/UiUBMY64N2c) |
+| Buttermere (Cumbria) | Richard Bell | [unsplash.com/photos/z0EAWZjn-PM](https://unsplash.com/photos/z0EAWZjn-PM) |
+| Crummock Water (Cumbria) | Jonny Gios | [unsplash.com/photos/k_tM2wWamaQ](https://unsplash.com/photos/k_tM2wWamaQ) |
+| Glencoyne Bay (Ullswater, Cumbria) | Matthias | [unsplash.com/photos/L5VXjiRaF14](https://unsplash.com/photos/L5VXjiRaF14) |
+| Wast Water (Wasdale, Cumbria) | Sean Ferigan | [unsplash.com/photos/GsPJAek9XGM](https://unsplash.com/photos/GsPJAek9XGM) |
+
+The three beach pages (`/beaches/`, `/cornwall/beaches/`, `/lake-district/beaches/`) use their first beach thumbnail as the og:image rather than a separate hero.
+
 ## Page heroes (16:9)
 
 | Page | Photographer | Source |
@@ -81,7 +110,7 @@ No content listing or page hero remains on picsum. (The only picsum references l
 
 - **Marie M** — 4 Lake District cottages (Fellside Lodge, Acorn, Daisy, Mill Cottage). Now the most-used photographer in the set; she shot a coherent series of Cumbrian white/stone cottages. They are spread across the listicle (positions 1, 2, 3 and 11) and use distinct compositions (white terrace, white-with-garage, stone-house-by-river, white-with-red-door), but if the Lake District page ever feels visually repetitive, swap one of the three white-cottage shots first.
 - **Ben Elliott** — 3 uses (Ocean Edge, home hero, OG image).
-- **Jonny Gios** — 3 Cumbria uses (Black Dog, Limefitt, Fell Foot) — all hot-tub-page lodges, deliberately kept off the Lake District cottage listicle for variety.
+- **Jonny Gios** — now the most-used photographer overall: 3 Cumbria hot-tub lodges (Black Dog, Limefitt, Fell Foot cottage) plus 4 Lake District beach shores (Fell Foot park, Calfclose Bay, Brown Howe, Crummock Water). He has the strongest free Lakeland-water catalogue on Unsplash, which is why; they're seven different lakes/spots so they don't visually repeat, but he's the first candidate to thin out if the Lake District beaches page ever feels samey. Kept deliberately off the Lake District cottage listicle.
 - **Greg Willson** — 2 Cornwall listings (Old Coastguard Lookout, The Poop Deck).
 - **Karen Cann** — 2 Cornwall listings (Treen, Tregoad).
 - **Bruce Barrow & Tanya Barrow** — one Cornwall stone-barn listing each (The Stable, The Granary); similar rustic-barn subject matter, but distinct photos.
