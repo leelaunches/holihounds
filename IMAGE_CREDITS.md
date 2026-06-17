@@ -78,6 +78,37 @@ Representative coast and lakeshore photos (not the exact named beach in every ca
 
 The three beach pages (`/beaches/`, `/cornwall/beaches/`, `/lake-district/beaches/`) use their first beach thumbnail as the og:image rather than a separate hero.
 
+## Pub thumbnails (16:11)
+
+Representative traditional British pub/inn photos (exteriors and cosy interiors), not the exact named pub in every case. Each verified by eye to read as a traditional UK pub or country inn.
+
+| Pub | Photographer | Source |
+|---|---|---|
+| The Old Success Inn (Sennen Cove, Cornwall) | Michael Cummins | [unsplash.com/photos/yDmZmfZzAbU](https://unsplash.com/photos/yDmZmfZzAbU) |
+| The Gurnard's Head (Zennor, Cornwall) | Tanya Barrow | [unsplash.com/photos/EdL4VYHqzK0](https://unsplash.com/photos/EdL4VYHqzK0) |
+| The Cornish Arms (St Merryn, Cornwall) | Tanya Barrow | [unsplash.com/photos/_6mgMuCYvjA](https://unsplash.com/photos/_6mgMuCYvjA) |
+| The Oystercatcher (Polzeath, Cornwall) | Gary J Stearman | [unsplash.com/photos/wEUXuCswm2I](https://unsplash.com/photos/wEUXuCswm2I) |
+| Old Custom House (Padstow, Cornwall) | Zoltan Tasi | [unsplash.com/photos/5uD3CbLfgoY](https://unsplash.com/photos/5uD3CbLfgoY) |
+| The Mariners (Rock, Cornwall) | Belinda Fewings | [unsplash.com/photos/Rir-NLG9gnQ](https://unsplash.com/photos/Rir-NLG9gnQ) |
+| The Halzephron Inn (Gunwalloe, Cornwall) | Dave Lowe | [unsplash.com/photos/gf-xJNJwqBk](https://unsplash.com/photos/gf-xJNJwqBk) |
+| The Pandora Inn (Mylor, Cornwall) | Liv Cashman | [unsplash.com/photos/M1UlUcYMdm8](https://unsplash.com/photos/M1UlUcYMdm8) |
+| The First & Last Inn (Sennen, Cornwall) | Uliana Koliasa | [unsplash.com/photos/wUM8G3131Tc](https://unsplash.com/photos/wUM8G3131Tc) |
+| The Castle Inn (St Ives, Cornwall) | Lawrence Krowdeed | [unsplash.com/photos/TL0jo9ovyXo](https://unsplash.com/photos/TL0jo9ovyXo) |
+| Mason's Arms (Camelford, Cornwall) | Annie Spratt | [unsplash.com/photos/9LPn0t9oifI](https://unsplash.com/photos/9LPn0t9oifI) |
+| Ye Olde Salutation Inn (Looe, Cornwall) | Frederick Wallace | [unsplash.com/photos/Li_PwG9UTlQ](https://unsplash.com/photos/Li_PwG9UTlQ) |
+| Tweedies Bar (Grasmere, Cumbria) | Eranjan | [unsplash.com/photos/8_Pt14a6kqY](https://unsplash.com/photos/8_Pt14a6kqY) |
+| The Black Bull Inn (Coniston, Cumbria) | Jonny Gios | [unsplash.com/photos/RAcIBjMtw0Q](https://unsplash.com/photos/RAcIBjMtw0Q) |
+| The Dog and Gun (Keswick, Cumbria) | Phil Hearing | [unsplash.com/photos/Qb2xn4AXyXQ](https://unsplash.com/photos/Qb2xn4AXyXQ) |
+| The Sun Inn (Pooley Bridge, Cumbria) | Shell Chapman | [unsplash.com/photos/9GntEd_jWy0](https://unsplash.com/photos/9GntEd_jWy0) |
+| The Mill Inn (Mungrisdale, Cumbria) | Hendrik Morkel | [unsplash.com/photos/rgU_La_JKRY](https://unsplash.com/photos/rgU_La_JKRY) |
+| The Wasdale Head Inn (Wasdale, Cumbria) | Tanya Barrow | [unsplash.com/photos/c06xYh6PwBc](https://unsplash.com/photos/c06xYh6PwBc) |
+| The Old Dungeon Ghyll (Great Langdale, Cumbria) | Marie M | [unsplash.com/photos/1jsKHaawYqw](https://unsplash.com/photos/1jsKHaawYqw) |
+| The Britannia Inn (Elterwater, Cumbria) | Brett Jordan | [unsplash.com/photos/TqNeRAw9eOQ](https://unsplash.com/photos/TqNeRAw9eOQ) |
+| The Kirkstile Inn (Loweswater, Cumbria) | Marie M | [unsplash.com/photos/Xp6Rwqt2rxE](https://unsplash.com/photos/Xp6Rwqt2rxE) |
+| The Swan (Newby Bridge, Cumbria) | Korng Sok | [unsplash.com/photos/uAkmmXfm1zQ](https://unsplash.com/photos/uAkmmXfm1zQ) |
+
+The three pub pages (`/pubs/`, `/cornwall/pubs/`, `/lake-district/pubs/`) use their first pub thumbnail as the og:image rather than a separate hero.
+
 ## Page heroes (16:9)
 
 | Page | Photographer | Source |
@@ -113,5 +144,6 @@ No content listing or page hero remains on picsum. (The only picsum references l
 - **Jonny Gios** — now the most-used photographer overall: 3 Cumbria hot-tub lodges (Black Dog, Limefitt, Fell Foot cottage) plus 4 Lake District beach shores (Fell Foot park, Calfclose Bay, Brown Howe, Crummock Water). He has the strongest free Lakeland-water catalogue on Unsplash, which is why; they're seven different lakes/spots so they don't visually repeat, but he's the first candidate to thin out if the Lake District beaches page ever feels samey. Kept deliberately off the Lake District cottage listicle.
 - **Greg Willson** — 2 Cornwall listings (Old Coastguard Lookout, The Poop Deck).
 - **Karen Cann** — 2 Cornwall listings (Treen, Tregoad).
-- **Bruce Barrow & Tanya Barrow** — one Cornwall stone-barn listing each (The Stable, The Granary); similar rustic-barn subject matter, but distinct photos.
+- **Tanya Barrow** — now 4 uses across the site (The Granary cottage; The Gurnard's Head, The Cornish Arms and The Wasdale Head Inn pubs). She has a strong free catalogue of English rural buildings and pub frontages. The Gurnard's Head and Cornish Arms shots are both whitewashed pubs and sit on the same Cornwall pubs page — fine but the first place to vary if it reads samey. (Bruce Barrow — The Stable cottage — is a different photographer.)
+- **Marie M** — 4 Lake District cottages plus 2 Lake District pub exteriors (Old Dungeon Ghyll, Kirkstile Inn); the two pub shots are similar whitewashed-inn compositions and both sit on the Lake District pubs page — swap one first if needed.
 - **Sophie Grieve-Williams** — appears twice (Signature Cove listing thumbnail and money page hero — same photo at different sizes). Worth a manual swap if visual duplication on the money page becomes noticeable.

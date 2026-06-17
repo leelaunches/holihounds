@@ -16,7 +16,7 @@ export type NavItem = {
 };
 
 export const VERTICALS: NavItem[] = [
-  { slug: 'pubs', label: 'Pubs' },
+  { slug: 'pubs', label: 'Pubs', href: '/pubs/' },
   { slug: 'cottages', label: 'Cottages', href: '/cottages/' },
   { slug: 'hotels', label: 'Hotels' },
   { slug: 'restaurants', label: 'Restaurants' },
@@ -49,17 +49,21 @@ export const REGIONS: NavItem[] = [
  *  - Phase 2.9 ✓ /about/, /contact/, /privacy/
  *  - Region 2 ✓ /lake-district/, /lake-district/cottages/
  *  - Beaches ✓ /beaches/, /cornwall/beaches/, /lake-district/beaches/
+ *  - Pubs ✓ /pubs/, /cornwall/pubs/, /lake-district/pubs/
  */
 export const LIVE_ROUTES: ReadonlySet<string> = new Set([
   '/',
   '/cornwall/',
   '/cornwall/cottages/',
   '/cornwall/beaches/',
+  '/cornwall/pubs/',
   '/lake-district/',
   '/lake-district/cottages/',
   '/lake-district/beaches/',
+  '/lake-district/pubs/',
   '/cottages/',
   '/beaches/',
+  '/pubs/',
   '/dog-friendly-hot-tub-lodges/',
   '/about/',
   '/contact/',

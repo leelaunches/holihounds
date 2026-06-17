@@ -120,4 +120,44 @@ const beaches = defineCollection({
   }),
 });
 
-export const collections = { regions, listings, pages, beaches };
+/**
+ * Dog-friendly pubs. Like `beaches`, a traffic/authority collection that
+ * interlinks back to the cottage money pages (`nearby_cottages`) and the
+ * beach guides (`nearby_beaches`). The headline field is `dog_access` — WHERE
+ * in the pub dogs are actually allowed (throughout vs bar-only vs garden),
+ * the specific most "dog-friendly pub" lists omit. Pub policies change with
+ * ownership, so copy hedges and `external_url` points at the pub's own site.
+ * IDs derive from the file path, e.g. `cornwall/the-gurnards-head`.
+ */
+const pubs = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/pubs' }),
+  schema: z.object({
+    name: z.string(),
+    region: z.string(),
+    location: z.string(),
+    description: z.string(),
+    /** Machine-readable access category, drives the pub-box badge + colour. */
+    dog_access: z.enum(['throughout', 'bar-and-garden', 'bar-only', 'garden-only']),
+    /** Headline policy summary in plain words. */
+    dog_policy: z.string(),
+    /** What's laid on — water bowls, treats, dog menu, blankets. */
+    dog_extras: z.string().nullable().default(null),
+    /** Food offering — gastropub, walkers' food, bar snacks, etc. */
+    food: z.string().nullable().default(null),
+    price_indicator: z.enum(['£', '££', '£££']).nullable().default(null),
+    /** Dog-friendly rooms note (for the stay angle), or null if no rooms. */
+    rooms: z.string().nullable().default(null),
+    /** Listing ids to interlink to the cottage money pages. */
+    nearby_cottages: z.array(z.string()).default([]),
+    /** Beach ids to interlink to the beach guides. */
+    nearby_beaches: z.array(z.string()).default([]),
+    external_url: z.string().url().nullable().default(null),
+    image: z.string(),
+    image_alt: z.string().optional(),
+    lat: z.number().nullable().default(null),
+    lng: z.number().nullable().default(null),
+    featured: z.boolean().default(false),
+  }),
+});
+
+export const collections = { regions, listings, pages, beaches, pubs };

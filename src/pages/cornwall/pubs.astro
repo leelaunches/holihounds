@@ -1,0 +1,210 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import PubDogBox from '~/components/PubDogBox.astro';
+import FAQ from '~/components/FAQ.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { article, itemList, faqPage, breadcrumbList } from '~/lib/schema';
+import { SITE_URL } from '~/lib/site';
+import { crumb } from '~/lib/nav';
+
+const all = await getCollection('pubs', (p) => p.data.region === 'cornwall');
+
+// Lead with the pubs that take dogs THROUGHOUT (the most useful — you're not
+// banished to the garden in the rain), then bar+garden, then bar/garden-only.
+// Within a tier, featured first, then alphabetical. Data-driven — no order list.
+const ACCESS_RANK: Record<string, number> = { throughout: 0, 'bar-and-garden': 1, 'bar-only': 2, 'garden-only': 2 };
+const pubs = all.sort((a, b) => {
+  const r = (ACCESS_RANK[a.data.dog_access] ?? 9) - (ACCESS_RANK[b.data.dog_access] ?? 9);
+  if (r !== 0) return r;
+  if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
+  return a.data.name.localeCompare(b.data.name);
+});
+
+const slugFor = (id: string) => id.split('/').pop()!;
+const listings = await getCollection('listings');
+const beaches = await getCollection('beaches');
+const cottageHref = (id: string) =>
+  `${id.startsWith('cornwall/') ? '/cornwall/cottages/' : '/lake-district/cottages/'}#${slugFor(id)}`;
+const beachHref = (id: string) =>
+  `${id.startsWith('cornwall/') ? '/cornwall/beaches/' : '/lake-district/beaches/'}#${slugFor(id)}`;
+const nearbyFor = (cottageIds: string[], beachIds: string[]) => {
+  const c = cottageIds
+    .map((id) => {
+      const l = listings.find((x) => x.id === id);
+      return l ? { name: l.data.name, href: cottageHref(id) } : null;
+    })
+    .filter((x): x is { name: string; href: string } => Boolean(x));
+  const b = beachIds
+    .map((id) => {
+      const be = beaches.find((x) => x.id === id);
+      return be ? { name: be.data.name, href: beachHref(id) } : null;
+    })
+    .filter((x): x is { name: string; href: string } => Boolean(x));
+  return { cottages: c, beaches: b };
+};
+
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Cornwall', '/cornwall/'),
+  crumb('Pubs', '/cornwall/pubs/'),
+];
+
+const faqItems = [
+  {
+    question: 'Are dogs allowed inside Cornish pubs or only in the garden?',
+    answer:
+      "It varies, and the difference matters on a wet day. The best for dogs let them in throughout, including where you eat; many allow dogs in the bar and garden but not the restaurant; a few are garden-only. We state which for each pub above. As a rule, the older locals' pubs and walkers' inns tend to be dogs-throughout, while the smarter dining pubs more often keep dogs to the bar.",
+  },
+  {
+    question: 'Do I need to book a table if I\'m bringing a dog?',
+    answer:
+      "For the dining pubs, yes — and say you have a dog when you book, so they sit you in a dog-allowed area rather than turning you round at the door. The bar and garden are usually first-come. In summer and on wet weekends the popular dog-friendly pubs fill fast, so a booking saves a soggy wait. Policies also change with new ownership, so a quick call confirms both the table and the current dog rule.",
+  },
+  {
+    question: 'Which Cornish pubs are best after a beach walk with a dog?',
+    answer:
+      'The ones we\'ve placed near the year-round dog beaches — so you can walk off the sand and straight in. Several entries above link to the nearest beach under "nearby". Pair them with our <a href="/cornwall/beaches/">dog-friendly Cornwall beaches guide</a> to build a day around a beach and a pub lunch.',
+  },
+  {
+    question: 'Do dog-friendly Cornwall pubs have rooms?',
+    answer:
+      "Several do — the old coaching inns and harbour pubs often have dog-friendly rooms upstairs, which makes them a neat one-stop for a short break. We note which pubs above take dogs in their rooms. For a longer stay with more space and a garden, our <a href=\"/cornwall/cottages/\">dog-friendly cottages guide</a> is the better starting point.",
+  },
+];
+
+const pageUrl = '/cornwall/pubs/';
+const pageTitle = 'Dog-friendly pubs in Cornwall';
+// 150 chars — under the 155-char Google truncation threshold.
+const pageDescription =
+  'Dog-friendly Cornwall pubs — with where dogs are actually allowed (throughout, bar or garden), what\'s laid on, and the food. By Rachel Polden.';
+
+const heroImage = pubs[0]?.data.image ?? '/images/og-default.jpg';
+
+const jsonLd = [
+  article({
+    headline: pageTitle,
+    description: pageDescription,
+    image: new URL(heroImage, SITE_URL).toString(),
+    datePublished: '2026-06-17',
+    url: pageUrl,
+  }),
+  itemList(pubs.map((p) => ({ name: p.data.name, url: `${pageUrl}#${slugFor(p.id)}` }))),
+  faqPage(faqItems),
+  breadcrumbList(breadcrumbs),
+];
+---
+<BaseLayout title={pageTitle} description={pageDescription} image={heroImage} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-8">
+      <p class="eyebrow">Cornwall</p>
+      <h1 class="display mt-3">{pageTitle}</h1>
+      <div class="mt-6">
+        <AuthorByline />
+      </div>
+    </header>
+
+    <div class="prose-reading space-y-4 text-lg">
+      <p>
+        Cornwall is one of the easiest places in England to take a dog to the pub — harbour locals where a wet collie by the fire is the norm, moorland inns, and dining pubs that have worked out dogs and good food aren't mutually exclusive. The thing worth knowing before you go is <strong>where</strong> in the pub your dog is actually welcome, because "dog-friendly" can mean anything from the whole place to the garden bench only.
+      </p>
+      <p>
+        This guide states that for each pub — throughout, bar and garden, or garden only — along with what's laid on, the food, and whether there are dog-friendly rooms. It leads with the dogs-throughout pubs, and links each one to the nearest beach and cottages so you can build a day around it. Pub policies change with new owners, so treat them as current-best and confirm when you book a table.
+      </p>
+    </div>
+
+    {pubs.length > 0 && (
+      <nav aria-label="Pub list" class="mt-12 border-t border-edge pt-8">
+        <p class="eyebrow mb-4">Jump to a pub</p>
+        <ol class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm">
+          {pubs.map((p, i) => (
+            <li>
+              <a href={`#${slugFor(p.id)}`} class="text-text">
+                {i + 1}. {p.data.name}
+                <span class="text-muted"> — {p.data.location}</span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+    )}
+
+    <section class="mt-16 space-y-20">
+      {pubs.map((p, i) => {
+        const nearby = nearbyFor(p.data.nearby_cottages, p.data.nearby_beaches);
+        return (
+          <article id={slugFor(p.id)} class="scroll-mt-8 border-t border-edge pt-12">
+            <p class="eyebrow">{p.data.location}</p>
+            <h2 class="mt-2">{i + 1}. {p.data.name}</h2>
+
+            <div class="mt-6 aspect-[16/11] overflow-hidden bg-cream-soft border border-edge">
+              <img src={p.data.image} alt={p.data.image_alt ?? p.data.name} loading="lazy" class="h-full w-full object-cover" />
+            </div>
+
+            <div class="prose-reading mt-6">
+              <p>{p.data.description}</p>
+            </div>
+
+            <PubDogBox
+              dogAccess={p.data.dog_access}
+              dogPolicy={p.data.dog_policy}
+              dogExtras={p.data.dog_extras}
+              food={p.data.food}
+              priceIndicator={p.data.price_indicator}
+              rooms={p.data.rooms}
+            />
+
+            {(nearby.cottages.length > 0 || nearby.beaches.length > 0) && (
+              <p class="text-sm mt-4">
+                <span class="text-muted">Nearby: </span>
+                {[...nearby.beaches, ...nearby.cottages].map((n, j, arr) => (
+                  <>
+                    <a href={n.href} class="text-text">{n.name}</a>{j < arr.length - 1 ? ', ' : ''}
+                  </>
+                ))}
+              </p>
+            )}
+
+            {p.data.external_url && (
+              <p class="text-sm mt-2">
+                <a href={p.data.external_url} class="text-text" rel="nofollow noopener" target="_blank">
+                  Visit the pub's website →
+                </a>
+              </p>
+            )}
+          </article>
+        );
+      })}
+    </section>
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <h2>What makes a pub genuinely good with a dog</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          After enough soggy Sundays, three things separate a pub that tolerates dogs from one that's genuinely good with them.
+        </p>
+        <p>
+          <strong>Dogs where you actually sit.</strong> A pub that only allows dogs in the garden is no use in a Cornish downpour. The ones worth seeking out let dogs in by the fire and, ideally, where you eat. We flag the access for each — and "throughout" is the gold standard.
+        </p>
+        <p>
+          <strong>The small touches that show they mean it.</strong> A water bowl by the door, biscuits behind the bar, a blanket on request — these cost the pub almost nothing and tell you the welcome is real rather than grudging. A few Cornish pubs run a proper dog menu.
+        </p>
+        <p>
+          <strong>The right spot.</strong> A pub at the end of a coast-path walk or across from a year-round dog beach is worth more than a fractionally better one a drive away. The pubs here are placed for exactly that — walk, then lunch, without getting back in the car.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <h2>Frequently asked questions</h2>
+      <FAQ items={faqItems} emitSchema={false} />
+    </section>
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <AuthorByline variant="full" />
+    </section>
+  </article>
+</BaseLayout>

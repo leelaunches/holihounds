@@ -1,0 +1,166 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import RegionCard from '~/components/RegionCard.astro';
+import FAQ from '~/components/FAQ.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { article, breadcrumbList, faqPage, itemList } from '~/lib/schema';
+import { SITE_URL } from '~/lib/site';
+import { crumb } from '~/lib/nav';
+
+const cornwall = await getEntry('regions', 'cornwall');
+const lakeDistrict = await getEntry('regions', 'lake-district');
+
+const allPubs = await getCollection('pubs');
+const cornwallCount = allPubs.filter((p) => p.data.region === 'cornwall').length;
+const lakeCount = allPubs.filter((p) => p.data.region === 'lake-district').length;
+
+const slugFor = (id: string) => id.split('/').pop()!;
+const pubHref = (id: string) =>
+  `${id.startsWith('cornwall/') ? '/cornwall/pubs/' : '/lake-district/pubs/'}#${slugFor(id)}`;
+
+const featured = allPubs.filter((p) => p.data.featured);
+
+const accessLabel: Record<string, string> = {
+  throughout: 'Dogs throughout',
+  'bar-and-garden': 'Bar & garden',
+  'bar-only': 'Bar only',
+  'garden-only': 'Garden only',
+};
+const badgeClass: Record<string, string> = {
+  throughout: 'bg-forest text-cream',
+  'bar-and-garden': 'bg-forest text-cream',
+  'bar-only': 'bg-edge text-text',
+  'garden-only': 'bg-edge text-text',
+};
+
+const breadcrumbs = [crumb('Home', '/'), crumb('Pubs', '/pubs/')];
+
+const faqItems = [
+  {
+    question: 'What does "dog-friendly pub" actually mean?',
+    answer:
+      "Less than you'd hope, on its own — it can mean dogs throughout, dogs in the bar but not the restaurant, or dogs in the garden only. The difference decides your whole evening, especially in bad weather. That's why every pub in our guides is tagged with where dogs are actually allowed, rather than just a blanket label. Always worth a quick confirmation too, as policies change with new owners.",
+  },
+  {
+    question: 'Can I bring my dog into the restaurant area, not just the bar?',
+    answer:
+      "Sometimes — and it's the single most useful thing to check. Many pubs that welcome dogs keep them out of the formal dining room, so you eat in the bar instead, which is usually no hardship. The pubs we tag 'dogs throughout' let you eat with your dog anywhere. If a pub is bar-only or bar-and-garden, book a bar table and mention the dog so they don't seat you in a dog-free zone.",
+  },
+  {
+    question: 'Are dogs allowed in pub bedrooms for an overnight stay?',
+    answer:
+      'Often, at the coaching inns and walkers\' hotels — frequently for a small per-dog charge, sometimes with towels and bowls laid on. It varies pub to pub and a few welcome dogs in the bar but not the rooms, so we note which pubs take dogs overnight. An inn that\'s dog-friendly in both the bar and the rooms makes a tidy base; for more space, see our <a href="/cottages/">dog-friendly cottages guide</a>.',
+  },
+];
+
+const pageUrl = '/pubs/';
+const pageTitle = 'Dog-friendly pubs in the UK';
+// 146 chars — under the 155-char Google truncation threshold.
+const pageDescription =
+  'Dog-friendly UK pubs — with where dogs are actually allowed (throughout, bar or garden), what\'s laid on, and which take dogs overnight. By Rachel Polden.';
+
+const heroImage = featured[0]?.data.image ?? cornwall?.data.hero_image ?? '/images/og-default.jpg';
+
+const jsonLd = [
+  article({
+    headline: pageTitle,
+    description: pageDescription,
+    image: new URL(heroImage, SITE_URL).toString(),
+    datePublished: '2026-06-17',
+    url: pageUrl,
+  }),
+  faqPage(faqItems),
+  itemList(featured.map((p) => ({ name: p.data.name, url: pubHref(p.id) }))),
+  breadcrumbList(breadcrumbs),
+];
+---
+<BaseLayout title={pageTitle} description={pageDescription} image={heroImage} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-8">
+      <p class="eyebrow">Pubs</p>
+      <h1 class="display mt-3">{pageTitle}</h1>
+      <div class="mt-6">
+        <AuthorByline />
+      </div>
+    </header>
+
+    <div class="prose-reading space-y-4 text-lg">
+      <p>
+        A good dog-friendly pub is the making of a dog holiday — the warm end to a cold walk, the place the dog flops under the table while you get the round in. But "dog-friendly" hides a lot of variation: some pubs mean the whole place, some mean the bar but not where you eat, some mean the garden and nothing more. This guide states which, pub by pub, so you're not stood in the porch in the rain working it out.
+      </p>
+      <p>
+        Each regional guide leads with the pubs that take dogs throughout, notes what's laid on and whether there are dog-friendly rooms, and links each pub to the nearest walk, beach and cottages. Two regions so far, with more as their guides ship.
+      </p>
+    </div>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <p class="eyebrow">Where to look</p>
+      <h2 class="mt-2">Dog-friendly pubs by region</h2>
+      <p class="prose-reading mt-4">
+        Each regional guide lists verified dog-friendly pubs with where dogs are actually allowed, what's provided, the food, and which take dogs overnight.
+      </p>
+
+      <div class="mt-8 grid gap-6 sm:grid-cols-2 md:grid-cols-3">
+        {cornwall && <RegionCard region={cornwall} count={cornwallCount} href="/cornwall/pubs/" />}
+        {lakeDistrict && <RegionCard region={lakeDistrict} count={lakeCount} href="/lake-district/pubs/" />}
+      </div>
+    </section>
+
+    {featured.length > 0 && (
+      <section class="mt-16 border-t border-edge pt-12">
+        <p class="eyebrow">Editor's picks</p>
+        <h2 class="mt-2">Pubs that take dogs anywhere</h2>
+        <div class="mt-8 grid gap-6 sm:grid-cols-2 md:grid-cols-3">
+          {featured.map((p) => (
+            <a href={pubHref(p.id)} class="group block no-underline">
+              <div class="aspect-[16/11] overflow-hidden bg-cream-soft border border-edge">
+                <img src={p.data.image} alt={p.data.image_alt ?? p.data.name} loading="lazy" class="h-full w-full object-cover" />
+              </div>
+              <div class="pt-3">
+                <span class:list={['text-xs font-semibold uppercase tracking-wide px-2 py-0.5', badgeClass[p.data.dog_access]]}>
+                  {accessLabel[p.data.dog_access]}
+                </span>
+                <h3 class="mt-2 group-hover:text-clay-deep transition-colors">{p.data.name}</h3>
+                <p class="text-sm text-muted">{p.data.location}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>How to read a pub's dog policy</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          Four phrases come up again and again on pub websites, and they mean genuinely different things.
+        </p>
+        <p>
+          <strong>"Dogs welcome throughout."</strong> The best — dogs anywhere, including where you eat. The locals' pubs and walkers' inns most often do this.
+        </p>
+        <p>
+          <strong>"Dogs in the bar."</strong> Common and usually fine — you eat in the bar rather than the restaurant, where dogs are most relaxed anyway. Book a bar table and say you have a dog.
+        </p>
+        <p>
+          <strong>"Dogs in the garden."</strong> A fair-weather welcome only. Useless in a downpour, so check before you rely on it for a winter walk's end.
+        </p>
+        <p>
+          <strong>"Dog-friendly rooms."</strong> Means overnight stays, often for a small charge — but check it covers the bar too, as the two aren't always the same. And confirm directly, because dog policies change when a pub changes hands more often than the website gets updated.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Frequently asked questions</h2>
+      <FAQ items={faqItems} emitSchema={false} />
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <AuthorByline variant="full" />
+    </section>
+  </article>
+</BaseLayout>

@@ -1,0 +1,54 @@
+---
+/**
+ * Pub dog-policy box — the pubs equivalent of BeachAccessBox / DogPolicyBox.
+ * Headline is WHERE dogs are allowed (throughout vs bar vs garden), shown as a
+ * colour-coded badge (forest = dogs throughout or bar+garden, neutral = bar or
+ * garden only) plus the policy in plain words.
+ */
+interface Props {
+  dogAccess: 'throughout' | 'bar-and-garden' | 'bar-only' | 'garden-only';
+  dogPolicy: string;
+  dogExtras?: string | null;
+  food?: string | null;
+  priceIndicator?: '£' | '££' | '£££' | null;
+  rooms?: string | null;
+}
+
+const { dogAccess, dogPolicy, dogExtras, food, priceIndicator, rooms } = Astro.props;
+
+const accessLabel: Record<Props['dogAccess'], string> = {
+  throughout: 'Dogs throughout',
+  'bar-and-garden': 'Bar & garden',
+  'bar-only': 'Bar only',
+  'garden-only': 'Garden only',
+};
+
+const badgeClass: Record<Props['dogAccess'], string> = {
+  throughout: 'bg-forest text-cream',
+  'bar-and-garden': 'bg-forest text-cream',
+  'bar-only': 'bg-edge text-text',
+  'garden-only': 'bg-edge text-text',
+};
+
+const items: { label: string; value: string; wide?: boolean }[] = [];
+items.push({ label: 'Where dogs go', value: dogPolicy, wide: true });
+if (dogExtras) items.push({ label: 'For the dog', value: dogExtras, wide: true });
+if (food) items.push({ label: 'Food', value: priceIndicator ? `${food} · ${priceIndicator}` : food });
+if (rooms) items.push({ label: 'Rooms', value: rooms });
+---
+<aside class="border-2 border-forest bg-cream-soft p-6 my-6">
+  <div class="flex items-center justify-between gap-4 mb-4">
+    <p class="eyebrow text-forest">Dog policy</p>
+    <span class:list={['text-xs font-semibold uppercase tracking-wide px-3 py-1', badgeClass[dogAccess]]}>
+      {accessLabel[dogAccess]}
+    </span>
+  </div>
+  <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 text-sm">
+    {items.map((item) => (
+      <div class:list={[item.wide && 'sm:col-span-2']}>
+        <dt class="eyebrow text-muted mb-1">{item.label}</dt>
+        <dd>{item.value}</dd>
+      </div>
+    ))}
+  </dl>
+</aside>

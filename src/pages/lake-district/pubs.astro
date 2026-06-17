@@ -1,0 +1,207 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import PubDogBox from '~/components/PubDogBox.astro';
+import FAQ from '~/components/FAQ.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { article, itemList, faqPage, breadcrumbList } from '~/lib/schema';
+import { SITE_URL } from '~/lib/site';
+import { crumb } from '~/lib/nav';
+
+const all = await getCollection('pubs', (p) => p.data.region === 'lake-district');
+
+const ACCESS_RANK: Record<string, number> = { throughout: 0, 'bar-and-garden': 1, 'bar-only': 2, 'garden-only': 2 };
+const pubs = all.sort((a, b) => {
+  const r = (ACCESS_RANK[a.data.dog_access] ?? 9) - (ACCESS_RANK[b.data.dog_access] ?? 9);
+  if (r !== 0) return r;
+  if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
+  return a.data.name.localeCompare(b.data.name);
+});
+
+const slugFor = (id: string) => id.split('/').pop()!;
+const listings = await getCollection('listings');
+const beaches = await getCollection('beaches');
+const cottageHref = (id: string) =>
+  `${id.startsWith('cornwall/') ? '/cornwall/cottages/' : '/lake-district/cottages/'}#${slugFor(id)}`;
+const beachHref = (id: string) =>
+  `${id.startsWith('cornwall/') ? '/cornwall/beaches/' : '/lake-district/beaches/'}#${slugFor(id)}`;
+const nearbyFor = (cottageIds: string[], beachIds: string[]) => {
+  const c = cottageIds
+    .map((id) => {
+      const l = listings.find((x) => x.id === id);
+      return l ? { name: l.data.name, href: cottageHref(id) } : null;
+    })
+    .filter((x): x is { name: string; href: string } => Boolean(x));
+  const b = beachIds
+    .map((id) => {
+      const be = beaches.find((x) => x.id === id);
+      return be ? { name: be.data.name, href: beachHref(id) } : null;
+    })
+    .filter((x): x is { name: string; href: string } => Boolean(x));
+  return { cottages: c, beaches: b };
+};
+
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Lake District', '/lake-district/'),
+  crumb('Pubs', '/lake-district/pubs/'),
+];
+
+const faqItems = [
+  {
+    question: 'Are Lake District pubs dog-friendly?',
+    answer:
+      "More so than almost anywhere — the Lakes run on walkers, and walkers have dogs, so the classic fellside and lakeside inns tend to welcome dogs throughout, muddy paws and all. Many keep a water bowl and biscuits behind the bar as standard. The exceptions are some of the smarter dining rooms, which keep dogs to the bar. We state which for each pub above and lead with the dogs-throughout ones.",
+  },
+  {
+    question: 'Can dogs stay in Lake District pub rooms?',
+    answer:
+      "Often, yes — the Lakeland coaching inns and walkers' hotels are some of the most reliable dog-friendly rooms in the country, frequently with towels, bowls and a hose for muddy dogs. We note which pubs above take dogs in their rooms; an inn with a dog-friendly bar and dog-friendly rooms makes a tidy base for a walking weekend. For more space and a garden, see our <a href=\"/lake-district/cottages/\">dog-friendly cottages guide</a>.",
+  },
+  {
+    question: 'Which pubs are best after a fell walk with a dog?',
+    answer:
+      'The ones at the foot of the walks — the valley-head inns below the big fells and the lakeside pubs where you finish a shoreline circuit. Several entries above sit exactly there and link to the nearby lake or shore. Pair this with our <a href="/lake-district/beaches/">Lake District lake shores guide</a> to plan a swim-and-pint day.',
+  },
+  {
+    question: 'Should I book a table at a Lake District pub with a dog?',
+    answer:
+      "For the popular walkers' inns and any with a restaurant, yes, especially weekends and in the main season — and mention the dog so they seat you somewhere dogs are allowed. The bar is usually first-come, which is where dogs are most welcome anyway. Pub policies shift with new ownership, so a quick call confirms both the table and the current dog rule before you set off across the fells.",
+  },
+];
+
+const pageUrl = '/lake-district/pubs/';
+const pageTitle = 'Dog-friendly pubs in the Lake District';
+// 149 chars — under the 155-char Google truncation threshold.
+const pageDescription =
+  'Dog-friendly Lake District pubs — where dogs are actually allowed, what\'s laid on, the food, and which take dogs in their rooms. By Rachel Polden.';
+
+const heroImage = pubs[0]?.data.image ?? '/images/og-default.jpg';
+
+const jsonLd = [
+  article({
+    headline: pageTitle,
+    description: pageDescription,
+    image: new URL(heroImage, SITE_URL).toString(),
+    datePublished: '2026-06-17',
+    url: pageUrl,
+  }),
+  itemList(pubs.map((p) => ({ name: p.data.name, url: `${pageUrl}#${slugFor(p.id)}` }))),
+  faqPage(faqItems),
+  breadcrumbList(breadcrumbs),
+];
+---
+<BaseLayout title={pageTitle} description={pageDescription} image={heroImage} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-8">
+      <p class="eyebrow">Lake District</p>
+      <h1 class="display mt-3">{pageTitle}</h1>
+      <div class="mt-6">
+        <AuthorByline />
+      </div>
+    </header>
+
+    <div class="prose-reading space-y-4 text-lg">
+      <p>
+        The Lake District does the dog-friendly walkers' pub better than anywhere in England. The whole region runs on people coming off the fells wanting a fire, a pie and a pint, and most of them have a wet dog in tow — so the classic valley inns simply take dogs as a given, often with a bowl and a biscuit waiting. It's the rare place where you rarely have to ask.
+      </p>
+      <p>
+        This guide still does the useful thing of stating it plainly — throughout, bar and garden, or bar only — along with what's laid on, the food, and crucially which pubs take dogs in their rooms, because a dog-friendly inn at the foot of a fell is a near-perfect base. It leads with the dogs-throughout pubs and links each to the nearby lake or cottages. Policies change with new owners, so confirm when you book.
+      </p>
+    </div>
+
+    {pubs.length > 0 && (
+      <nav aria-label="Pub list" class="mt-12 border-t border-edge pt-8">
+        <p class="eyebrow mb-4">Jump to a pub</p>
+        <ol class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm">
+          {pubs.map((p, i) => (
+            <li>
+              <a href={`#${slugFor(p.id)}`} class="text-text">
+                {i + 1}. {p.data.name}
+                <span class="text-muted"> — {p.data.location}</span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+    )}
+
+    <section class="mt-16 space-y-20">
+      {pubs.map((p, i) => {
+        const nearby = nearbyFor(p.data.nearby_cottages, p.data.nearby_beaches);
+        return (
+          <article id={slugFor(p.id)} class="scroll-mt-8 border-t border-edge pt-12">
+            <p class="eyebrow">{p.data.location}</p>
+            <h2 class="mt-2">{i + 1}. {p.data.name}</h2>
+
+            <div class="mt-6 aspect-[16/11] overflow-hidden bg-cream-soft border border-edge">
+              <img src={p.data.image} alt={p.data.image_alt ?? p.data.name} loading="lazy" class="h-full w-full object-cover" />
+            </div>
+
+            <div class="prose-reading mt-6">
+              <p>{p.data.description}</p>
+            </div>
+
+            <PubDogBox
+              dogAccess={p.data.dog_access}
+              dogPolicy={p.data.dog_policy}
+              dogExtras={p.data.dog_extras}
+              food={p.data.food}
+              priceIndicator={p.data.price_indicator}
+              rooms={p.data.rooms}
+            />
+
+            {(nearby.cottages.length > 0 || nearby.beaches.length > 0) && (
+              <p class="text-sm mt-4">
+                <span class="text-muted">Nearby: </span>
+                {[...nearby.beaches, ...nearby.cottages].map((n, j, arr) => (
+                  <>
+                    <a href={n.href} class="text-text">{n.name}</a>{j < arr.length - 1 ? ', ' : ''}
+                  </>
+                ))}
+              </p>
+            )}
+
+            {p.data.external_url && (
+              <p class="text-sm mt-2">
+                <a href={p.data.external_url} class="text-text" rel="nofollow noopener" target="_blank">
+                  Visit the pub's website →
+                </a>
+              </p>
+            )}
+          </article>
+        );
+      })}
+    </section>
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <h2>What makes a Lakeland pub genuinely good with a dog</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          The bar's low here — most Lake District pubs are good with dogs — so the things that separate the great ones are about the day around them.
+        </p>
+        <p>
+          <strong>Dogs by the fire, not in the porch.</strong> After a wet fell day you want the dog in with you, drying off. The best Lakeland inns allow dogs throughout the bar and snug; a few extend it to the restaurant. We flag which.
+        </p>
+        <p>
+          <strong>A muddy-dog welcome, not just a dog welcome.</strong> The pubs that mean it have a hose or a towel by the door, a bowl down already, and don't flinch at a soaked spaniel. In the Lakes that's common — it's a feature, and we note the standouts.
+        </p>
+        <p>
+          <strong>At the foot of a walk, with rooms.</strong> The valley-head and lakeside inns let you finish a walk and step straight in; the ones with dog-friendly rooms let you not drive at all. That combination — walk, pint, bed, all dog-friendly — is the Lakeland speciality this list is built around.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <h2>Frequently asked questions</h2>
+      <FAQ items={faqItems} emitSchema={false} />
+    </section>
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <AuthorByline variant="full" />
+    </section>
+  </article>
+</BaseLayout>
