@@ -109,12 +109,63 @@ Representative traditional British pub/inn photos (exteriors and cosy interiors)
 
 The three pub pages (`/pubs/`, `/cornwall/pubs/`, `/lake-district/pubs/`) use their first pub thumbnail as the og:image rather than a separate hero.
 
+## Yorkshire Dales — region 3 (16:11 thumbnails)
+
+Representative Yorkshire Dales photos (grey-stone cottages, river/waterfall spots, traditional inns), each verified by eye to read as the Dales / a traditional British inn. Pub images here lean to cosy interiors because the free British-pub-exterior catalogue was largely exhausted by the Cornwall and Lake District sets.
+
+### Cottages
+| Cottage | Photographer | Source |
+|---|---|---|
+| The Cobbles (Grassington) | Greg Willson | [unsplash.com/photos/FkWpv8GlwL8](https://unsplash.com/photos/FkWpv8GlwL8) |
+| Low Mill Cottage (Grassington) | Ana Achim | [unsplash.com/photos/PF_wirYtTMk](https://unsplash.com/photos/PF_wirYtTMk) |
+| Sandywood (Burnsall) | Tom Photos | [unsplash.com/photos/yZMZCoEwhUo](https://unsplash.com/photos/yZMZCoEwhUo) |
+| Oak Cottage (Kettlewell) | Candy Goode | [unsplash.com/photos/uSWk45kjEHw](https://unsplash.com/photos/uSWk45kjEHw) |
+| Miss Burrow's House (Hawes) | Adam Ling | [unsplash.com/photos/y79WCyyVi7o](https://unsplash.com/photos/y79WCyyVi7o) |
+| The Hayloft (Gayle) | Greg Willson | [unsplash.com/photos/Lz5hHOqipZw](https://unsplash.com/photos/Lz5hHOqipZw) |
+| School House (Askrigg) | Darren Richardson | [unsplash.com/photos/xSyTBT8exZY](https://unsplash.com/photos/xSyTBT8exZY) |
+| Harker View Cottage (Reeth) | Greg Willson | [unsplash.com/photos/c7kAlQCIzHg](https://unsplash.com/photos/c7kAlQCIzHg) |
+| Swale View (Low Row) | Bethany Beck | [unsplash.com/photos/qnXQH9t9NMs](https://unsplash.com/photos/qnXQH9t9NMs) |
+| Woodside Cottage (Malham) | Marie M | [unsplash.com/photos/puI7cYmYtEQ](https://unsplash.com/photos/puI7cYmYtEQ) |
+| The Stables (Horton-in-Ribblesdale) | Greg Willson | [unsplash.com/photos/S4GDdrOukG8](https://unsplash.com/photos/S4GDdrOukG8) |
+| 3 Mountain View (Sedbergh) | Candes J | [unsplash.com/photos/5Ns22AXZ0D4](https://unsplash.com/photos/5Ns22AXZ0D4) |
+
+### River & swimming spots
+| Spot | Photographer | Source |
+|---|---|---|
+| Janet's Foss (Malham) | Steven Brown | [unsplash.com/photos/lP1qSfVUObU](https://unsplash.com/photos/lP1qSfVUObU) |
+| Loup Scar, Burnsall | Adam Ling | [unsplash.com/photos/mSGZYDkIXuk](https://unsplash.com/photos/mSGZYDkIXuk) |
+| Semer Water | Jonny Gios | [unsplash.com/photos/ao2E6IZtPFQ](https://unsplash.com/photos/ao2E6IZtPFQ) |
+| Aysgarth Falls | Nathan Langer | [unsplash.com/photos/rsu4bEN2aNA](https://unsplash.com/photos/rsu4bEN2aNA) |
+| Stainforth Force | Ian Cylkowski | [unsplash.com/photos/pZ5lI0ZYqTw](https://unsplash.com/photos/pZ5lI0ZYqTw) |
+| The Wharfe at Grassington | Jonathan MONCK-MASON | [unsplash.com/photos/1eX2kbMJMqo](https://unsplash.com/photos/1eX2kbMJMqo) |
+| Ingleton Waterfalls Trail | Jonny Gios | [unsplash.com/photos/a0utsqNio6A](https://unsplash.com/photos/a0utsqNio6A) |
+| Cotter Force (Hawes) | Annie Spratt | [unsplash.com/photos/MpZW02o-7E4](https://unsplash.com/photos/MpZW02o-7E4) |
+
+### Pubs
+| Pub | Photographer | Source |
+|---|---|---|
+| Tan Hill Inn (Swaledale) | Jonathan Borba | [unsplash.com/photos/Q42GVPmNvy4](https://unsplash.com/photos/Q42GVPmNvy4) |
+| The Lister Arms (Malham) | Steve O | [unsplash.com/photos/lXcWyGwiTYc](https://unsplash.com/photos/lXcWyGwiTYc) |
+| The Buck Inn (Buckden) | Lex Brogan | [unsplash.com/photos/oYcZf1OWnLg](https://unsplash.com/photos/oYcZf1OWnLg) |
+| The Craven Arms (Appletreewick) | Ambitious Studio / Rick Barrett | [unsplash.com/photos/bFBQZhwCfl4](https://unsplash.com/photos/bFBQZhwCfl4) |
+| The Red Lion (Burnsall) | Martina Jorden | [unsplash.com/photos/qCc7llSV2AU](https://unsplash.com/photos/qCc7llSV2AU) |
+| The Falcon Inn (Arncliffe) | Ted Balmer | [unsplash.com/photos/ALGhwUyy5hQ](https://unsplash.com/photos/ALGhwUyy5hQ) |
+| The Kings Arms (Reeth) | Eranjan | [unsplash.com/photos/ULysA-AxywY](https://unsplash.com/photos/ULysA-AxywY) |
+| The Farmers Arms (Muker) | Jonathan Borba | [unsplash.com/photos/Vpbp6pl6oGQ](https://unsplash.com/photos/Vpbp6pl6oGQ) |
+| The Golden Lion (Settle) | Candes J | [unsplash.com/photos/14YCEJxloLM](https://unsplash.com/photos/14YCEJxloLM) |
+| Aysgarth Falls Hotel (Aysgarth) | Jonathan Borba | [unsplash.com/photos/H7QPTj-8aF8](https://unsplash.com/photos/H7QPTj-8aF8) |
+
+The three Yorkshire Dales vertical pages use their first thumbnail as the og:image.
+
+**Concentrations to watch:** Greg Willson shot 5 Dales images (4 grey-stone Grassington cottage/wall details + the Malham Cove hero) — all distinct compositions but the cottages share a tone; first to vary if the cottages page reads samey. Jonathan Borba supplied 3 pub interiors (Tan Hill, Farmers Arms, Aysgarth Falls Hotel) — they're the same ornate Victorian bar from different angles, spaced across the list; swap one if noticeable.
+
 ## Page heroes (16:9)
 
 | Page | Photographer | Source |
 |---|---|---|
 | `/cornwall/` regional hero | Danilo D'Agostino | [unsplash.com/photos/Imv3xp-W14A](https://unsplash.com/photos/Imv3xp-W14A) |
 | `/lake-district/` regional hero | James Armes | [unsplash.com/photos/RPAQRgD5YMY](https://unsplash.com/photos/RPAQRgD5YMY) |
+| `/yorkshire-dales/` regional hero (Malham Cove) | Greg Willson | [unsplash.com/photos/A5PPSg2fhl8](https://unsplash.com/photos/A5PPSg2fhl8) |
 | `/cottages/` vertical hub hero | reuses Old Coastguard Lookout image (Greg Willson) | — |
 | `/dog-friendly-hot-tub-lodges/` money page hero | Sophie Grieve-Williams | [unsplash.com/photos/ozb0D8Foio4](https://unsplash.com/photos/ozb0D8Foio4) |
 | `/` home page hero (og:image) | Ben Elliott | [unsplash.com/photos/uVakwt4EHMU](https://unsplash.com/photos/uVakwt4EHMU) |

@@ -12,6 +12,7 @@ import { crumb, FOOTER_REGIONS } from '~/lib/nav';
 
 const cornwall = await getEntry('regions', 'cornwall');
 const lakeDistrict = await getEntry('regions', 'lake-district');
+const yorkshireDales = await getEntry('regions', 'yorkshire-dales');
 
 // All listings across regions — find-by-id below selects the featured mix.
 const allListings = await getCollection('listings');
@@ -123,7 +124,7 @@ const jsonLd = [
       <p class="eyebrow">Where to look</p>
       <h2 class="mt-2">Best regions for dog-friendly cottages</h2>
       <p class="prose-reading mt-4">
-        Cornwall and the Lake District lead the regional coverage. Snowdonia, Scotland, Yorkshire and Norfolk follow as those guides ship — each a listicle of verified properties with the dog policy specifics most sites leave out.
+        Cornwall, the Lake District and the Yorkshire Dales lead the regional coverage. Snowdonia, Scotland and Norfolk follow as those guides ship — each a listicle of verified properties with the dog policy specifics most sites leave out.
       </p>
 
       <div class="mt-8 grid gap-6 sm:grid-cols-2 md:grid-cols-3">
@@ -139,6 +140,13 @@ const jsonLd = [
             region={lakeDistrict}
             count={12}
             href="/lake-district/cottages/"
+          />
+        )}
+        {yorkshireDales && (
+          <RegionCard
+            region={yorkshireDales}
+            count={12}
+            href="/yorkshire-dales/cottages/"
           />
         )}
       </div>

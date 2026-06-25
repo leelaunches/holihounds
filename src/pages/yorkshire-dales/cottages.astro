@@ -1,0 +1,237 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import DogPolicyBox from '~/components/DogPolicyBox.astro';
+import AffiliateCTA from '~/components/AffiliateCTA.astro';
+import AffiliateDisclosure from '~/components/AffiliateDisclosure.astro';
+import FAQ from '~/components/FAQ.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { article, itemList, faqPage, breadcrumbList } from '~/lib/schema';
+import { SITE_URL } from '~/lib/site';
+import { crumb } from '~/lib/nav';
+
+const all = await getCollection('listings', (entry) => entry.data.region === 'yorkshire-dales');
+// Geographic flow: Wharfedale → Wensleydale → Swaledale → Malhamdale →
+// Ribblesdale → Sedbergh. Explicit order, like the other regional listicles.
+const order = [
+  'yorkshire-dales/the-cobbles',
+  'yorkshire-dales/low-mill-cottage',
+  'yorkshire-dales/sandywood',
+  'yorkshire-dales/oak-cottage',
+  'yorkshire-dales/miss-burrows-house',
+  'yorkshire-dales/the-hayloft',
+  'yorkshire-dales/school-house',
+  'yorkshire-dales/harker-view-cottage',
+  'yorkshire-dales/swale-view',
+  'yorkshire-dales/woodside-cottage',
+  'yorkshire-dales/the-stables',
+  'yorkshire-dales/3-mountain-view',
+];
+const cottages = order
+  .map((id) => all.find((c) => c.id === id))
+  .filter((c): c is NonNullable<typeof c> => Boolean(c));
+
+const slugFor = (id: string) => id.split('/').pop()!;
+
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Yorkshire Dales', '/yorkshire-dales/'),
+  crumb('Cottages', '/yorkshire-dales/cottages/'),
+];
+
+const faqItems = [
+  {
+    question: 'Are dog-friendly cottages expensive in the Yorkshire Dales?',
+    answer:
+      "Rates are generally a touch gentler than the Lake District or Cornwall, with the same pattern on dogs: a per-stay pet supplement (£20–£40 is typical) rather than a loaded rate. Sykes and cottages.com hide that supplement until you enter dates, so it reads 'shown at booking' on most listings here. A few Dales independents are more upfront — and the odd one (Swale View, Low Row) takes dogs free with no limit.",
+  },
+  {
+    question: 'Can I bring more than one dog?',
+    answer:
+      "Most Dales cottages cap at one or two dogs, and the cap is firm. Our entries above state the number for each (several are single-dog only). The standout for multi-dog households is Swale View at Low Row, which states no limit at all — 'bring as many as you like, even muddy ones'. If you travel with three or more, start there or with the larger farmhouses rather than the village cottages.",
+  },
+  {
+    question: 'Which Dales cottages have a genuinely enclosed garden?',
+    answer:
+      "Not all of them — and we say so plainly, because it's the thing dog owners most need and listings most often fudge. Among those above, Low Mill, Sandywood, Miss Burrow's, School House (small), Harker View, Swale View, Woodside and 3 Mountain View have enclosed outdoor space (with caveats noted — steps, a nearby brook, a fenced river). Oak Cottage is explicitly NOT enclosed, and The Hayloft and The Stables don't state it — so confirm those if a secure boundary matters.",
+  },
+  {
+    question: 'Where should I base myself for walking the Dales with a dog?',
+    answer:
+      "Match the dale to the walk. Grassington and Kettlewell (Wharfedale) put you on the Dales Way with riverside and fell routes from the door; Hawes (Wensleydale) is central with the Pennine Way through it; Reeth and Low Row (Swaledale) are the quiet, remote choice on the Coast to Coast; Horton (Ribblesdale) is the Three Peaks base; Malham is unbeatable for doorstep drama (the Cove, Gordale, Janet's Foss). All the cottages above are picked to walk from.",
+  },
+  {
+    question: 'Yorkshire Dales or Lake District for a dog holiday?',
+    answer:
+      'They sit side by side and pair beautifully for a two-centre trip. The Lakes give you bigger water and more dramatic fells (and real lake-shore swimming); the Dales are quieter, gentler underfoot, with arguably better price-to-quality and a denser network of low-level riverside walks. For the dog, the Dales edge it on crowds and on pubs. See our <a href="/lake-district/cottages/">dog-friendly Lake District cottages</a> to combine the two.',
+  },
+];
+
+const pageUrl = '/yorkshire-dales/cottages/';
+const pageTitle = '12 best dog-friendly cottages in the Yorkshire Dales';
+// 152 chars — under the 155-char Google truncation threshold.
+const pageDescription =
+  '12 verified dog-friendly Yorkshire Dales cottages — Sykes, cottages.com & independents — with the dog policy specifics most sites leave out. By Rachel Polden.';
+
+const heroImage = cottages[0]?.data.image ?? '/images/og-default.jpg';
+
+const jsonLd = [
+  article({
+    headline: pageTitle,
+    description: pageDescription,
+    image: new URL(heroImage, SITE_URL).toString(),
+    datePublished: '2026-06-18',
+    url: pageUrl,
+  }),
+  itemList(cottages.map((c) => ({ name: c.data.name, url: `${pageUrl}#${slugFor(c.id)}` }))),
+  faqPage(faqItems),
+  breadcrumbList(breadcrumbs),
+];
+---
+<BaseLayout title={pageTitle} description={pageDescription} image={heroImage} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-8">
+      <p class="eyebrow">Yorkshire Dales</p>
+      <h1 class="display mt-3">{pageTitle}</h1>
+      <div class="mt-6">
+        <AuthorByline />
+      </div>
+    </header>
+
+    <div class="border-t border-b border-edge py-3 my-6">
+      <AffiliateDisclosure />
+    </div>
+
+    <div class="prose-reading space-y-4 text-lg">
+      <p>
+        The Yorkshire Dales is one of the great walking regions of England, and the self-catering stock has long since adapted to the fact that walkers come with dogs. Stone cottages in the villages, boot rooms and drying space, enclosed gardens to come back to — they're the norm here, in dale after dale, and the prices tend to undercut the Lake District next door.
+      </p>
+      <p>
+        The twelve below span Wharfedale, Wensleydale, Swaledale, Malhamdale, Ribblesdale and the Howgills edge — booked through Sykes, cottages.com and a couple of Yorkshire independents, and verified against the listing small print rather than the marketing copy: max dogs, pet charge, garden status, what's actually provided. Where a listing is vague — or honest about a garden that isn't enclosed — we say so.
+      </p>
+    </div>
+
+    <nav aria-label="Cottage list" class="mt-12 border-t border-edge pt-8">
+      <p class="eyebrow mb-4">Jump to a cottage</p>
+      <ol class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm">
+        {cottages.map((c, i) => (
+          <li>
+            <a href={`#${slugFor(c.id)}`} class="text-text">
+              {i + 1}. {c.data.name}
+              <span class="text-muted"> — {c.data.town}</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+
+    <section class="mt-16 space-y-20">
+      {cottages.map((c, i) => (
+        <article id={slugFor(c.id)} class="scroll-mt-8 border-t border-edge pt-12">
+          <p class="eyebrow">{c.data.town}</p>
+          <h2 class="mt-2">{i + 1}. {c.data.name}</h2>
+
+          <div class="mt-6 aspect-[16/11] overflow-hidden bg-cream-soft border border-edge">
+            <img src={c.data.image} alt={c.data.image_alt ?? c.data.name} loading="lazy" class="h-full w-full object-cover" />
+          </div>
+
+          <div class="prose-reading mt-6">
+            <p>{c.data.description}</p>
+          </div>
+
+          <DogPolicyBox
+            maxDogs={c.data.max_dogs}
+            petCharge={c.data.pet_charge}
+            enclosedGarden={c.data.enclosed_garden}
+            gardenNote={c.data.garden_note}
+            dogsAllowedIn={c.data.dogs_allowed_in}
+            dogExtras={c.data.dog_extras}
+          />
+
+          <p class="text-sm text-muted">
+            Sleeps {c.data.sleeps}
+            {c.data.bedrooms && ` · ${c.data.bedrooms} bed${c.data.bedrooms === 1 ? '' : 's'}`}
+            {c.data.price_indicator && ` · ${c.data.price_indicator}`}
+          </p>
+
+          <div class="mt-6">
+            <AffiliateCTA
+              provider={c.data.affiliate_provider ?? 'sykes'}
+              identifier={slugFor(c.id)}
+              fallbackUrl={c.data.external_url ?? undefined}
+            />
+          </div>
+        </article>
+      ))}
+    </section>
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <h2>What to look for in a dog-friendly Dales cottage</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          The Dales have their own checklist, close to the Lakes' but with a couple of local quirks worth knowing.
+        </p>
+        <p>
+          <strong>An enclosed garden — and read the caveat.</strong> "Garden" means little on its own here: several Dales cottages back onto a beck or an unfenced lane, and one of ours (Oak Cottage, Kettlewell) is refreshingly upfront that it isn't enclosed at all. Look for explicit "enclosed" or "dog-secure" wording, and mind the small print — a fenced river nearby, steps up to a courtyard.
+        </p>
+        <p>
+          <strong>Somewhere to clean a wet dog.</strong> Dales weather is Dales weather. A boot room, a utility, an outside hose — Sandywood, The Hayloft and Woodside all have something for the muddy return, and it matters more than a hamper of treats.
+        </p>
+        <p>
+          <strong>Walking from the door.</strong> The Dales' right-of-way network is among the densest in the country, and the best villages put you straight onto it — the Dales Way, the Pennine Way, the Coast to Coast, or just a riverside meadow path. Every cottage here is chosen to walk from rather than drive from.
+        </p>
+        <p>
+          If a listing won't state the max dogs, the supplement or whether the garden's enclosed, that's a signal — not that the cottage is bad, but that you should ask before you book.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <h2>Best Dales areas for dogs</h2>
+      <div class="prose-reading mt-6 space-y-8">
+        <div>
+          <h3>Wharfedale</h3>
+          <p class="mt-2">
+            The most visited and most accessible dale — Grassington, Kettlewell and Burnsall strung along the River Wharfe, with riverside meadow walks, the Dales Way, and the limestone drama of Kilnsey and Malham within reach. Four of the cottages above sit here. The river itself gives some of the best dog paddling in the Dales (with care — see our wild-swimming guide).
+          </p>
+        </div>
+        <div>
+          <h3>Wensleydale</h3>
+          <p class="mt-2">
+            The broad, green, central dale — Hawes at its head with the Pennine Way through it, Askrigg and Aysgarth strung east, and waterfalls everywhere. Miss Burrow's House, The Hayloft and School House cover it. The most "all-round" dale: market-town amenities, gentle walking, and Aysgarth and Cotter Force for the dog to paddle.
+          </p>
+        </div>
+        <div>
+          <h3>Swaledale</h3>
+          <p class="mt-2">
+            The quiet, remote, achingly pretty one — drystone walls and field barns, Reeth and Muker, the Coast to Coast and the Swale Trail. Harker View and the dog-built Swale View sit here. If you want fewer people and more sky, this is the dale, with the Tan Hill Inn (Britain's highest pub) up on the moor above.
+          </p>
+        </div>
+        <div>
+          <h3>Malhamdale &amp; Ribblesdale</h3>
+          <p class="mt-2">
+            The south-western dales, and the showpiece walking — Malham Cove, Gordale Scar and Janet's Foss from Malham (Woodside Cottage on the doorstep), and the Three Peaks of Pen-y-ghent, Whernside and Ingleborough from Horton-in-Ribblesdale (The Stables as the base). Big days out and dramatic limestone country.
+          </p>
+        </div>
+        <div>
+          <h3>The Howgills &amp; Sedbergh</h3>
+          <p class="mt-2">
+            The western edge, where the Dales meet the Lake District — Sedbergh, England's book town, under the smooth, grassy Howgill Fells, which walk quite unlike the rest of the Dales. 3 Mountain View sits here, and the Lakes are close enough to combine the two regions in one trip.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <h2>Frequently asked questions</h2>
+      <FAQ items={faqItems} emitSchema={false} />
+    </section>
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <AuthorByline variant="full" />
+    </section>
+  </article>
+</BaseLayout>

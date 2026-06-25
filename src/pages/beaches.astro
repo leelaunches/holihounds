@@ -11,14 +11,22 @@ import { crumb } from '~/lib/nav';
 
 const cornwall = await getEntry('regions', 'cornwall');
 const lakeDistrict = await getEntry('regions', 'lake-district');
+const yorkshireDales = await getEntry('regions', 'yorkshire-dales');
 
 const allBeaches = await getCollection('beaches');
 const cornwallCount = allBeaches.filter((b) => b.data.region === 'cornwall').length;
 const lakeCount = allBeaches.filter((b) => b.data.region === 'lake-district').length;
+const dalesCount = allBeaches.filter((b) => b.data.region === 'yorkshire-dales').length;
 
 const slugFor = (id: string) => id.split('/').pop()!;
-const beachHref = (id: string) =>
-  `${id.startsWith('cornwall/') ? '/cornwall/beaches/' : '/lake-district/beaches/'}#${slugFor(id)}`;
+const beachHref = (id: string) => {
+  const base = id.startsWith('cornwall/')
+    ? '/cornwall/beaches/'
+    : id.startsWith('lake-district/')
+      ? '/lake-district/beaches/'
+      : '/yorkshire-dales/beaches/';
+  return `${base}#${slugFor(id)}`;
+};
 
 // Featured beaches across both regions for the teaser grid.
 const featured = allBeaches.filter((b) => b.data.featured);
@@ -109,7 +117,7 @@ const jsonLd = [
         "Dog-friendly beach" is one of the most misleading phrases in UK travel. Most of the famous ones ban dogs across the entire summer — the exact window set beach-by-beach by the council, reviewed every year, and often spelled out nowhere but the sign at the top of the steps. Turn up on the wrong day and you're walking back to the car. This guide does the boring, essential thing: it states the access for each beach, and leads with the ones you can use all year.
       </p>
       <p>
-        Two regions so far, and they're a study in contrast. Cornwall has England's best beach coast for dogs but the most restrictions to navigate; the Lake District has no sea at all, lake shores instead — and no seasonal bans, just the water itself to respect. More regions follow as their guides ship.
+        Three regions so far, and they're a study in contrast. Cornwall has England's best beach coast for dogs but the most restrictions to navigate; the Lake District and Yorkshire Dales have no sea at all — lake shores and river pools instead, with no seasonal bans, just the water itself to respect. More regions follow as their guides ship.
       </p>
     </div>
 
@@ -126,6 +134,9 @@ const jsonLd = [
         )}
         {lakeDistrict && (
           <RegionCard region={lakeDistrict} count={lakeCount} href="/lake-district/beaches/" />
+        )}
+        {yorkshireDales && (
+          <RegionCard region={yorkshireDales} count={dalesCount} href="/yorkshire-dales/beaches/" />
         )}
       </div>
     </section>

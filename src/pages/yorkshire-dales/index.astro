@@ -1,0 +1,174 @@
+---
+import { getEntry, getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import ListingCard from '~/components/ListingCard.astro';
+import Callout from '~/components/Callout.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { article, breadcrumbList, place } from '~/lib/schema';
+import { SITE_URL } from '~/lib/site';
+import { crumb } from '~/lib/nav';
+
+const dales = await getEntry('regions', 'yorkshire-dales');
+if (!dales) throw new Error('Yorkshire Dales region entry missing — check src/content/regions/yorkshire-dales.md');
+
+const allListings = await getCollection('listings', (e) => e.data.region === 'yorkshire-dales');
+const featuredOrder = [
+  'yorkshire-dales/miss-burrows-house',
+  'yorkshire-dales/swale-view',
+  'yorkshire-dales/low-mill-cottage',
+];
+const featured = featuredOrder
+  .map((id) => allListings.find((l) => l.id === id))
+  .filter((c): c is NonNullable<typeof c> => Boolean(c));
+
+const cottageCount = 12;
+
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Yorkshire Dales', '/yorkshire-dales/'),
+];
+
+const pageUrl = '/yorkshire-dales/';
+const pageTitle = dales.data.meta_title;
+const pageDescription = dales.data.meta_description;
+
+const jsonLd = [
+  article({
+    headline: 'Dog-friendly Yorkshire Dales: complete guide',
+    description: pageDescription,
+    image: new URL(dales.data.hero_image, SITE_URL).toString(),
+    datePublished: '2026-06-18',
+    url: pageUrl,
+  }),
+  place({
+    name: dales.data.name,
+    description: dales.data.description,
+    image: new URL(dales.data.hero_image, SITE_URL).toString(),
+  }),
+  breadcrumbList(breadcrumbs),
+];
+---
+<BaseLayout title={pageTitle} description={pageDescription} image={dales.data.hero_image} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-8">
+      <p class="eyebrow">Region</p>
+      <h1 class="display mt-3">Dog-friendly Yorkshire Dales: complete guide</h1>
+      <div class="mt-6">
+        <AuthorByline />
+      </div>
+    </header>
+
+    <div class="aspect-[16/9] overflow-hidden bg-cream-soft border border-edge mb-10">
+      <img src={dales.data.hero_image} alt="Limestone and drystone walls in the Yorkshire Dales" class="h-full w-full object-cover" loading="eager" />
+    </div>
+
+    <div class="prose-reading space-y-4 text-lg">
+      <p>
+        The Yorkshire Dales is walking country before it is anything else — limestone pavements and drystone walls, river valleys and high heather moor, threaded by one of the densest footpath networks in England. It sits right alongside the Lake District, and for a dog it's arguably the easier of the two: gentler underfoot, quieter, with the same depth of welcome in the cottages and an even stronger hand of walkers' pubs.
+      </p>
+      <p>
+        This guide leads with the cottages — twelve verified properties across Wharfedale, Wensleydale, Swaledale, Malhamdale, Ribblesdale and the Howgills, researched against the listing small print. River swimming spots and dog-friendly pubs follow. The Dales reward a particular kind of trip — walk from the door, paddle the dog in a river pool, end at a fire in a stone-flagged bar — and the whole guide is built around that.
+      </p>
+    </div>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <p class="eyebrow">Where to stay</p>
+      <h2 class="mt-2">Cottages</h2>
+      <p class="prose-reading mt-4">
+        Twelve verified dog-friendly cottages, spread across all the main dales — stone villages, riverside, fellside and farmhouse. Each entry has the dog policy specifics — max dogs, pet supplement, garden status, what's actually provided — and editorial caveats baked in, including which gardens genuinely are (and aren't) enclosed.
+      </p>
+
+      <div class="mt-8 grid gap-6 md:grid-cols-3">
+        {featured.map((c) => (
+          <ListingCard listing={c} href={`/yorkshire-dales/cottages/#${c.id.split('/').pop()}`} />
+        ))}
+      </div>
+
+      <p class="mt-8">
+        <a href="/yorkshire-dales/cottages/" class="text-text">
+          See all {cottageCount} dog-friendly cottages in the Yorkshire Dales →
+        </a>
+      </p>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <p class="eyebrow">On the water</p>
+      <h2 class="mt-2">River swimming spots</h2>
+      <p class="prose-reading mt-4">
+        No coast, but river beaches, waterfall pools and a natural lake to swim a dog — and, unlike the seaside, no seasonal dog bans. Our guide covers the best spots with the real small print: water safety, flash floods, and the one stretch of river (the Strid) you must never let a dog near.
+      </p>
+      <p class="mt-8">
+        <a href="/yorkshire-dales/beaches/" class="text-text">
+          See dog-friendly swimming spots in the Yorkshire Dales →
+        </a>
+      </p>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <p class="eyebrow">After the walk</p>
+      <h2 class="mt-2">Pubs</h2>
+      <p class="prose-reading mt-4">
+        From Britain's highest pub on Tan Hill to gas-lit village locals and smart gastro-inns by the river, the Dales do the dog-friendly walkers' pub as well as anywhere. Our guide leads with the pubs that take dogs throughout and notes which take them overnight.
+      </p>
+      <p class="mt-8">
+        <a href="/yorkshire-dales/pubs/" class="text-text">
+          See dog-friendly pubs in the Yorkshire Dales →
+        </a>
+      </p>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <p class="eyebrow">Editor's picks</p>
+      <h2 class="mt-2">Best for…</h2>
+      <div class="mt-8 grid gap-6 md:grid-cols-3">
+        <Callout eyebrow="Best for" title="A dog-led trip">
+          <p>
+            Swale View at Low Row is built around the dog — no limit on numbers, no pet charge, a genuinely dog-secure garden over the Swale, and the Swale Trail from the door. The rare cottage that puts the dog first.
+          </p>
+          <p class="mt-3"><a href="/yorkshire-dales/cottages/#swale-view" class="text-text">See Swale View →</a></p>
+        </Callout>
+        <Callout eyebrow="Best for" title="The post-walk pint">
+          <p>
+            The Tan Hill Inn — Britain's highest pub, alone on the moor above Swaledale — takes dogs throughout, fire and all, and runs a proper dog menu. The walkers' pub by which others are judged.
+          </p>
+          <p class="mt-3"><a href="/yorkshire-dales/pubs/#tan-hill-inn" class="text-text">See Tan Hill Inn →</a></p>
+        </Callout>
+        <Callout eyebrow="Best for" title="A gentle dog swim">
+          <p>
+            Semer Water, the largest of the Dales' two natural lakes, is shallow and current-free — the safest paddle on the list for a nervous or older dog, with a shore to run on. Keep them on a lead (it's a wildlife reserve).
+          </p>
+          <p class="mt-3"><a href="/yorkshire-dales/beaches/#semer-water" class="text-text">See Semer Water →</a></p>
+        </Callout>
+      </div>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Travelling to the Yorkshire Dales with a dog</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          The Dales are an easy reach from both the M6 (west side — for Sedbergh, Ribblesdale and the western dales) and the A1 (east — for Wensleydale and Swaledale), with Skipton the usual southern gateway into Wharfedale. From the Midlands count two and a half to three hours, from the south four to five. Tebay and Killington Lake services on the M6 are the best dog stops on the western approach — Tebay especially, with its proper grass and farm-shop food.
+        </p>
+        <p>
+          Once you're in, the thing to grasp is that the dales are largely dead-end valleys separated by high passes — so pick your dale and base yourself in it rather than planning to hop between them daily. The roads narrow fast to single-track between drystone walls, with sheep often on the carriageway on the open moor; take the passes (Buttertubs, Fleet Moss) gently with a dog aboard.
+        </p>
+        <p>
+          Two practical notes. Sheep are everywhere and lambing runs roughly March to May, so a lead near livestock isn't optional — it's the law on access land in spring, and farmers here take it seriously. And Dales weather turns the rivers fast: a microfibre towel, a boot liner and an eye on the forecast save a lot of grief.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Adjacent regions</h2>
+      <p class="prose-reading mt-4">
+        The Yorkshire Dales pairs naturally with the <a href="/lake-district/" class="text-text">Lake District</a> immediately to the west — similar stone-and-slate cottage stock, the same dense footpath network, and the two regions almost touch at the Howgills, so a two-centre trip is easy. The <strong>North York Moors</strong> and the <strong>Yorkshire coast</strong> lie to the east for a contrast of heather moor and (seasonally dog-restricted) sands; both are in the queue for guide treatment.
+      </p>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <AuthorByline variant="full" />
+    </section>
+  </article>
+</BaseLayout>

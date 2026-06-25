@@ -28,6 +28,7 @@ export const VERTICALS: NavItem[] = [
 export const REGIONS: NavItem[] = [
   { slug: 'cornwall', label: 'Cornwall', href: '/cornwall/' },
   { slug: 'lake-district', label: 'Lake District', href: '/lake-district/' },
+  { slug: 'yorkshire-dales', label: 'Yorkshire Dales', href: '/yorkshire-dales/' },
 ];
 
 /**
@@ -50,6 +51,7 @@ export const REGIONS: NavItem[] = [
  *  - Region 2 ✓ /lake-district/, /lake-district/cottages/
  *  - Beaches ✓ /beaches/, /cornwall/beaches/, /lake-district/beaches/
  *  - Pubs ✓ /pubs/, /cornwall/pubs/, /lake-district/pubs/
+ *  - Region 3 ✓ /yorkshire-dales/ + /cottages/, /beaches/, /pubs/
  */
 export const LIVE_ROUTES: ReadonlySet<string> = new Set([
   '/',
@@ -61,6 +63,10 @@ export const LIVE_ROUTES: ReadonlySet<string> = new Set([
   '/lake-district/cottages/',
   '/lake-district/beaches/',
   '/lake-district/pubs/',
+  '/yorkshire-dales/',
+  '/yorkshire-dales/cottages/',
+  '/yorkshire-dales/beaches/',
+  '/yorkshire-dales/pubs/',
   '/cottages/',
   '/beaches/',
   '/pubs/',

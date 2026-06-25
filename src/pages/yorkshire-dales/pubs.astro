@@ -1,0 +1,196 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import PubDogBox from '~/components/PubDogBox.astro';
+import FAQ from '~/components/FAQ.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { article, itemList, faqPage, breadcrumbList } from '~/lib/schema';
+import { SITE_URL } from '~/lib/site';
+import { crumb } from '~/lib/nav';
+
+const all = await getCollection('pubs', (p) => p.data.region === 'yorkshire-dales');
+const ACCESS_RANK: Record<string, number> = { throughout: 0, 'bar-and-garden': 1, 'bar-only': 2, 'garden-only': 2 };
+const pubs = all.sort((a, b) => {
+  const r = (ACCESS_RANK[a.data.dog_access] ?? 9) - (ACCESS_RANK[b.data.dog_access] ?? 9);
+  if (r !== 0) return r;
+  if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
+  return a.data.name.localeCompare(b.data.name);
+});
+
+const slugFor = (id: string) => id.split('/').pop()!;
+const listings = await getCollection('listings');
+const beaches = await getCollection('beaches');
+const cottageHref = (id: string) => `/yorkshire-dales/cottages/#${slugFor(id)}`;
+const beachHref = (id: string) => `/yorkshire-dales/beaches/#${slugFor(id)}`;
+const nearbyFor = (cottageIds: string[], beachIds: string[]) => {
+  const c = cottageIds
+    .map((id) => {
+      const l = listings.find((x) => x.id === id);
+      return l ? { name: l.data.name, href: cottageHref(id) } : null;
+    })
+    .filter((x): x is { name: string; href: string } => Boolean(x));
+  const b = beachIds
+    .map((id) => {
+      const be = beaches.find((x) => x.id === id);
+      return be ? { name: be.data.name, href: beachHref(id) } : null;
+    })
+    .filter((x): x is { name: string; href: string } => Boolean(x));
+  return { cottages: c, beaches: b };
+};
+
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Yorkshire Dales', '/yorkshire-dales/'),
+  crumb('Pubs', '/yorkshire-dales/pubs/'),
+];
+
+const faqItems = [
+  {
+    question: 'Are Yorkshire Dales pubs dog-friendly?',
+    answer:
+      "Few places are more so — the Dales run on walkers, and the classic dale-bottom and fellside inns take dogs as a given, muddy boots and all, often with a bowl and biscuits ready. Tan Hill Inn (Britain's highest pub) even runs a dog menu. The exceptions are some of the smarter dining rooms, which keep dogs to the bar — the Lister Arms at Malham, for one. We state the access for each pub and lead with the dogs-throughout ones.",
+  },
+  {
+    question: 'Can dogs stay in Dales pub rooms?',
+    answer:
+      "Very often — the Dales coaching inns are some of the most reliable dog-friendly rooms in the country, frequently with beds and bowls laid on (Tan Hill and the Lister Arms among them, the latter taking up to three dogs in every room). We note which pubs above take dogs overnight; an inn that's dog-friendly in both bar and rooms makes a tidy walking-weekend base. For more space, see our <a href=\"/yorkshire-dales/cottages/\">dog-friendly Dales cottages</a>.",
+  },
+  {
+    question: 'Which pubs are best after a river or fell walk with a dog?',
+    answer:
+      'The ones at the foot of the walks — the riverside inns and the village locals where you finish a dale walk and step straight in. Several entries above sit exactly there and link to the nearby swim spot and cottages. Pair this with our <a href="/yorkshire-dales/beaches/">Dales swimming spots guide</a> for a paddle-and-pint day on the Wharfe or at Malham.',
+  },
+  {
+    question: 'Should I book a table at a Dales pub with a dog?',
+    answer:
+      "For the popular walkers' inns and any with a restaurant, yes — especially weekends and in summer — and mention the dog so they seat you somewhere dogs are allowed. The bar is usually first-come and the easiest spot with a wet one. Dales pub ownership and policies change fairly often, so a quick call confirms both the table and the current dog rule before you set off across the dale.",
+  },
+];
+
+const pageUrl = '/yorkshire-dales/pubs/';
+const pageTitle = 'Dog-friendly pubs in the Yorkshire Dales';
+// 150 chars — under the 155-char Google truncation threshold.
+const pageDescription =
+  'Dog-friendly Yorkshire Dales pubs — where dogs are actually allowed, what\'s laid on, the food, and which take dogs in their rooms. By Rachel Polden.';
+
+const heroImage = pubs[0]?.data.image ?? '/images/og-default.jpg';
+
+const jsonLd = [
+  article({
+    headline: pageTitle,
+    description: pageDescription,
+    image: new URL(heroImage, SITE_URL).toString(),
+    datePublished: '2026-06-18',
+    url: pageUrl,
+  }),
+  itemList(pubs.map((p) => ({ name: p.data.name, url: `${pageUrl}#${slugFor(p.id)}` }))),
+  faqPage(faqItems),
+  breadcrumbList(breadcrumbs),
+];
+---
+<BaseLayout title={pageTitle} description={pageDescription} image={heroImage} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-8">
+      <p class="eyebrow">Yorkshire Dales</p>
+      <h1 class="display mt-3">{pageTitle}</h1>
+      <div class="mt-6">
+        <AuthorByline />
+      </div>
+    </header>
+
+    <div class="prose-reading space-y-4 text-lg">
+      <p>
+        The Yorkshire Dales does the dog-friendly walkers' inn as well as anywhere in England — and it has the range, from Britain's highest pub alone on the moor to gas-lit village locals and smart gastro-inns by the river. The whole region is built around people coming off the dales and fells wanting a fire and a pint, usually with a dog in tow, so the welcome is rarely in doubt.
+      </p>
+      <p>
+        This guide still does the useful thing of stating it plainly — throughout, bar and garden, or bar only — with the food, what's laid on, and crucially which pubs take dogs in their rooms, because a dog-friendly inn at the foot of a dale is a near-perfect base. It leads with the dogs-throughout pubs and links each to the nearby swim spot and cottages. Dales pub policies change with new owners, so confirm when you book.
+      </p>
+    </div>
+
+    {pubs.length > 0 && (
+      <nav aria-label="Pub list" class="mt-12 border-t border-edge pt-8">
+        <p class="eyebrow mb-4">Jump to a pub</p>
+        <ol class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm">
+          {pubs.map((p, i) => (
+            <li>
+              <a href={`#${slugFor(p.id)}`} class="text-text">
+                {i + 1}. {p.data.name}
+                <span class="text-muted"> — {p.data.location}</span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+    )}
+
+    <section class="mt-16 space-y-20">
+      {pubs.map((p, i) => {
+        const nearby = nearbyFor(p.data.nearby_cottages, p.data.nearby_beaches);
+        return (
+          <article id={slugFor(p.id)} class="scroll-mt-8 border-t border-edge pt-12">
+            <p class="eyebrow">{p.data.location}</p>
+            <h2 class="mt-2">{i + 1}. {p.data.name}</h2>
+
+            <div class="mt-6 aspect-[16/11] overflow-hidden bg-cream-soft border border-edge">
+              <img src={p.data.image} alt={p.data.image_alt ?? p.data.name} loading="lazy" class="h-full w-full object-cover" />
+            </div>
+
+            <div class="prose-reading mt-6">
+              <p>{p.data.description}</p>
+            </div>
+
+            <PubDogBox
+              dogAccess={p.data.dog_access}
+              dogPolicy={p.data.dog_policy}
+              dogExtras={p.data.dog_extras}
+              food={p.data.food}
+              priceIndicator={p.data.price_indicator}
+              rooms={p.data.rooms}
+            />
+
+            {(nearby.cottages.length > 0 || nearby.beaches.length > 0) && (
+              <p class="text-sm mt-4">
+                <span class="text-muted">Nearby: </span>
+                {[...nearby.beaches, ...nearby.cottages].map((n, j, arr) => (
+                  <>
+                    <a href={n.href} class="text-text">{n.name}</a>{j < arr.length - 1 ? ', ' : ''}
+                  </>
+                ))}
+              </p>
+            )}
+          </article>
+        );
+      })}
+    </section>
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <h2>What makes a Dales pub genuinely good with a dog</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          The bar's low here — most Dales pubs are good with dogs — so the things that separate the great ones are about the day around them.
+        </p>
+        <p>
+          <strong>Dogs by the fire, not the porch.</strong> After a wet day on the tops you want the dog in with you, drying off. The best Dales inns allow dogs throughout the bar and snug; a few extend it to the restaurant (book a dog table). We flag which.
+        </p>
+        <p>
+          <strong>A muddy-dog welcome, not just a dog welcome.</strong> The pubs that mean it have a bowl down already, biscuits or ham scraps behind the bar, and don't flinch at a soaked spaniel. In the Dales that's the norm — Tan Hill's dog menu and the Lister Arms' dog-wash are the standouts.
+        </p>
+        <p>
+          <strong>At the foot of a walk, with rooms.</strong> The dale-bottom and fellside inns let you finish a walk and step straight in; the ones with dog-friendly rooms let you not drive at all. Walk, pint, bed, all dog-friendly — that's the Dales speciality this list is built around.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <h2>Frequently asked questions</h2>
+      <FAQ items={faqItems} emitSchema={false} />
+    </section>
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <AuthorByline variant="full" />
+    </section>
+  </article>
+</BaseLayout>

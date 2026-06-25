@@ -11,14 +11,22 @@ import { crumb } from '~/lib/nav';
 
 const cornwall = await getEntry('regions', 'cornwall');
 const lakeDistrict = await getEntry('regions', 'lake-district');
+const yorkshireDales = await getEntry('regions', 'yorkshire-dales');
 
 const allPubs = await getCollection('pubs');
 const cornwallCount = allPubs.filter((p) => p.data.region === 'cornwall').length;
 const lakeCount = allPubs.filter((p) => p.data.region === 'lake-district').length;
+const dalesCount = allPubs.filter((p) => p.data.region === 'yorkshire-dales').length;
 
 const slugFor = (id: string) => id.split('/').pop()!;
-const pubHref = (id: string) =>
-  `${id.startsWith('cornwall/') ? '/cornwall/pubs/' : '/lake-district/pubs/'}#${slugFor(id)}`;
+const pubHref = (id: string) => {
+  const base = id.startsWith('cornwall/')
+    ? '/cornwall/pubs/'
+    : id.startsWith('lake-district/')
+      ? '/lake-district/pubs/'
+      : '/yorkshire-dales/pubs/';
+  return `${base}#${slugFor(id)}`;
+};
 
 const featured = allPubs.filter((p) => p.data.featured);
 
@@ -93,7 +101,7 @@ const jsonLd = [
         A good dog-friendly pub is the making of a dog holiday — the warm end to a cold walk, the place the dog flops under the table while you get the round in. But "dog-friendly" hides a lot of variation: some pubs mean the whole place, some mean the bar but not where you eat, some mean the garden and nothing more. This guide states which, pub by pub, so you're not stood in the porch in the rain working it out.
       </p>
       <p>
-        Each regional guide leads with the pubs that take dogs throughout, notes what's laid on and whether there are dog-friendly rooms, and links each pub to the nearest walk, beach and cottages. Two regions so far, with more as their guides ship.
+        Each regional guide leads with the pubs that take dogs throughout, notes what's laid on and whether there are dog-friendly rooms, and links each pub to the nearest walk, beach and cottages. Three regions so far, with more as their guides ship.
       </p>
     </div>
 
@@ -107,6 +115,7 @@ const jsonLd = [
       <div class="mt-8 grid gap-6 sm:grid-cols-2 md:grid-cols-3">
         {cornwall && <RegionCard region={cornwall} count={cornwallCount} href="/cornwall/pubs/" />}
         {lakeDistrict && <RegionCard region={lakeDistrict} count={lakeCount} href="/lake-district/pubs/" />}
+        {yorkshireDales && <RegionCard region={yorkshireDales} count={dalesCount} href="/yorkshire-dales/pubs/" />}
       </div>
     </section>
 

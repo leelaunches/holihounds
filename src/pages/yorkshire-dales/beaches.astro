@@ -1,0 +1,203 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import BeachAccessBox from '~/components/BeachAccessBox.astro';
+import FAQ from '~/components/FAQ.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { article, itemList, faqPage, breadcrumbList } from '~/lib/schema';
+import { SITE_URL } from '~/lib/site';
+import { crumb } from '~/lib/nav';
+
+const all = await getCollection('beaches', (b) => b.data.region === 'yorkshire-dales');
+const ACCESS_RANK: Record<string, number> = { 'year-round': 0, 'lake-shore': 0, partial: 1, seasonal: 2 };
+const spots = all.sort((a, b) => {
+  const r = (ACCESS_RANK[a.data.dog_access] ?? 9) - (ACCESS_RANK[b.data.dog_access] ?? 9);
+  if (r !== 0) return r;
+  if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
+  return a.data.name.localeCompare(b.data.name);
+});
+
+const slugFor = (id: string) => id.split('/').pop()!;
+const listings = await getCollection('listings');
+const cottageHref = (id: string) => `/yorkshire-dales/cottages/#${slugFor(id)}`;
+const nearbyFor = (ids: string[]) =>
+  ids
+    .map((id) => {
+      const l = listings.find((x) => x.id === id);
+      return l ? { name: l.data.name, href: cottageHref(id) } : null;
+    })
+    .filter((x): x is { name: string; href: string } => Boolean(x));
+
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Yorkshire Dales', '/yorkshire-dales/'),
+  crumb('Swimming spots', '/yorkshire-dales/beaches/'),
+];
+
+const faqItems = [
+  {
+    question: 'Does the Yorkshire Dales have anywhere to swim a dog?',
+    answer:
+      "No sea — it's inland — but plenty of water: river beaches and gorge pools on the Wharfe, Ure and Ribble, waterfalls like Janet's Foss and Aysgarth, and Semer Water, the largest of the Dales' two natural lakes (Malham Tarn is the other). The good news for the dog is that, unlike the coast, none of it carries a seasonal dog ban — you can paddle a Dales river in August as freely as in winter. The catch is the water itself.",
+  },
+  {
+    question: 'Are dogs allowed off the lead at Dales rivers?',
+    answer:
+      "Usually, where it's safe — there's no beach-style ban. The real constraints are livestock (a lead near grazing sheep is essential, strictest in spring lambing) and ground-nesting birds, which on National Trust land like Malham means leads roughly March to July. Two spots have firmer rules: Semer Water is a wildlife reserve (short lead) and the Ingleton Waterfalls Trail requires leads at all times. Otherwise it's down to your dog's recall and the water conditions.",
+  },
+  {
+    question: 'Is it safe for dogs to swim in Yorkshire Dales rivers?',
+    answer:
+      "With real care. Dales rivers are cold, often deeper than they look, and — crucially — they rise fast and turn powerful after rain, so a calm pool can become dangerous within the hour. Stick to shallow, slow margins; keep dogs out of gorge pools and below waterfalls in high flow; and never, ever jump in after a dog — it swims better than you, so walk to a shallow bank and call it out. Above all, know the one place to avoid entirely: the Strid (see below).",
+  },
+  {
+    question: 'What is the Strid and why is it so dangerous?',
+    answer:
+      'The Strid, on the Wharfe at Bolton Abbey, is where the whole river is forced through a gap under two metres wide — it becomes extremely deep, fast and undercut, with submerged ledges and caves, and it can rise around five feet in a minute after rain. It has claimed lives over centuries, and a dog that goes in is very unlikely to get out. Keep dogs leashed through Strid Wood and well back from the water. The rest of Bolton Abbey (the stepping-stones beach, the riverside) is fine and dog-friendly on a lead.',
+  },
+  {
+    question: 'Where should I stay near the best Dales swimming spots?',
+    answer:
+      'Base yourself in the dale you want — Wharfedale (Grassington, Burnsall) for the river beaches, Malham for Janet\'s Foss, Wensleydale for the waterfalls. Several of our <a href="/yorkshire-dales/cottages/">dog-friendly Dales cottages</a> sit within reach of a swim spot, and each entry above links to the nearest ones.',
+  },
+];
+
+const pageUrl = '/yorkshire-dales/beaches/';
+const pageTitle = 'Dog-friendly swimming spots in the Yorkshire Dales';
+// 154 chars — under the 155-char Google truncation threshold.
+const pageDescription =
+  'Dog-friendly Yorkshire Dales river beaches, waterfalls & swimming — no seasonal bans, but the water-safety small print (and the lethal Strid) spelled out.';
+
+const heroImage = spots[0]?.data.image ?? '/images/og-default.jpg';
+
+const jsonLd = [
+  article({
+    headline: pageTitle,
+    description: pageDescription,
+    image: new URL(heroImage, SITE_URL).toString(),
+    datePublished: '2026-06-18',
+    url: pageUrl,
+  }),
+  itemList(spots.map((b) => ({ name: b.data.name, url: `${pageUrl}#${slugFor(b.id)}` }))),
+  faqPage(faqItems),
+  breadcrumbList(breadcrumbs),
+];
+---
+<BaseLayout title={pageTitle} description={pageDescription} image={heroImage} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-8">
+      <p class="eyebrow">Yorkshire Dales</p>
+      <h1 class="display mt-3">{pageTitle}</h1>
+      <div class="mt-6">
+        <AuthorByline />
+      </div>
+    </header>
+
+    <div class="prose-reading space-y-4 text-lg">
+      <p>
+        The Dales have no coast — but they have water everywhere, and the river beaches, waterfall pools and the one swimmable lake are some of the best dog paddling in the north of England. Here's the part that matters: unlike the Cornish coast, none of it carries a <strong>seasonal dog ban</strong>. You can let a dog into the Wharfe in August as freely as in February. What you have to respect instead is the water — and one place on this river that you must never go near at all.
+      </p>
+      <p>
+        Each spot below has the dog access, the parking, a nearby dog-friendly pub and where to stay — but the field that matters most here is water safety, so read it. Dales rivers are cold, deceptively deep, and they rise fast after rain.
+      </p>
+    </div>
+
+    <aside class="mt-10 border-2 border-clay bg-cream-soft p-6">
+      <p class="eyebrow text-clay-deep">Do not swim — the one to avoid</p>
+      <h2 class="mt-2 text-clay-deep">The Strid, Bolton Abbey</h2>
+      <p class="prose-reading mt-3">
+        Before the spots worth seeking out, the one to stay away from. At the Strid, the whole River Wharfe is forced through a gap under two metres wide — extremely deep, fast and undercut with submerged ledges and caves, and it can rise around five feet in a minute after rain. It has claimed lives for centuries, and a dog that goes in is very unlikely to get out. <strong>Keep dogs leashed through Strid Wood and well back from the water.</strong> The rest of Bolton Abbey — the stepping-stones beach, the riverside meadows — is fine and dog-friendly on a lead.
+      </p>
+    </aside>
+
+    {spots.length > 0 && (
+      <nav aria-label="Spot list" class="mt-12 border-t border-edge pt-8">
+        <p class="eyebrow mb-4">Jump to a spot</p>
+        <ol class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm">
+          {spots.map((b, i) => (
+            <li>
+              <a href={`#${slugFor(b.id)}`} class="text-text">
+                {i + 1}. {b.data.name}
+                <span class="text-muted"> — {b.data.location}</span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+    )}
+
+    <section class="mt-16 space-y-20">
+      {spots.map((b, i) => {
+        const nearby = nearbyFor(b.data.nearby_cottages);
+        return (
+          <article id={slugFor(b.id)} class="scroll-mt-8 border-t border-edge pt-12">
+            <p class="eyebrow">{b.data.location}</p>
+            <h2 class="mt-2">{i + 1}. {b.data.name}</h2>
+
+            <div class="mt-6 aspect-[16/11] overflow-hidden bg-cream-soft border border-edge">
+              <img src={b.data.image} alt={b.data.image_alt ?? b.data.name} loading="lazy" class="h-full w-full object-cover" />
+            </div>
+
+            <div class="prose-reading mt-6">
+              <p>{b.data.description}</p>
+            </div>
+
+            <BeachAccessBox
+              dogAccess={b.data.dog_access}
+              dogRestriction={b.data.dog_restriction}
+              restrictionDetail={b.data.restriction_detail}
+              parking={b.data.parking}
+              facilities={b.data.facilities}
+              nearestPub={b.data.nearest_pub}
+              safetyNote={b.data.safety_note}
+            />
+
+            {nearby.length > 0 && (
+              <p class="text-sm mt-4">
+                <span class="text-muted">Where to stay nearby: </span>
+                {nearby.map((c, j) => (
+                  <>
+                    <a href={c.href} class="text-text">{c.name}</a>{j < nearby.length - 1 ? ', ' : ''}
+                  </>
+                ))}
+              </p>
+            )}
+          </article>
+        );
+      })}
+    </section>
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <h2>Swimming a dog safely in the Dales</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          No seasonal ban to plan around here, so the planning is all about the water. Four things matter more than dates.
+        </p>
+        <p>
+          <strong>Rivers rise fast.</strong> The Wharfe and Ure can go from a gentle paddle to a dangerous torrent within an hour of rain on the fells above — and the rain can be miles away and out of sight. If the water's up, brown or moving hard, keep the dog out.
+        </p>
+        <p>
+          <strong>Cold and depth catch dogs out.</strong> Dales rivers stay cold all summer and the pools are deeper than they look, with hidden drops and undercut ledges. Keep dogs to the shallow, slow margins; the gorge pools (Loup Scar, Stainforth) are for confident swimmers in calm conditions only.
+        </p>
+        <p>
+          <strong>Never jump in after your dog.</strong> It's the rule the Dales rescue teams repeat every year. Your dog swims far better than you and will usually get itself out; people who jump in after them are the ones who drown. Walk to a shallow bank and call it to you.
+        </p>
+        <p>
+          <strong>Leads for livestock and birds.</strong> There's no beach ban, but a lead is essential near grazing sheep (strictest in spring lambing) and ground-nesting birds in spring and early summer — and at the signed exceptions, Semer Water and the Ingleton trail.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <h2>Frequently asked questions</h2>
+      <FAQ items={faqItems} emitSchema={false} />
+    </section>
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <AuthorByline variant="full" />
+    </section>
+  </article>
+</BaseLayout>
