@@ -159,7 +159,7 @@ const jsonLd = [
 
           <div class="mt-6">
             <AffiliateCTA
-              provider={c.data.affiliate_provider ?? 'sykes'}
+              provider={c.data.affiliate_provider}
               identifier={slugFor(c.id)}
               fallbackUrl={c.data.external_url ?? undefined}
             />

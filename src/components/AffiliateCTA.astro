@@ -1,33 +1,30 @@
 ---
 /**
- * Renders an affiliate CTA using the {{AFFILIATE:provider:identifier}} token
- * convention. The token is replaced at deploy time (see AFFILIATES.md) — for
- * Sprint 1 the link is non-functional. Optional fallback URL surfaces the
- * property's own website as a backup.
+ * Renders the booking CTA. The href resolves via `affiliateHref()` to a tracked
+ * Awin deeplink when the provider is an approved Awin merchant, otherwise to the
+ * property's own booking page (working, but untracked). See src/lib/affiliate.ts.
  */
+import { affiliateHref } from '~/lib/affiliate';
 
 interface Props {
-  provider: string;
+  provider: string | null;
+  /** Listing slug — surfaced as a data attribute for analytics, not used in the URL. */
   identifier: string;
+  /** The property's own booking URL (listing `external_url`). */
   fallbackUrl?: string;
   label?: string;
 }
 
 const { provider, identifier, fallbackUrl, label = 'Check availability' } = Astro.props;
-const href = `{{AFFILIATE:${provider}:${identifier}}}`;
+const href = affiliateHref(provider ?? null, fallbackUrl ?? null);
 ---
-<div class="flex flex-col sm:flex-row sm:items-center gap-4">
-  <a
-    href={href}
-    rel="sponsored nofollow noopener"
-    data-affiliate-provider={provider}
-    class="inline-flex items-center justify-center bg-clay px-6 py-3.5 text-white no-underline font-medium transition-colors hover:bg-clay-deep"
-  >
-    {label}
-  </a>
-  {fallbackUrl && (
-    <a href={fallbackUrl} rel="noopener" class="text-sm">
-      Or visit the property's own website
-    </a>
-  )}
-</div>
+<a
+  href={href}
+  rel="sponsored nofollow noopener"
+  target="_blank"
+  data-affiliate-provider={provider}
+  data-listing={identifier}
+  class="inline-flex items-center justify-center bg-clay px-6 py-3.5 text-white no-underline font-medium transition-colors hover:bg-clay-deep"
+>
+  {label}
+</a>
