@@ -19,20 +19,19 @@ export const AWIN_PUBLISHER_ID = '2932845';
  * listing frontmatter. Fill each in as Awin approves that advertiser.
  *
  * Approved + live:
- *   (none yet — advertiser approvals pending as of 18 Jun 2026)
+ *   - hoseasons      (6 listings) — approved 18 Jun 2026, awinmid 118651
  *
  * Pending Awin advertiser approval (add the id here when it lands):
  *   - sykes          (33 listings — the big one)
  *   - cottages.com   (6 listings)
- *   - hoseasons      (6 listings)
  *
  * Not Awin merchants (always link direct, never add ids here):
  *   - aspects-holidays, kernock-cottages, direct/independent (null provider)
  */
 export const AWIN_MERCHANT_IDS: Record<string, string> = {
+  hoseasons: '118651', // approved 18 Jun 2026
   // sykes: '00000',
   // 'cottages.com': '00000',
-  // hoseasons: '00000',
 };
 
 /**
