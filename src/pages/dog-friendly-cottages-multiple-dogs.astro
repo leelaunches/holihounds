@@ -1,0 +1,141 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import MoneyCottageCard from '~/components/MoneyCottageCard.astro';
+import AffiliateDisclosure from '~/components/AffiliateDisclosure.astro';
+import FAQ from '~/components/FAQ.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { article, breadcrumbList, faqPage, itemList } from '~/lib/schema';
+import { SITE_URL } from '~/lib/site';
+import { crumb } from '~/lib/nav';
+
+// Cottages that take two or more dogs (a verified max_dogs of 2+). Excludes the
+// single-dog caps and the unstated ones — only properties that definitely
+// welcome a second dog.
+const multi = await getCollection('listings', (e) => (e.data.max_dogs ?? 0) >= 2);
+
+const slugFor = (id: string) => id.split('/').pop()!;
+const REGION_ORDER = ['cornwall', 'lake-district', 'yorkshire-dales'] as const;
+const REGION_LABEL: Record<string, string> = {
+  cornwall: 'Cornwall',
+  'lake-district': 'Lake District',
+  'yorkshire-dales': 'Yorkshire Dales',
+};
+const byName = (a: (typeof multi)[number], b: (typeof multi)[number]) => {
+  if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
+  return a.data.name.localeCompare(b.data.name);
+};
+const groups: { label: string; items: typeof multi }[] = [];
+for (const r of REGION_ORDER) {
+  const items = multi.filter((c) => c.data.region === r).sort(byName);
+  if (items.length) groups.push({ label: REGION_LABEL[r], items });
+}
+const elsewhere = multi.filter((c) => !REGION_ORDER.includes(c.data.region as any)).sort(byName);
+if (elsewhere.length) groups.push({ label: 'Hot-tub lodges', items: elsewhere });
+
+const anchorFor = (label: string) => label.toLowerCase().replace(/[^a-z]+/g, '-');
+const total = multi.length;
+const dogsValue = (n: number | null) => (n === 2 ? 'Up to 2 dogs welcome' : `Up to ${n} dogs welcome`);
+
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Cottages', '/cottages/'),
+  crumb('2+ dogs', '/dog-friendly-cottages-multiple-dogs/'),
+];
+
+const faqItems = [
+  {
+    question: 'Why is it hard to find cottages that take more than one dog?',
+    answer:
+      "Most self-catering listings cap dogs at one or two, and a surprising number are one-dog-only — set by the owner over cleaning and wear rather than anything about your dogs. The cap is firm, too: \"two dogs\" almost never means \"two-ish\". So if you have two (or more), a big chunk of the apparent inventory is quietly off-limits, and the search facets don't always make the cap obvious until you're deep in the booking. This page does that filtering for you.",
+  },
+  {
+    question: 'What if I have three or more dogs?',
+    answer:
+      "That's harder again — most of the cottages here cap at two. Your best routes are the larger rural farmhouses (which sometimes flex on numbers by arrangement) and the rare property that states no limit at all. On our list, Swale View in Swaledale is the standout: it explicitly welcomes \"as many as you like, even muddy ones\", free of charge. For three-plus dogs, start there or call owners of the bigger lettings to ask before booking.",
+  },
+  {
+    question: 'Is there an extra charge per dog?',
+    answer:
+      "Sometimes — it varies by property. Many charge a flat per-stay pet supplement regardless of one or two dogs; some charge per dog (School House in Askrigg, for instance, adds £10 for the second). Sykes and cottages.com hide the supplement until you enter dates. A few cottages take dogs free entirely. Each cottage's full review has the pet-charge detail we could verify.",
+  },
+  {
+    question: 'Will two dogs be allowed everywhere in the cottage?',
+    answer:
+      "Usually the same rules apply whether you bring one dog or two — but those rules vary by property (some are throughout, some downstairs-only, some not-on-the-furniture), and they don't change with dog count. The cap is about numbers, not access. Each cottage's full review states where dogs are allowed inside; this page confirms the number.",
+  },
+];
+
+const pageUrl = '/dog-friendly-cottages-multiple-dogs/';
+const pageTitle = `${total} dog-friendly cottages that welcome 2+ dogs (UK)`;
+// 151 chars — under the 155-char Google truncation threshold.
+const pageDescription =
+  'Dog-friendly UK cottages that welcome two or more dogs — verified max-dog limits, so multi-dog households skip the single-dog caps. By Rachel Polden.';
+
+const heroImage = groups[0]?.items[0]?.data.image ?? '/images/og-default.jpg';
+
+const jsonLd = [
+  article({ headline: pageTitle, description: pageDescription, image: new URL(heroImage, SITE_URL).toString(), datePublished: '2026-06-18', url: pageUrl }),
+  faqPage(faqItems),
+  itemList(multi.map((l) => ({ name: l.data.name, url: `${pageUrl}#${slugFor(l.id)}` }))),
+  breadcrumbList(breadcrumbs),
+];
+---
+<BaseLayout title={pageTitle} description={pageDescription} image={heroImage} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-8">
+      <p class="eyebrow">Cottages · 2+ dogs</p>
+      <h1 class="display mt-3">{pageTitle}</h1>
+      <div class="mt-6"><AuthorByline /></div>
+    </header>
+
+    <div class="border-t border-b border-edge py-3 my-6"><AffiliateDisclosure /></div>
+
+    <div class="prose-reading space-y-4 text-lg">
+      <p>
+        If you travel with more than one dog, a lot of "dog-friendly" cottages aren't — they cap at a single dog, and the limit is firm. It's the quiet filter that catches multi-dog households out, because the cap often isn't obvious until you're entering dates. So this page gathers the cottages we've verified as welcoming <strong>two or more dogs</strong>, with the max-dog number confirmed against the listing for each.
+      </p>
+      <p>
+        {total} qualify, across Cornwall, the Lake District and the Yorkshire Dales (plus a few hot-tub lodges). Most cap at two — that's the common ceiling — and we flag the single standout that sets no limit at all (Swale View, Swaledale: "as many as you like, even muddy ones"). Each card links to the full review with the pet-charge and in-cottage access detail.
+      </p>
+    </div>
+
+    <nav aria-label="By region" class="mt-12 border-t border-edge pt-8">
+      <p class="eyebrow mb-4">Jump to a region</p>
+      <ul class="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+        {groups.map((g) => (<li><a href={`#${anchorFor(g.label)}`} class="text-text">{g.label} ({g.items.length})</a></li>))}
+      </ul>
+    </nav>
+
+    {groups.map((g) => (
+      <section class="mt-16 border-t border-edge pt-12" id={anchorFor(g.label)}>
+        <h2>{g.label}</h2>
+        <div class="mt-8 grid gap-6 sm:grid-cols-2">
+          {g.items.map((c) => (
+            <MoneyCottageCard listing={c} highlightLabel="Dogs" highlightValue={dogsValue(c.data.max_dogs)} />
+          ))}
+        </div>
+      </section>
+    ))}
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <h2>Frequently asked questions</h2>
+      <FAQ items={faqItems} emitSchema={false} />
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Related guides</h2>
+      <ul class="mt-4 grid gap-3 sm:grid-cols-2 text-sm">
+        <li><a href="/dog-friendly-cottages-enclosed-gardens/">Cottages with enclosed gardens</a></li>
+        <li><a href="/large-dog-friendly-cottages/">Large dog-friendly cottages (sleeps 8+)</a></li>
+        <li><a href="/dog-friendly-cottages-muddy-dogs/">Cottages for muddy dogs</a></li>
+        <li><a href="/cottages/">Dog-friendly cottages in the UK</a></li>
+      </ul>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12"><AuthorByline variant="full" /></section>
+  </article>
+</BaseLayout>

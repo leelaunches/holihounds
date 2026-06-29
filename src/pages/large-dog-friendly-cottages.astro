@@ -1,0 +1,129 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import MoneyCottageCard from '~/components/MoneyCottageCard.astro';
+import AffiliateDisclosure from '~/components/AffiliateDisclosure.astro';
+import FAQ from '~/components/FAQ.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { article, breadcrumbList, faqPage, itemList } from '~/lib/schema';
+import { SITE_URL } from '~/lib/site';
+import { crumb } from '~/lib/nav';
+
+// Large dog-friendly cottages — sleeping 8 or more, for groups and multi-family
+// dog holidays.
+const large = await getCollection('listings', (e) => (e.data.sleeps ?? 0) >= 8);
+
+const slugFor = (id: string) => id.split('/').pop()!;
+const REGION_ORDER = ['cornwall', 'lake-district', 'yorkshire-dales'] as const;
+const REGION_LABEL: Record<string, string> = { cornwall: 'Cornwall', 'lake-district': 'Lake District', 'yorkshire-dales': 'Yorkshire Dales' };
+const bySize = (a: (typeof large)[number], b: (typeof large)[number]) => (b.data.sleeps ?? 0) - (a.data.sleeps ?? 0) || a.data.name.localeCompare(b.data.name);
+const groups: { label: string; items: typeof large }[] = [];
+for (const r of REGION_ORDER) {
+  const items = large.filter((c) => c.data.region === r).sort(bySize);
+  if (items.length) groups.push({ label: REGION_LABEL[r], items });
+}
+const elsewhere = large.filter((c) => !REGION_ORDER.includes(c.data.region as any)).sort(bySize);
+if (elsewhere.length) groups.push({ label: 'Elsewhere', items: elsewhere });
+
+const anchorFor = (label: string) => label.toLowerCase().replace(/[^a-z]+/g, '-');
+const total = large.length;
+const sizeValue = (c: (typeof large)[number]) =>
+  `Sleeps ${c.data.sleeps}${c.data.bedrooms ? ` · ${c.data.bedrooms} bedrooms` : ''}`;
+
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Cottages', '/cottages/'),
+  crumb('Large cottages', '/large-dog-friendly-cottages/'),
+];
+
+const faqItems = [
+  {
+    question: 'How many dogs can a large group cottage take?',
+    answer:
+      "Often the same low cap as a small cottage — and that's the catch worth checking. A farmhouse that sleeps ten may still only allow two dogs, because the limit is set on cleaning and wear, not floor space. So two families sharing can't assume four dogs are fine. Each cottage's max-dog number is on its full review; confirm it covers your whole party before you book, and ask the owner if you're over the stated cap.",
+  },
+  {
+    question: 'Are large dog-friendly cottages good value for groups?',
+    answer:
+      "Usually yes — split across several households, a big cottage often works out cheaper per head than separate smaller ones, and you only pay one (per-stay) pet supplement rather than several. The headline nightly rate looks large, but the per-family maths is favourable, especially off-peak. Booking early matters more here: there's far less large dog-friendly stock than small, so the good ones go first for school holidays.",
+  },
+  {
+    question: 'Do they have enclosed gardens big enough for several dogs?',
+    answer:
+      "Varies, and it's worth checking for a multi-dog group. Some of these are farmhouses with proper enclosed grounds; others have a smaller garden relative to the indoor space, or a boundary with a caveat. Where we've verified the enclosure, it's on the full review (and on our <a href=\"/dog-friendly-cottages-enclosed-gardens/\">enclosed-gardens guide</a>). For several dogs off the lead, prioritise the ones with genuinely secure, sizeable grounds.",
+  },
+];
+
+const pageUrl = '/large-dog-friendly-cottages/';
+const pageTitle = `Large dog-friendly cottages, sleeps 8+ (UK)`;
+// 148 chars — under the 155-char Google truncation threshold.
+const pageDescription =
+  'Large dog-friendly UK cottages sleeping 8 or more — for group and multi-family dog holidays, with verified dog limits and the small print. By Rachel Polden.';
+
+const heroImage = groups[0]?.items[0]?.data.image ?? '/images/og-default.jpg';
+
+const jsonLd = [
+  article({ headline: pageTitle, description: pageDescription, image: new URL(heroImage, SITE_URL).toString(), datePublished: '2026-06-18', url: pageUrl }),
+  faqPage(faqItems),
+  itemList(large.map((l) => ({ name: l.data.name, url: `${pageUrl}#${slugFor(l.id)}` }))),
+  breadcrumbList(breadcrumbs),
+];
+---
+<BaseLayout title={pageTitle} description={pageDescription} image={heroImage} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-8">
+      <p class="eyebrow">Cottages · large &amp; group</p>
+      <h1 class="display mt-3">{pageTitle}</h1>
+      <div class="mt-6"><AuthorByline /></div>
+    </header>
+
+    <div class="border-t border-b border-edge py-3 my-6"><AffiliateDisclosure /></div>
+
+    <div class="prose-reading space-y-4 text-lg">
+      <p>
+        A big group holiday with dogs is one of the harder things to book: there's far less large dog-friendly stock than small, and the size of the cottage tells you nothing about how many dogs it allows — a farmhouse for ten may still cap at two. So this page gathers the larger cottages we've verified as dog-friendly, sleeping eight or more, with the dog limit confirmed for each.
+      </p>
+      <p>
+        {total} qualify, ordered biggest first. The crucial check for a multi-family group is the max-dog number — two households sharing can't assume four dogs are welcome — so each card links to the full review with the limit and the garden detail. Book these early; the good large ones go first for school holidays.
+      </p>
+    </div>
+
+    <nav aria-label="By region" class="mt-12 border-t border-edge pt-8">
+      <p class="eyebrow mb-4">Jump to a region</p>
+      <ul class="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+        {groups.map((g) => (<li><a href={`#${anchorFor(g.label)}`} class="text-text">{g.label} ({g.items.length})</a></li>))}
+      </ul>
+    </nav>
+
+    {groups.map((g) => (
+      <section class="mt-16 border-t border-edge pt-12" id={anchorFor(g.label)}>
+        <h2>{g.label}</h2>
+        <div class="mt-8 grid gap-6 sm:grid-cols-2">
+          {g.items.map((c) => (
+            <MoneyCottageCard listing={c} highlightLabel="Group size" highlightValue={sizeValue(c)} />
+          ))}
+        </div>
+      </section>
+    ))}
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <h2>Frequently asked questions</h2>
+      <FAQ items={faqItems} emitSchema={false} />
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Related guides</h2>
+      <ul class="mt-4 grid gap-3 sm:grid-cols-2 text-sm">
+        <li><a href="/dog-friendly-cottages-enclosed-gardens/">Cottages with enclosed gardens</a></li>
+        <li><a href="/dog-friendly-cottages-multiple-dogs/">Cottages that welcome 2+ dogs</a></li>
+        <li><a href="/dog-friendly-cottages-muddy-dogs/">Cottages for muddy dogs</a></li>
+        <li><a href="/cottages/">Dog-friendly cottages in the UK</a></li>
+      </ul>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12"><AuthorByline variant="full" /></section>
+  </article>
+</BaseLayout>

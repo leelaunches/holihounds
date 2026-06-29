@@ -1,0 +1,151 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import MoneyCottageCard from '~/components/MoneyCottageCard.astro';
+import AffiliateDisclosure from '~/components/AffiliateDisclosure.astro';
+import FAQ from '~/components/FAQ.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { article, breadcrumbList, faqPage, itemList } from '~/lib/schema';
+import { SITE_URL } from '~/lib/site';
+import { crumb } from '~/lib/nav';
+
+// Cottages set up for wet, muddy dogs — a dog-wash station, boot room, outdoor
+// hose or drying space. Matched across the dog-extras, amenities and policy
+// fields rather than a single flag.
+const MUD_RE = /dog.?wash|boot ?room|outdoor hose|\bhose\b|drying|utility/i;
+const all = await getCollection('listings');
+const haystack = (c: (typeof all)[number]) =>
+  [c.data.dog_extras, c.data.garden_note, c.data.dog_policy, ...(c.data.amenities ?? [])]
+    .filter(Boolean)
+    .join(' | ');
+const muddy = all.filter((c) => MUD_RE.test(haystack(c)));
+
+// The verified muddy-dog feature to surface on the card.
+const mudFeature = (c: (typeof all)[number]): string => {
+  if (c.data.dog_extras && MUD_RE.test(c.data.dog_extras)) return c.data.dog_extras;
+  const amen = (c.data.amenities ?? []).find((a) => MUD_RE.test(a));
+  if (amen) return amen;
+  if (c.data.garden_note && MUD_RE.test(c.data.garden_note)) return c.data.garden_note;
+  return 'Boot room / drying space — see review';
+};
+
+const slugFor = (id: string) => id.split('/').pop()!;
+const REGION_ORDER = ['cornwall', 'lake-district', 'yorkshire-dales'] as const;
+const REGION_LABEL: Record<string, string> = { cornwall: 'Cornwall', 'lake-district': 'Lake District', 'yorkshire-dales': 'Yorkshire Dales' };
+const byName = (a: (typeof all)[number], b: (typeof all)[number]) => {
+  if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
+  return a.data.name.localeCompare(b.data.name);
+};
+const groups: { label: string; items: typeof muddy }[] = [];
+for (const r of REGION_ORDER) {
+  const items = muddy.filter((c) => c.data.region === r).sort(byName);
+  if (items.length) groups.push({ label: REGION_LABEL[r], items });
+}
+const elsewhere = muddy.filter((c) => !REGION_ORDER.includes(c.data.region as any)).sort(byName);
+if (elsewhere.length) groups.push({ label: 'Hot-tub lodges', items: elsewhere });
+
+const anchorFor = (label: string) => label.toLowerCase().replace(/[^a-z]+/g, '-');
+const total = muddy.length;
+
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Cottages', '/cottages/'),
+  crumb('Muddy dogs', '/dog-friendly-cottages-muddy-dogs/'),
+];
+
+const faqItems = [
+  {
+    question: 'What makes a cottage good for a muddy dog?',
+    answer:
+      "Somewhere to clean the dog and stow the wet kit before it reaches the carpet. The gold standard is a dedicated dog-wash station — a low shower with warm water, sometimes a dryer and towels. Short of that, an outdoor hose, a boot room or a hard-floored utility does the job. In the Lake District and Yorkshire Dales especially, this matters more than any welcome hamper: a fell or riverside walk produces a genuinely filthy dog, and a cottage with nowhere to deal with it makes for a tense week.",
+  },
+  {
+    question: 'Which cottages have an actual dog-wash station?',
+    answer:
+      "The standout on this list is Fellside Lodge in Bowness, with a basement dog-wash — shampoo, dryer and towels. It's rarer than you'd hope; most cottages that are good for muddy dogs offer an outdoor hose or a boot room rather than a full wash station. Each card states what that specific property has, so you can tell a hose from a heated dog shower before you book.",
+  },
+  {
+    question: 'Is an outdoor hose enough in winter?',
+    answer:
+      "It depends on you and the dog. A cold-water outdoor hose in January is workable for a short-coated, water-tolerant dog and a quick rinse, less so for a shivering whippet or a deep wash. For winter trips, lean towards the cottages with an indoor boot room, a heated utility or a proper dog-wash rather than a hose alone — we note which is which.",
+  },
+  {
+    question: "Do these cottages provide towels for the dog?",
+    answer:
+      "Some do — a dog towel by the back door is a common touch on the better-equipped properties (Holly Tree, Woodside and Dalegarth among them), and the dog-wash cottages usually include them. Others leave it to you, so packing two old microfibre towels is never wasted. Each card and its full review note the provided extras we could verify.",
+  },
+];
+
+const pageUrl = '/dog-friendly-cottages-muddy-dogs/';
+const pageTitle = `${total} dog-friendly cottages for muddy dogs (UK)`;
+// 150 chars — under the 155-char Google truncation threshold.
+const pageDescription =
+  'Dog-friendly UK cottages with a dog wash, boot room, outdoor hose or drying room — the muddy-paws kit that matters for fell and river walks. By Rachel Polden.';
+
+const heroImage = groups[0]?.items[0]?.data.image ?? '/images/og-default.jpg';
+
+const jsonLd = [
+  article({ headline: pageTitle, description: pageDescription, image: new URL(heroImage, SITE_URL).toString(), datePublished: '2026-06-18', url: pageUrl }),
+  faqPage(faqItems),
+  itemList(muddy.map((l) => ({ name: l.data.name, url: `${pageUrl}#${slugFor(l.id)}` }))),
+  breadcrumbList(breadcrumbs),
+];
+---
+<BaseLayout title={pageTitle} description={pageDescription} image={heroImage} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-8">
+      <p class="eyebrow">Cottages · muddy dogs</p>
+      <h1 class="display mt-3">{pageTitle}</h1>
+      <div class="mt-6"><AuthorByline /></div>
+    </header>
+
+    <div class="border-t border-b border-edge py-3 my-6"><AffiliateDisclosure /></div>
+
+    <div class="prose-reading space-y-4 text-lg">
+      <p>
+        A proper walk with a dog ends in mud — and the difference between a relaxed cottage week and a fraught one is whether there's somewhere to deal with it before it hits the carpet. A dog-wash station, an outdoor hose, a boot room, a hard-floored utility: unglamorous features that matter more than any welcome hamper, especially for fell and riverside country. So this page gathers the cottages we've found that are genuinely set up for a wet, filthy dog.
+      </p>
+      <p>
+        {total} qualify, and we tell you which kind of kit each one has — because a heated dog-wash and a cold garden tap are not the same thing on a January afternoon. The standout is Fellside Lodge in Bowness, with a basement dog-wash (shampoo, dryer, towels); the rest range from boot rooms to outdoor hoses, stated per cottage.
+      </p>
+    </div>
+
+    <nav aria-label="By region" class="mt-12 border-t border-edge pt-8">
+      <p class="eyebrow mb-4">Jump to a region</p>
+      <ul class="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+        {groups.map((g) => (<li><a href={`#${anchorFor(g.label)}`} class="text-text">{g.label} ({g.items.length})</a></li>))}
+      </ul>
+    </nav>
+
+    {groups.map((g) => (
+      <section class="mt-16 border-t border-edge pt-12" id={anchorFor(g.label)}>
+        <h2>{g.label}</h2>
+        <div class="mt-8 grid gap-6 sm:grid-cols-2">
+          {g.items.map((c) => (
+            <MoneyCottageCard listing={c} highlightLabel="For muddy dogs" highlightValue={mudFeature(c)} />
+          ))}
+        </div>
+      </section>
+    ))}
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <h2>Frequently asked questions</h2>
+      <FAQ items={faqItems} emitSchema={false} />
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Related guides</h2>
+      <ul class="mt-4 grid gap-3 sm:grid-cols-2 text-sm">
+        <li><a href="/dog-friendly-cottages-enclosed-gardens/">Cottages with enclosed gardens</a></li>
+        <li><a href="/dog-friendly-cottages-multiple-dogs/">Cottages that welcome 2+ dogs</a></li>
+        <li><a href="/large-dog-friendly-cottages/">Large dog-friendly cottages (sleeps 8+)</a></li>
+        <li><a href="/cottages/">Dog-friendly cottages in the UK</a></li>
+      </ul>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12"><AuthorByline variant="full" /></section>
+  </article>
+</BaseLayout>
