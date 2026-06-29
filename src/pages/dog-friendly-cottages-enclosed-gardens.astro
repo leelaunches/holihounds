@@ -1,0 +1,221 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import AffiliateCTA from '~/components/AffiliateCTA.astro';
+import AffiliateDisclosure from '~/components/AffiliateDisclosure.astro';
+import FAQ from '~/components/FAQ.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { article, breadcrumbList, faqPage, itemList } from '~/lib/schema';
+import { SITE_URL } from '~/lib/site';
+import { crumb } from '~/lib/nav';
+
+/**
+ * Enclosed-gardens money page. Cross-cutting listicle that filters every
+ * listing with a verified `enclosed_garden: true` into one buy-ready page —
+ * the highest-intent dog-cottage search, and one only this site can answer
+ * honestly because the garden status (and its caveats, via `garden_note`) is
+ * verified property-by-property. Auto-populates as enclosed cottages are added.
+ */
+const enclosed = await getCollection('listings', (e) => e.data.enclosed_garden === true);
+
+const slugFor = (id: string) => id.split('/').pop()!;
+
+// Full-review link: regional cottage listicle for normal cottages, the hot-tub
+// money page for the tagged lodges (which aren't on a regional cottages page).
+const fullReviewHref = (l: (typeof enclosed)[number]) =>
+  l.data.tags.includes('hot-tub')
+    ? `/dog-friendly-hot-tub-lodges/#${slugFor(l.id)}`
+    : `/${l.data.region}/cottages/#${slugFor(l.id)}`;
+
+// Group by region, the three full regions first, then the hot-tub lodges that
+// happen to have enclosed gardens.
+const REGION_ORDER = ['cornwall', 'lake-district', 'yorkshire-dales'] as const;
+const REGION_LABEL: Record<string, string> = {
+  cornwall: 'Cornwall',
+  'lake-district': 'Lake District',
+  'yorkshire-dales': 'Yorkshire Dales',
+};
+const byName = (a: (typeof enclosed)[number], b: (typeof enclosed)[number]) => {
+  if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
+  return a.data.name.localeCompare(b.data.name);
+};
+const groups: { label: string; items: typeof enclosed }[] = [];
+for (const r of REGION_ORDER) {
+  const items = enclosed.filter((c) => c.data.region === r).sort(byName);
+  if (items.length) groups.push({ label: REGION_LABEL[r], items });
+}
+const elsewhere = enclosed.filter((c) => !REGION_ORDER.includes(c.data.region as any)).sort(byName);
+if (elsewhere.length) groups.push({ label: 'Hot-tub lodges with enclosed gardens', items: elsewhere });
+
+const total = enclosed.length;
+
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Cottages', '/cottages/'),
+  crumb('Enclosed gardens', '/dog-friendly-cottages-enclosed-gardens/'),
+];
+
+const faqItems = [
+  {
+    question: 'Why does an enclosed garden matter so much for a dog?',
+    answer:
+      "It's the difference between a relaxing stay and a vigilant one. A securely enclosed garden means you can open the door and let the dog out — first thing, last thing, in the rain — without a lead, without watching for a road or an open gate, and without the dog bolting after a sheep. For a recall-iffy dog, an anxious one, or a new rescue, it's often the single most important feature of the whole booking.",
+  },
+  {
+    question: 'Does "enclosed garden" always mean fully secure?',
+    answer:
+      "No — and this is exactly what most listings gloss over and we don't. \"Enclosed\" can mean a fully fenced lawn, but it can also mean a paved courtyard rather than grass, a boundary with a gap by the gate, or a garden that backs onto a (fenced, but present) river or brook. Every cottage below states what its enclosure actually is, caveats included. Read that line before you book, and if a secure boundary is critical, confirm the fence height and any gaps with the owner.",
+  },
+  {
+    question: 'Can I let my dog off the lead in the garden?',
+    answer:
+      "On the genuinely fully-enclosed ones, yes — that's the point of them. On the ones we've flagged with a caveat (a courtyard, a gappy boundary, a nearby waterway), treat it as supervised rather than off-lead-and-forget. We don't lump those in silently; the garden note on each entry tells you which is which.",
+  },
+  {
+    question: 'Are enclosed-garden cottages more expensive?',
+    answer:
+      "Not as a rule — a secure garden isn't a premium feature the way a hot tub is, so you're mostly paying the normal regional rate plus the standard dog supplement (£20–£40 per stay is typical, hidden until checkout on Sykes and cottages.com). The harder part is availability rather than price: genuinely secure-garden cottages get booked early by the people who specifically need them.",
+  },
+  {
+    question: 'How do you verify the garden is actually enclosed?',
+    answer:
+      'Against the listing\'s own description and photos rather than the search facets, which routinely overstate. Where the listing is explicit ("fully enclosed", "dog-secure garden") we say so; where it\'s a courtyard or has a caveat, we say that instead; and where enclosure isn\'t actually stated, the cottage doesn\'t appear on this page at all. The full write-up for each is on its regional guide, linked from every card.',
+  },
+];
+
+const pageUrl = '/dog-friendly-cottages-enclosed-gardens/';
+const pageTitle = `${total} dog-friendly cottages with enclosed gardens (UK)`;
+// 152 chars — under the 155-char Google truncation threshold.
+const pageDescription =
+  'Dog-friendly UK cottages with verified enclosed gardens — and the honest small print on which are fully secure and which have a caveat. By Rachel Polden.';
+
+const heroImage = groups[0]?.items[0]?.data.image ?? '/images/og-default.jpg';
+
+const jsonLd = [
+  article({
+    headline: pageTitle,
+    description: pageDescription,
+    image: new URL(heroImage, SITE_URL).toString(),
+    datePublished: '2026-06-18',
+    url: pageUrl,
+  }),
+  faqPage(faqItems),
+  itemList(enclosed.map((l) => ({ name: l.data.name, url: `${pageUrl}#${slugFor(l.id)}` }))),
+  breadcrumbList(breadcrumbs),
+];
+---
+<BaseLayout title={pageTitle} description={pageDescription} image={heroImage} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-8">
+      <p class="eyebrow">Cottages · enclosed gardens</p>
+      <h1 class="display mt-3">{pageTitle}</h1>
+      <div class="mt-6">
+        <AuthorByline />
+      </div>
+    </header>
+
+    <div class="border-t border-b border-edge py-3 my-6">
+      <AffiliateDisclosure />
+    </div>
+
+    <div class="prose-reading space-y-4 text-lg">
+      <p>
+        A securely enclosed garden is the feature dog owners filter for above almost any other — and the one self-catering listings are vaguest about. "Enclosed garden" gets typed into the marketing copy whether it means a fully fenced lawn or a courtyard with a gap by the gate. So this page does the thing those listings won't: it gathers every cottage we've verified as having a genuinely enclosed garden, and tells you, for each, exactly what "enclosed" means.
+      </p>
+      <p>
+        {total} cottages across Cornwall, the Lake District and the Yorkshire Dales (plus a few hot-tub lodges) qualify — each checked against the listing's own description, not the search facets. Where it's a fully secure lawn, we say so; where it's a paved courtyard, a gappy boundary or a garden by a brook, we say that instead. Cottages whose enclosure isn't actually stated don't appear here at all.
+      </p>
+    </div>
+
+    <nav aria-label="By region" class="mt-12 border-t border-edge pt-8">
+      <p class="eyebrow mb-4">Jump to a region</p>
+      <ul class="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+        {groups.map((g) => (
+          <li><a href={`#${g.label.toLowerCase().replace(/[^a-z]+/g, '-')}`} class="text-text">{g.label} ({g.items.length})</a></li>
+        ))}
+      </ul>
+    </nav>
+
+    {groups.map((g) => (
+      <section class="mt-16 border-t border-edge pt-12" id={g.label.toLowerCase().replace(/[^a-z]+/g, '-')}>
+        <h2>{g.label}</h2>
+        <div class="mt-8 grid gap-6 sm:grid-cols-2">
+          {g.items.map((c) => (
+            <article id={slugFor(c.id)} class="scroll-mt-8 flex flex-col bg-cream-soft border border-edge">
+              <div class="aspect-[16/11] overflow-hidden bg-cream-soft border-b border-edge">
+                <img src={c.data.image} alt={c.data.image_alt ?? c.data.name} loading="lazy" class="h-full w-full object-cover" />
+              </div>
+              <div class="flex flex-col flex-1 p-5">
+                <p class="eyebrow">{c.data.town}</p>
+                <h3 class="mt-1">{c.data.name}</h3>
+                <p class="mt-3 text-sm">
+                  <span class="eyebrow text-forest">Garden</span><br />
+                  {c.data.garden_note ?? 'Fully enclosed garden.'}
+                </p>
+                <p class="mt-3 text-sm text-muted">
+                  Sleeps {c.data.sleeps}
+                  {c.data.max_dogs != null && ` · ${c.data.max_dogs} dog${c.data.max_dogs === 1 ? '' : 's'}`}
+                  {c.data.max_dogs == null && ' · dog limit not stated'}
+                  {c.data.price_indicator && ` · ${c.data.price_indicator}`}
+                </p>
+                <div class="mt-auto pt-5">
+                  <AffiliateCTA
+                    provider={c.data.affiliate_provider}
+                    identifier={slugFor(c.id)}
+                    fallbackUrl={c.data.external_url ?? undefined}
+                  />
+                  <p class="mt-3 text-sm">
+                    <a href={fullReviewHref(c)} class="text-text">Full review →</a>
+                  </p>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+    ))}
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <h2>How to read an "enclosed garden" claim</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          After reading enough listings to know which language holds up, three things separate a genuinely secure garden from one that just gets called enclosed.
+        </p>
+        <p>
+          <strong>"Fully enclosed" or "dog-secure", not just "enclosed".</strong> The specific wording matters. A listing that commits to "fully enclosed" or "secure" has usually thought about the dog; one that says only "enclosed garden" may mean a low wall, a gappy hedge or a courtyard. We lead each entry with the actual wording.
+        </p>
+        <p>
+          <strong>Lawn vs courtyard.</strong> A paved courtyard can be perfectly secure, but it's not the same as grass for a dog that wants to stretch out — and several "gardens" on the booking platforms are exactly this. Where ours is a courtyard, the garden note says so.
+        </p>
+        <p>
+          <strong>What's on the other side of the fence.</strong> The catch that catches people out: a fully fenced garden that backs onto a river, a lane or a field gate. We flag the cottages by water or with a boundary caveat — fenced, but worth supervising — rather than waving them through.
+        </p>
+        <p>
+          If a secure boundary is non-negotiable for your dog, the safest move is still a two-minute call to the owner to confirm fence height and any gaps before you book. This page gets you to the right shortlist; the call closes it.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Frequently asked questions</h2>
+      <FAQ items={faqItems} emitSchema={false} />
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Related guides</h2>
+      <ul class="mt-4 grid gap-3 sm:grid-cols-2 text-sm">
+        <li><a href="/cottages/">Dog-friendly cottages in the UK</a></li>
+        <li><a href="/dog-friendly-hot-tub-lodges/">Dog-friendly hot tub lodges UK</a></li>
+        <li><a href="/cornwall/cottages/">Dog-friendly cottages in Cornwall</a></li>
+        <li><a href="/lake-district/cottages/">Dog-friendly cottages in the Lake District</a></li>
+      </ul>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <AuthorByline variant="full" />
+    </section>
+  </article>
+</BaseLayout>

@@ -71,6 +71,7 @@ export const LIVE_ROUTES: ReadonlySet<string> = new Set([
   '/beaches/',
   '/pubs/',
   '/dog-friendly-hot-tub-lodges/',
+  '/dog-friendly-cottages-enclosed-gardens/',
   '/about/',
   '/contact/',
   '/privacy/',
