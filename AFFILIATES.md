@@ -45,7 +45,7 @@ Generated link format:
 
 | Provider | Listings | On Awin? | Action |
 |---|---|---|---|
-| `sykes` | 33 | yes (pending) | add `awinmid` when approved |
+| `sykes` | 33 | **REJECTED 13 Jul 2026** | stays direct; re-apply once site has more traffic |
 | `cottages.com` | 6 | yes (pending) | add `awinmid` when approved |
 | `hoseasons` | 6 | yes (pending) | add `awinmid` when approved |
 | `aspects-holidays` | 2 | no (independent) | stays direct |

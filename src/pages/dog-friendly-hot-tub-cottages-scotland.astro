@@ -1,0 +1,129 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import MoneyCottageCard from '~/components/MoneyCottageCard.astro';
+import AffiliateDisclosure from '~/components/AffiliateDisclosure.astro';
+import FAQ from '~/components/FAQ.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { article, breadcrumbList, faqPage, itemList } from '~/lib/schema';
+import { SITE_URL } from '~/lib/site';
+import { crumb } from '~/lib/nav';
+
+// Scotland hot-tub lodges — targets "hot tub lodges scotland dog friendly" /
+// "dog friendly hot tub scotland".
+const lodges = (await getCollection('listings', (e) => e.data.tags.includes('hot-tub') && e.data.region === 'scotland'))
+  .sort((a, b) => (a.data.featured !== b.data.featured ? (a.data.featured ? -1 : 1) : a.data.name.localeCompare(b.data.name)));
+
+const slugFor = (id: string) => id.split('/').pop()!;
+const total = lodges.length;
+const dogsPhrase = (n: number | null) => (n != null ? `up to ${n} dog${n === 1 ? '' : 's'}` : 'dog limit not stated');
+
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Hot tub lodges', '/dog-friendly-hot-tub-lodges/'),
+  crumb('Scotland', '/dog-friendly-hot-tub-cottages-scotland/'),
+];
+
+const faqItems = [
+  {
+    question: 'Are dogs allowed in the hot tub?',
+    answer:
+      "No — the tub is for humans only on essentially all booking-platform stock, because dog hair and oils throw the water chemistry off. Dogs are welcome in the lodge, garden and usually the decking; the water isn't. If a listing doesn't state it, assume dogs stay out of the tub.",
+  },
+  {
+    question: 'Do Scotland’s access laws help dog owners?',
+    answer:
+      "Yes, significantly. Scotland's right-to-roam laws give dogs far wider access than England and Wales — most uncultivated land, coast, hills and moor is open, provided the dog is under proper control (on a lead during ground-nesting-bird season, roughly April to July). For a hot-tub lodge break, that means the walking straight from the door is often better and less restricted than an equivalent English base.",
+  },
+  {
+    question: 'Is a hot tub worth it in the Scottish Highlands?',
+    answer:
+      "Very — arguably more than anywhere. The Highlands are cold, dramatic and often wet, and a private hot tub under a big dark sky (and, in the right spot, the Northern Lights in winter) is the trip, not an add-on. Off-season rates drop hard and the walking is superb and uncrowded. Check the lodge doesn't close over deep winter and that the access road suits your car.",
+  },
+  {
+    question: "What's the difference between a lodge, a cabin and a cottage with a hot tub?",
+    answer:
+      "For a dog holiday, less than the labels suggest — all mean self-catering with a private hot tub. \"Lodge\" and \"log cabin\" usually mean a timber unit on a holiday park; \"cottage\" or \"croft\" means a standalone building. Scotland has a lot of the timber-lodge type on lochside and Highland parks; the properties here are that kind. For standalone crofts and cottages, see our main UK hot-tub guide.",
+  },
+];
+
+const pageUrl = '/dog-friendly-hot-tub-cottages-scotland/';
+const pageTitle = 'Dog-friendly hot tub lodges in Scotland';
+// 150 chars — under the 155-char Google truncation threshold.
+const pageDescription =
+  'Dog-friendly Scottish lodges & cabins with a private hot tub — Highlands, Loch Lomond, Galloway — with verified dog policies and the small print. By Rachel Polden.';
+
+const heroImage = lodges[0]?.data.image ?? '/images/og-default.jpg';
+
+const jsonLd = [
+  article({ headline: pageTitle, description: pageDescription, image: new URL(heroImage, SITE_URL).toString(), datePublished: '2026-07-13', url: pageUrl }),
+  faqPage(faqItems),
+  itemList(lodges.map((l) => ({ name: l.data.name, url: `${pageUrl}#${slugFor(l.id)}` }))),
+  breadcrumbList(breadcrumbs),
+];
+---
+<BaseLayout title={pageTitle} description={pageDescription} image={heroImage} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-8">
+      <p class="eyebrow">Hot tubs · Scotland</p>
+      <h1 class="display mt-3">{pageTitle}</h1>
+      <div class="mt-6"><AuthorByline /></div>
+    </header>
+
+    <div class="border-t border-b border-edge py-3 my-6"><AffiliateDisclosure /></div>
+
+    <div class="prose-reading space-y-4 text-lg">
+      <p>
+        A private hot tub under a Highland sky, a dog asleep by the wood burner, and right-to-roam walking from the door — Scotland does the hot-tub dog break as well as anywhere in Britain, and its access laws give dogs more freedom than anywhere in England. This is the Scottish cut of our national guide: lochside and Highland lodges we've verified as both dog-friendly and privately hot-tubbed.
+      </p>
+      <p>
+        Each has a private hot tub in your unit and a dog policy checked against the listing. It's a small, curated set spanning the Highlands, Loch Lomond and Galloway; for more across the UK, see our <a href="/dog-friendly-hot-tub-lodges/">UK hot tub lodges guide</a>.
+      </p>
+    </div>
+
+    {total > 0 && (
+      <section class="mt-14">
+        <div class="grid gap-6 sm:grid-cols-2">
+          {lodges.map((c) => (
+            <MoneyCottageCard listing={c} highlightLabel="Hot tub &amp; dogs" highlightValue={`Private hot tub · ${dogsPhrase(c.data.max_dogs)}`} />
+          ))}
+        </div>
+      </section>
+    )}
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Why Scotland for a hot-tub dog break</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          Two things set Scotland apart for this kind of trip.
+        </p>
+        <p>
+          <strong>The access laws.</strong> Right to roam means the dog isn't confined to footpaths — coast, hill and moor are open under close control, so the walking from a Scottish lodge tends to be wilder and freer than an English equivalent. (Leads on during ground-nesting season, April–July.)
+        </p>
+        <p>
+          <strong>The setting rewards the tub.</strong> Cold, dark, dramatic — a Highland hot tub is a genuinely different experience from a suburban one, big-sky and often aurora-lit in winter. Off-season rates are low and the lodges are quiet. Each full write-up notes the walking, the garden and the remoteness of the road in.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Frequently asked questions</h2>
+      <FAQ items={faqItems} emitSchema={false} />
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Related guides</h2>
+      <ul class="mt-4 grid gap-3 sm:grid-cols-2 text-sm">
+        <li><a href="/dog-friendly-hot-tub-lodges/">Dog-friendly hot tub lodges UK (all regions)</a></li>
+        <li><a href="/dog-friendly-hot-tub-cottages-lake-district/">Hot tub cottages in the Lake District</a></li>
+        <li><a href="/dog-friendly-hot-tub-cottages-cornwall/">Hot tub cottages in Cornwall</a></li>
+        <li><a href="/dog-friendly-cottages-enclosed-gardens/">Cottages with enclosed gardens</a></li>
+      </ul>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12"><AuthorByline variant="full" /></section>
+  </article>
+</BaseLayout>

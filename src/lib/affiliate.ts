@@ -22,8 +22,11 @@ export const AWIN_PUBLISHER_ID = '2932845';
  *   - hoseasons      (6 listings) — approved 18 Jun 2026, awinmid 118651
  *
  * Pending Awin advertiser approval (add the id here when it lands):
- *   - sykes          (33 listings — the big one)
  *   - cottages.com   (6 listings)
+ *
+ * REJECTED by advertiser — do NOT add an id (links stay direct/untracked).
+ * Worth re-applying once the site has more content + traffic:
+ *   - sykes          (33 listings — rejected 13 Jul 2026; reapply later)
  *
  * Not Awin merchants (always link direct, never add ids here):
  *   - aspects-holidays, kernock-cottages, direct/independent (null provider)

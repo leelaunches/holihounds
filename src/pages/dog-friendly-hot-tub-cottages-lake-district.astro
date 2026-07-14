@@ -1,0 +1,130 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import MoneyCottageCard from '~/components/MoneyCottageCard.astro';
+import AffiliateDisclosure from '~/components/AffiliateDisclosure.astro';
+import FAQ from '~/components/FAQ.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { article, breadcrumbList, faqPage, itemList } from '~/lib/schema';
+import { SITE_URL } from '~/lib/site';
+import { crumb } from '~/lib/nav';
+
+// Lake District hot-tub lodges — the hot-tub-tagged Cumbria properties. Targets
+// the "dog friendly cottages with hot tubs lake district" cluster (a big share
+// of the site's search impressions).
+const lodges = (await getCollection('listings', (e) => e.data.tags.includes('hot-tub') && e.data.region === 'cumbria'))
+  .sort((a, b) => (a.data.featured !== b.data.featured ? (a.data.featured ? -1 : 1) : a.data.name.localeCompare(b.data.name)));
+
+const slugFor = (id: string) => id.split('/').pop()!;
+const total = lodges.length;
+const dogsPhrase = (n: number | null) => (n != null ? `up to ${n} dog${n === 1 ? '' : 's'}` : 'dog limit not stated');
+
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Hot tub lodges', '/dog-friendly-hot-tub-lodges/'),
+  crumb('Lake District', '/dog-friendly-hot-tub-cottages-lake-district/'),
+];
+
+const faqItems = [
+  {
+    question: 'Are dogs allowed in the hot tub?',
+    answer:
+      "No — the tub itself is for humans only, on essentially all booking-platform stock, because dog hair and oils throw the water chemistry off. Your dog is welcome in the lodge, the garden and usually the decking around the tub; the water inside isn't. It's chemistry and etiquette rather than meanness. If a listing doesn't say, assume dogs stay out of the tub.",
+  },
+  {
+    question: 'Is a hot tub worth it in the Lake District in winter?',
+    answer:
+      "Arguably it's better in winter. The Lakes get wet, and a hot tub turns a January storm from a washout into the point of the trip — a hot soak after a fell walk, watching the rain come in over the water. Off-season midweek rates are also 30–50% below peak on the platforms, and the dog-friendly walking is far less competitive. Confirm the lodge doesn't close seasonally (most don't).",
+  },
+  {
+    question: 'How far ahead do Lake District hot tub lodges book up?',
+    answer:
+      "Further than almost any other UK self-catering category. Dog-friendly plus a private hot tub in the Lakes is one of the hardest combinations to book last-minute — peak weeks (school holidays, bank holidays, Christmas) go 6–12 months out for the strongest lodges. Off-peak midweek stays are usually still available 2–4 weeks ahead, especially November–March outside the Christmas window.",
+  },
+  {
+    question: "What's the difference between a lodge, a cabin and a cottage with a hot tub?",
+    answer:
+      "For a dog holiday, less than the labels suggest — all three mean self-catering with a private hot tub. \"Lodge\" and \"log cabin\" usually mean a timber unit on a holiday park (often with shared facilities like a pool nearby); \"cottage\" means a standalone stone building. Parks tend to be better value and more dog-set-up; standalone cottages give more privacy. The properties here are the timber-lodge type; for standalone stone cottages, see our main UK hot-tub guide.",
+  },
+];
+
+const pageUrl = '/dog-friendly-hot-tub-cottages-lake-district/';
+const pageTitle = 'Dog-friendly cottages with hot tubs in the Lake District';
+// 149 chars — under the 155-char Google truncation threshold.
+const pageDescription =
+  'Dog-friendly Lake District lodges & cabins with a private hot tub — verified dog policies, and the honest small print on gardens and pet charges. By Rachel Polden.';
+
+const heroImage = lodges[0]?.data.image ?? '/images/og-default.jpg';
+
+const jsonLd = [
+  article({ headline: pageTitle, description: pageDescription, image: new URL(heroImage, SITE_URL).toString(), datePublished: '2026-07-13', url: pageUrl }),
+  faqPage(faqItems),
+  itemList(lodges.map((l) => ({ name: l.data.name, url: `${pageUrl}#${slugFor(l.id)}` }))),
+  breadcrumbList(breadcrumbs),
+];
+---
+<BaseLayout title={pageTitle} description={pageDescription} image={heroImage} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-8">
+      <p class="eyebrow">Hot tubs · Lake District</p>
+      <h1 class="display mt-3">{pageTitle}</h1>
+      <div class="mt-6"><AuthorByline /></div>
+    </header>
+
+    <div class="border-t border-b border-edge py-3 my-6"><AffiliateDisclosure /></div>
+
+    <div class="prose-reading space-y-4 text-lg">
+      <p>
+        A private hot tub, a dog-friendly lodge and the Lake District out of the window is one of the best UK short-break combinations there is — and one of the hardest to actually book, because most hot-tub stock doesn't take dogs and most dog-friendly stock doesn't have a private tub. This page is the Lake District cut of our national guide: the Cumbrian lodges and cabins we've verified as clearing both bars.
+      </p>
+      <p>
+        Each has a private hot tub in your unit (not a shared one) and a dog policy checked against the listing — max dogs, garden, pet charge. It's a small, curated set; for more across the whole country, see our <a href="/dog-friendly-hot-tub-lodges/">UK hot tub lodges guide</a>.
+      </p>
+    </div>
+
+    {total > 0 && (
+      <section class="mt-14">
+        <div class="grid gap-6 sm:grid-cols-2">
+          {lodges.map((c) => (
+            <MoneyCottageCard listing={c} highlightLabel="Hot tub &amp; dogs" highlightValue={`Private hot tub · ${dogsPhrase(c.data.max_dogs)}`} />
+          ))}
+        </div>
+      </section>
+    )}
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Why the Lake District for a hot-tub dog break</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          The Lakes are the most natural dog-walking region in England, and a hot tub is the ideal end to a day on the fells — the walk earns the soak. The combination works particularly well here for two reasons.
+        </p>
+        <p>
+          <strong>The weather makes the tub, not the other way round.</strong> Cumbrian rain is a feature, not a bug, when there's a hot tub to retreat to; a wet week that would sink a normal cottage break becomes a series of good walks and better soaks. It's why the Lakes are arguably the strongest hot-tub region in the country for dog owners.
+        </p>
+        <p>
+          <strong>Walking straight from the lodge.</strong> The best of these sit near the shore or the fells, so the dog gets its miles and you get the tub without a drive in between. Each lodge's full write-up notes the walking and the garden setup.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Frequently asked questions</h2>
+      <FAQ items={faqItems} emitSchema={false} />
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Related guides</h2>
+      <ul class="mt-4 grid gap-3 sm:grid-cols-2 text-sm">
+        <li><a href="/dog-friendly-hot-tub-lodges/">Dog-friendly hot tub lodges UK (all regions)</a></li>
+        <li><a href="/dog-friendly-hot-tub-cottages-scotland/">Hot tub lodges in Scotland</a></li>
+        <li><a href="/dog-friendly-hot-tub-cottages-cornwall/">Hot tub cottages in Cornwall</a></li>
+        <li><a href="/lake-district/cottages/">Dog-friendly cottages in the Lake District</a></li>
+      </ul>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12"><AuthorByline variant="full" /></section>
+  </article>
+</BaseLayout>

@@ -1,0 +1,129 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import MoneyCottageCard from '~/components/MoneyCottageCard.astro';
+import AffiliateDisclosure from '~/components/AffiliateDisclosure.astro';
+import FAQ from '~/components/FAQ.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { article, breadcrumbList, faqPage, itemList } from '~/lib/schema';
+import { SITE_URL } from '~/lib/site';
+import { crumb } from '~/lib/nav';
+
+// Cornwall hot-tub properties — targets "dog friendly cottages with hot tubs
+// cornwall" and the coastal hot-tub cluster.
+const lodges = (await getCollection('listings', (e) => e.data.tags.includes('hot-tub') && e.data.region === 'cornwall'))
+  .sort((a, b) => (a.data.featured !== b.data.featured ? (a.data.featured ? -1 : 1) : a.data.name.localeCompare(b.data.name)));
+
+const slugFor = (id: string) => id.split('/').pop()!;
+const total = lodges.length;
+const dogsPhrase = (n: number | null) => (n != null ? `up to ${n} dog${n === 1 ? '' : 's'}` : 'dog limit not stated');
+
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Hot tub lodges', '/dog-friendly-hot-tub-lodges/'),
+  crumb('Cornwall', '/dog-friendly-hot-tub-cottages-cornwall/'),
+];
+
+const faqItems = [
+  {
+    question: 'Are dogs allowed in the hot tub?',
+    answer:
+      "No — the tub is for humans only on essentially all booking-platform stock; dog hair and oils throw the water chemistry off. Dogs are welcome in the lodge, garden and usually the decking around the tub. If a listing doesn't say, assume dogs stay out of the tub.",
+  },
+  {
+    question: 'Can I combine a hot tub with a dog beach in Cornwall?',
+    answer:
+      "That's the appeal of Cornwall for this — a private hot tub plus year-round dog beaches within reach. Time it right and you can walk the sand, then soak. Note the seasonal beach dog bans though: many Cornish beaches restrict dogs 10am–6pm over summer, so pair a summer hot-tub break with our <a href=\"/cornwall/beaches/\">year-round dog beaches guide</a> to be sure of the walk.",
+  },
+  {
+    question: 'Is a hot tub worth it in Cornwall, or is it a summer place?',
+    answer:
+      "Year-round. A hot tub is arguably better on a wild Atlantic-storm evening than a warm July one, and Cornwall's shoulder and winter seasons are quieter, cheaper and — for dogs — better, because the summer beach restrictions lift. Off-season midweek rates on the platforms run well below peak. Check the specific park's winter opening.",
+  },
+  {
+    question: "What's the difference between a lodge, a cabin and a cottage with a hot tub?",
+    answer:
+      "For a dog holiday, less than the labels suggest — all mean self-catering with a private hot tub. \"Lodge\" and \"log cabin\" usually mean a timber unit on a holiday park (often with a pool and facilities); \"cottage\" means a standalone building. The Cornish options here are a mix; for standalone cottages with hot tubs elsewhere, see our main UK guide.",
+  },
+];
+
+const pageUrl = '/dog-friendly-hot-tub-cottages-cornwall/';
+const pageTitle = 'Dog-friendly cottages with hot tubs in Cornwall';
+// 151 chars — under the 155-char Google truncation threshold.
+const pageDescription =
+  'Dog-friendly Cornwall lodges & cottages with a private hot tub, near the coast and year-round dog beaches — verified dog policies and small print. By Rachel Polden.';
+
+const heroImage = lodges[0]?.data.image ?? '/images/og-default.jpg';
+
+const jsonLd = [
+  article({ headline: pageTitle, description: pageDescription, image: new URL(heroImage, SITE_URL).toString(), datePublished: '2026-07-13', url: pageUrl }),
+  faqPage(faqItems),
+  itemList(lodges.map((l) => ({ name: l.data.name, url: `${pageUrl}#${slugFor(l.id)}` }))),
+  breadcrumbList(breadcrumbs),
+];
+---
+<BaseLayout title={pageTitle} description={pageDescription} image={heroImage} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-8">
+      <p class="eyebrow">Hot tubs · Cornwall</p>
+      <h1 class="display mt-3">{pageTitle}</h1>
+      <div class="mt-6"><AuthorByline /></div>
+    </header>
+
+    <div class="border-t border-b border-edge py-3 my-6"><AffiliateDisclosure /></div>
+
+    <div class="prose-reading space-y-4 text-lg">
+      <p>
+        A private hot tub within reach of a Cornish dog beach is a rare and good thing — the coast walk and the soak, with the dog welcome for both. Most hot-tub stock in Cornwall doesn't take dogs, and most dog-friendly stock skips the private tub, so this is the Cornish cut of our national guide: the lodges and cottages we've verified as clearing both.
+      </p>
+      <p>
+        Each has a private hot tub in your unit and a dog policy checked against the listing. A small, curated set; for more across the UK, see our <a href="/dog-friendly-hot-tub-lodges/">UK hot tub lodges guide</a>, and pair a stay with our <a href="/cornwall/beaches/">year-round Cornwall dog beaches</a>.
+      </p>
+    </div>
+
+    {total > 0 && (
+      <section class="mt-14">
+        <div class="grid gap-6 sm:grid-cols-2">
+          {lodges.map((c) => (
+            <MoneyCottageCard listing={c} highlightLabel="Hot tub &amp; dogs" highlightValue={`Private hot tub · ${dogsPhrase(c.data.max_dogs)}`} />
+          ))}
+        </div>
+      </section>
+    )}
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Hot tubs and dog beaches — timing it right</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          Cornwall's draw for this kind of break is the pairing: a hot tub back at the lodge and a dog beach down the road. One thing to plan around, though.
+        </p>
+        <p>
+          <strong>The summer beach bans.</strong> Most Cornish beaches restrict dogs during the day (roughly 10am–6pm) from around Easter or mid-May to the end of September. So a July hot-tub break needs a year-round dog beach nearby — Gwynver, Daymer, Sandymouth and the rest — rather than the flagship resort sands. Our <a href="/cornwall/beaches/">Cornwall beaches guide</a> flags which stay open all year.
+        </p>
+        <p>
+          <strong>Off-season is the sweet spot.</strong> October to April, the beach bans lift, the crowds go, the rates drop, and a hot tub against an Atlantic storm is the whole point. For a dog, winter Cornwall with a hot tub is arguably better than summer.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Frequently asked questions</h2>
+      <FAQ items={faqItems} emitSchema={false} />
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Related guides</h2>
+      <ul class="mt-4 grid gap-3 sm:grid-cols-2 text-sm">
+        <li><a href="/dog-friendly-hot-tub-lodges/">Dog-friendly hot tub lodges UK (all regions)</a></li>
+        <li><a href="/dog-friendly-hot-tub-cottages-lake-district/">Hot tub cottages in the Lake District</a></li>
+        <li><a href="/dog-friendly-hot-tub-cottages-scotland/">Hot tub lodges in Scotland</a></li>
+        <li><a href="/cornwall/cottages/">Dog-friendly cottages in Cornwall</a></li>
+      </ul>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12"><AuthorByline variant="full" /></section>
+  </article>
+</BaseLayout>

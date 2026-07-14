@@ -92,13 +92,18 @@ const faqItems = [
     answer:
       "Almost none. A handful of independent owners run dedicated 'dog-friendly hot tub' setups where the tub itself is shared with dogs, but these are rare and usually clearly advertised. Booking-platform stock (Sykes, Hoseasons, cottages.com) universally requires dogs to stay out of the tub. If the listing doesn't explicitly mention it, assume dogs aren't permitted in the tub.",
   },
+  {
+    question: "Lodge, cabin or cottage with a hot tub — what's the difference?",
+    answer:
+      "For a dog holiday, less than the labels suggest — all three mean self-catering with a private hot tub, and people search them interchangeably. \"Lodge\" and \"log cabin\" usually mean a timber unit on a holiday park (often with a pool and shared facilities); \"cottage\" means a standalone stone building. Parks tend to be better value and more set up for dogs; standalone cottages give more privacy. Most of the properties here are the timber-lodge or cabin type.",
+  },
 ];
 
 const pageUrl = '/dog-friendly-hot-tub-lodges/';
 const pageTitle = 'Dog-friendly hot tub lodges UK: 2026 guide';
 // 131 chars — under the 155-char Google truncation threshold.
 const pageDescription =
-  '16 verified UK lodges with private hot tubs and dog policies that hold up — Sykes, Hoseasons and independents. By Rachel Polden.';
+  '16 verified UK lodges, cabins & cottages with private hot tubs and dog policies that actually hold up — with the small print checked. By Rachel Polden.';
 
 // Fallback hero image until the listings drop in and we use the first lodge's image.
 const heroImage = 'https://images.unsplash.com/photo-1633512424746-0cb5240e064d?w=1600&h=900&fit=crop&q=85';
@@ -144,7 +149,10 @@ const jsonLd = [
         The combination of dog-friendly and private hot tub is genuinely hard to find — which is why people search this specifically rather than browsing self-catering generally. Most lodge stock that allows dogs has shared hot tubs, and the surrounding area is often dog-restricted, defeating the point. Most stock with private hot tubs doesn't allow dogs at all.
       </p>
       <p>
-        The lodges below all clear both bars: a private hot tub in your unit, plus a clear dog policy with the small print verified against the listing. Provider mix is Sykes-heavy (the platform with by far the deepest UK private-tub dog-friendly inventory), with Hoseasons, an independent and a single Welsh smallholding making up the rest. East Anglia and the Peak District are gaps in this iteration — research couldn't surface verified private-tub dog-friendly units there that met our standards.
+        The lodges below all clear both bars: a private hot tub in your unit, plus a clear dog policy with the small print verified against the listing. East Anglia and the Peak District are gaps in this iteration — research couldn't surface verified private-tub dog-friendly units there that met our standards.
+      </p>
+      <p>
+        A note on wording: the same stock gets searched as "hot tub lodges", "log cabins with a hot tub" and "dog-friendly cottages with a hot tub" — here they're the same thing. Most are timber lodges or log cabins on holiday parks; a few are standalone cottages. We've used "lodge" throughout for consistency.
       </p>
     </div>
 
@@ -203,6 +211,28 @@ const jsonLd = [
           ))}
         </div>
       )}
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <p class="eyebrow">By region</p>
+      <h2 class="mt-2">Hot tub lodges by region</h2>
+      <p class="prose-reading mt-4">
+        The regions with the deepest dog-friendly private-hot-tub stock, each a focused guide with the local detail — walking, beaches, seasons.
+      </p>
+      <div class="mt-8 grid gap-6 sm:grid-cols-3">
+        <a href="/dog-friendly-hot-tub-cottages-lake-district/" class="group block h-full bg-cream-soft border border-edge p-6 no-underline">
+          <h3 class="group-hover:text-clay-deep transition-colors">Lake District</h3>
+          <p class="mt-2 text-sm">Fellside and lakeside lodges — the strongest hot-tub region for wet-weather dog holidays.</p>
+        </a>
+        <a href="/dog-friendly-hot-tub-cottages-scotland/" class="group block h-full bg-cream-soft border border-edge p-6 no-underline">
+          <h3 class="group-hover:text-clay-deep transition-colors">Scotland</h3>
+          <p class="mt-2 text-sm">Highland and lochside lodges, with right-to-roam walking straight from the door.</p>
+        </a>
+        <a href="/dog-friendly-hot-tub-cottages-cornwall/" class="group block h-full bg-cream-soft border border-edge p-6 no-underline">
+          <h3 class="group-hover:text-clay-deep transition-colors">Cornwall</h3>
+          <p class="mt-2 text-sm">A hot tub within reach of a year-round dog beach — coast walk, then soak.</p>
+        </a>
+      </div>
     </section>
 
     <section class="mt-16 border-t border-edge pt-12">
