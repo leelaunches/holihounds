@@ -1,0 +1,133 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import MoneyCottageCard from '~/components/MoneyCottageCard.astro';
+import AffiliateDisclosure from '~/components/AffiliateDisclosure.astro';
+import FAQ from '~/components/FAQ.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { article, breadcrumbList, faqPage, itemList } from '~/lib/schema';
+import { SITE_URL } from '~/lib/site';
+import { crumb } from '~/lib/nav';
+
+// Yorkshire Dales hot-tub properties — targets "dog friendly cottages with hot
+// tubs yorkshire dales" / "hot tub lodge dales dog friendly". Genuinely thin
+// stock: only a handful clear both dog-friendly AND a private tub inside the Dales.
+const lodges = (await getCollection('listings', (e) => e.data.tags.includes('hot-tub') && e.data.region === 'yorkshire-dales'))
+  .sort((a, b) => (a.data.featured !== b.data.featured ? (a.data.featured ? -1 : 1) : a.data.name.localeCompare(b.data.name)));
+
+const slugFor = (id: string) => id.split('/').pop()!;
+const total = lodges.length;
+const dogsPhrase = (n: number | null) => (n != null ? `up to ${n} dog${n === 1 ? '' : 's'}` : 'dog limit not stated');
+
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Hot tub lodges', '/dog-friendly-hot-tub-lodges/'),
+  crumb('Yorkshire Dales', '/dog-friendly-hot-tub-cottages-yorkshire-dales/'),
+];
+
+const faqItems = [
+  {
+    question: 'Are dogs allowed in the hot tub?',
+    answer:
+      "No — the tub is for humans only on essentially all booking-platform stock, because dog hair and oils throw the water chemistry off. Dogs are welcome in the lodge, garden and usually the decking around the tub; the water isn't. If a listing doesn't say, assume dogs stay out of the tub.",
+  },
+  {
+    question: 'Why are there so few dog-friendly hot-tub cottages in the Yorkshire Dales?',
+    answer:
+      "Honestly, because there are. The Dales has plenty of dog-friendly stone cottages and plenty of hot-tub lodges, but the overlap — a private tub <em>and</em> dogs welcome, actually inside or on the edge of the National Park — is genuinely small. Most \"Yorkshire Dales hot tub\" search results are either not dog-friendly, or sit over the border in County Durham or Cumbria. The handful here are the ones we could verify clear both, so we've been upfront about exactly where each one sits.",
+  },
+  {
+    question: 'Which of these is actually inside the National Park?',
+    answer:
+      "Only the Aysgarth lodge is genuinely inside the Yorkshire Dales National Park, in Wensleydale near Aysgarth Falls — it's the truest \"in the Dales\" pick. The others are southern-gateway spots: Cononley is just south of Skipton, and the Ribblesdale park at Gisburn is on the south-western fringe (Ribble Valley / Forest of Bowland), a short drive from the fells rather than inside the boundary. All good walking country; we just don't dress up the geography.",
+  },
+  {
+    question: 'When is the best time for a hot-tub break in the Dales with a dog?',
+    answer:
+      "Autumn and winter, for our money. The Dales has no seasonal dog restrictions to plan around — the walking is open year-round — so a hot tub earns its keep most on a cold, clear evening after a day on the fells. Off-season midweek rates drop hard, the honeypots (Malham, Aysgarth, Bolton Abbey) empty out, and the dog gets the tops largely to itself. One safety note: after heavy rain the rivers run fast, and the Strid at Bolton Abbey is lethal — never let a dog near it.",
+  },
+];
+
+const pageUrl = '/dog-friendly-hot-tub-cottages-yorkshire-dales/';
+const pageTitle = 'Dog-friendly cottages with hot tubs in the Yorkshire Dales';
+// 152 chars — under the 155-char Google truncation threshold.
+const pageDescription =
+  'Dog-friendly Yorkshire Dales lodges & cottages with a private hot tub — verified dog policies and honest geography on which sit inside the National Park. By Rachel Polden.';
+
+const heroImage = lodges[0]?.data.image ?? '/images/og-default.jpg';
+
+const jsonLd = [
+  article({ headline: pageTitle, description: pageDescription, image: new URL(heroImage, SITE_URL).toString(), datePublished: '2026-07-14', url: pageUrl }),
+  faqPage(faqItems),
+  itemList(lodges.map((l) => ({ name: l.data.name, url: `${pageUrl}#${slugFor(l.id)}` }))),
+  breadcrumbList(breadcrumbs),
+];
+---
+<BaseLayout title={pageTitle} description={pageDescription} image={heroImage} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-8">
+      <p class="eyebrow">Hot tubs · Yorkshire Dales</p>
+      <h1 class="display mt-3">{pageTitle}</h1>
+      <div class="mt-6"><AuthorByline /></div>
+    </header>
+
+    <div class="border-t border-b border-edge py-3 my-6"><AffiliateDisclosure /></div>
+
+    <div class="prose-reading space-y-4 text-lg">
+      <p>
+        A private hot tub after a day on the Dales fells — Ingleborough, Wensleydale, the Three Peaks — with the dog asleep by the fire is a very good way to spend a cold weekend. But it's a harder thing to book here than you'd expect: the Dales has plenty of dog-friendly cottages and plenty of hot-tub lodges, yet the overlap that also sits in or near the National Park is genuinely small.
+      </p>
+      <p>
+        So this is a deliberately short, honest list — the properties we could verify as both dog-friendly and privately hot-tubbed, with the geography stated plainly (only one is truly inside the Park; the others are southern gateways). Each has a private hot tub in your unit and a dog policy checked against the listing. For more across the country, see our <a href="/dog-friendly-hot-tub-lodges/">UK hot tub lodges guide</a>, and pair a stay with our <a href="/yorkshire-dales/">Yorkshire Dales dog-friendly guide</a>.
+      </p>
+    </div>
+
+    {total > 0 && (
+      <section class="mt-14">
+        <div class="grid gap-6 sm:grid-cols-2">
+          {lodges.map((c) => (
+            <MoneyCottageCard listing={c} highlightLabel="Hot tub &amp; dogs" highlightValue={`Private hot tub · ${dogsPhrase(c.data.max_dogs)}`} />
+          ))}
+        </div>
+      </section>
+    )}
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Where these actually are — the honest geography</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          "Yorkshire Dales" gets stretched a long way in holiday listings, so it's worth being precise, because for a walking-and-dog trip the location is the whole point.
+        </p>
+        <p>
+          <strong>Inside the National Park.</strong> The Aysgarth lodge is the real thing — Wensleydale, minutes from Aysgarth Falls, fells from the door. If "in the Dales" matters to you, that's the one.
+        </p>
+        <p>
+          <strong>Southern gateways.</strong> Cononley (near Skipton) and the Ribblesdale park at Gisburn sit just outside the boundary on the southern and south-western edges — a short drive into the fells, in lovely Ribble Valley and Forest of Bowland country, but not strictly the National Park. Fine bases; just not what a purist means by "in the Dales".
+        </p>
+        <p>
+          <strong>One safety line.</strong> The Dales rivers are beautiful and, after rain, dangerous — and the Strid at Bolton Abbey has killed people and dogs. Keep dogs well back from fast water; our <a href="/yorkshire-dales/beaches/">Dales wild-swimming guide</a> flags the safe spots and the ones to avoid.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Frequently asked questions</h2>
+      <FAQ items={faqItems} emitSchema={false} />
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Related guides</h2>
+      <ul class="mt-4 grid gap-3 sm:grid-cols-2 text-sm">
+        <li><a href="/dog-friendly-hot-tub-lodges/">Dog-friendly hot tub lodges UK (all regions)</a></li>
+        <li><a href="/dog-friendly-hot-tub-cottages-lake-district/">Hot tub cottages in the Lake District</a></li>
+        <li><a href="/dog-friendly-hot-tub-cottages-scotland/">Hot tub lodges in Scotland</a></li>
+        <li><a href="/yorkshire-dales/cottages/">Dog-friendly cottages in the Yorkshire Dales</a></li>
+      </ul>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12"><AuthorByline variant="full" /></section>
+  </article>
+</BaseLayout>
