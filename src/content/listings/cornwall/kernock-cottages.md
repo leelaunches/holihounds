@@ -45,6 +45,7 @@ enclosed_garden: true
 garden_note: Each cottage has its own enclosed garden plus access to "Central Bark", a 6-acre dedicated dog walking field fenced to 90 cm.
 dogs_allowed_in: Throughout each cottage
 dog_extras: Welcome pack, water bowl, towels available
+single_level: "Single-storey, wheelchair accessible"
 tags:
   - hot-tub
 featured: true

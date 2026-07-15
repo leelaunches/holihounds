@@ -1,0 +1,156 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import MoneyCottageCard from '~/components/MoneyCottageCard.astro';
+import AffiliateDisclosure from '~/components/AffiliateDisclosure.astro';
+import FAQ from '~/components/FAQ.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { article, breadcrumbList, faqPage, itemList } from '~/lib/schema';
+import { SITE_URL } from '~/lib/site';
+import { crumb } from '~/lib/nav';
+
+// Single-level / ground-floor / step-free cottages — for older or less mobile
+// dogs (and owners). Driven by the explicit `single_level` field, which is set
+// ONLY where the whole property is single-storey (never for a ground-floor
+// bedroom in a multi-storey cottage, or a "dogs ground floor only" pet rule).
+const all = await getCollection('listings');
+const level = all.filter((c) => c.data.single_level != null);
+
+const slugFor = (id: string) => id.split('/').pop()!;
+const REGION_ORDER = ['cornwall', 'lake-district', 'yorkshire-dales', 'scotland', 'northumberland'] as const;
+const REGION_LABEL: Record<string, string> = {
+  cornwall: 'Cornwall',
+  'lake-district': 'Lake District',
+  'yorkshire-dales': 'Yorkshire Dales',
+  scotland: 'Scotland',
+  northumberland: 'Northumberland',
+};
+const byName = (a: (typeof all)[number], b: (typeof all)[number]) => {
+  if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
+  return a.data.name.localeCompare(b.data.name);
+};
+const groups: { label: string; items: typeof level }[] = [];
+for (const r of REGION_ORDER) {
+  const items = level.filter((c) => c.data.region === r).sort(byName);
+  if (items.length) groups.push({ label: REGION_LABEL[r], items });
+}
+const elsewhere = level.filter((c) => !REGION_ORDER.includes(c.data.region as any)).sort(byName);
+if (elsewhere.length) groups.push({ label: 'Elsewhere in the UK', items: elsewhere });
+
+const anchorFor = (label: string) => label.toLowerCase().replace(/[^a-z]+/g, '-');
+const total = level.length;
+
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Cottages', '/cottages/'),
+  crumb('Ground floor', '/dog-friendly-cottages-ground-floor/'),
+];
+
+const faqItems = [
+  {
+    question: 'Why does a single-level cottage matter for a dog?',
+    answer:
+      "Stairs are a daily hazard for a lot of dogs — an arthritic older dog, one recovering from surgery, a three-legged rescue, or a big breed prone to hip and elbow trouble. A steep, unfamiliar holiday-cottage staircase is exactly where a strain or a fall happens. A single-storey cottage removes that entirely: the dog can settle, potter to the garden and get to bed without being carried or gated off from half the house. It suits less-mobile owners for the same reason.",
+  },
+  {
+    question: 'Which of these are genuinely step-free?',
+    answer:
+      "Two go furthest: Kernock Cottages in Cornwall are single-storey and wheelchair accessible, and Little Lodge in Galloway is a single-storey lodge with ramp access. The rest are all-on-one-level inside but we flag the entrance honestly — Griffon Lodge in Northumberland, for instance, is a single-level lodge but has four steps up to the door. Every card states the real access, steps included, so you can tell level access from single-storey-with-a-step before you book.",
+  },
+  {
+    question: "Is 'single-storey' the same as a ground-floor flat?",
+    answer:
+      "No — and it's an important difference for a dog. Everything here is a whole single-level building: a bungalow, a single-storey cottage or a ground-floor lodge, with its own front door and (usually) its own outdoor space. That's not the same as a ground-floor flat inside a larger converted building, where you may still share a hallway or have a communal entrance. We've set the single-level flag only where the entire property is on one level.",
+  },
+  {
+    question: 'Can I get single-level and a secure garden together?',
+    answer:
+      "Some of these manage both. Polwen near Harlyn Bay is single-storey with an enclosed rear garden; The Stable at Boskensoe Barns pairs single-level living with a fenced dog-exercise area on site. Others are all-one-level but have open or unspecified outdoor space, which we note per cottage. If a secure garden is the priority, cross-check with our <a href=\"/dog-friendly-cottages-enclosed-gardens/\">enclosed-garden cottages</a> guide.",
+  },
+];
+
+const pageUrl = '/dog-friendly-cottages-ground-floor/';
+const pageTitle = 'Ground-floor dog-friendly cottages — single-level, no stairs';
+// 152 chars — under the 155-char Google truncation threshold.
+const pageDescription =
+  'Single-storey, ground-floor dog-friendly cottages with no stairs — for older or less mobile dogs. Verified access, step-free ones flagged. By Rachel Polden.';
+
+const heroImage = groups[0]?.items[0]?.data.image ?? '/images/og-default.jpg';
+
+const jsonLd = [
+  article({ headline: pageTitle, description: pageDescription, image: new URL(heroImage, SITE_URL).toString(), datePublished: '2026-07-15', url: pageUrl }),
+  faqPage(faqItems),
+  itemList(level.map((l) => ({ name: l.data.name, url: `${pageUrl}#${slugFor(l.id)}` }))),
+  breadcrumbList(breadcrumbs),
+];
+---
+<BaseLayout title={pageTitle} description={pageDescription} image={heroImage} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-8">
+      <p class="eyebrow">Cottages · single-level</p>
+      <h1 class="display mt-3">{pageTitle}</h1>
+      <div class="mt-6"><AuthorByline /></div>
+    </header>
+
+    <div class="border-t border-b border-edge py-3 my-6"><AffiliateDisclosure /></div>
+
+    <div class="prose-reading space-y-4 text-lg">
+      <p>
+        If your dog can't do stairs — an old dog with stiff hips, one just out of surgery, a three-legged rescue, a big breed you'd rather not carry — a holiday cottage full of steep, unfamiliar steps turns a break into a week of hoisting and gating. A single-storey cottage solves it: the dog settles on the level, gets itself to the garden and to bed, and has the run of the whole place. It's just as welcome if the stairs are hard on <em>you</em>.
+      </p>
+      <p>
+        These are the dog-friendly cottages and lodges we've verified as genuinely single-level — the whole building on one floor, not a ground-floor bedroom tucked into a house full of stairs. {total} qualify, and we state each one's real access honestly: which are wheelchair- or ramp-accessible, which are all-on-one-level, and which are single-storey but have a step or two at the door.
+      </p>
+    </div>
+
+    <nav aria-label="By region" class="mt-12 border-t border-edge pt-8">
+      <p class="eyebrow mb-4">Jump to a region</p>
+      <ul class="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+        {groups.map((g) => (<li><a href={`#${anchorFor(g.label)}`} class="text-text">{g.label} ({g.items.length})</a></li>))}
+      </ul>
+    </nav>
+
+    {groups.map((g) => (
+      <section class="mt-16 border-t border-edge pt-12" id={anchorFor(g.label)}>
+        <h2>{g.label}</h2>
+        <div class="mt-8 grid gap-6 sm:grid-cols-2">
+          {g.items.map((c) => (
+            <MoneyCottageCard listing={c} highlightLabel="Access" highlightValue={c.data.single_level!} />
+          ))}
+        </div>
+      </section>
+    ))}
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <h2>How we decide what counts as "single-level"</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          Holiday listings are loose with this. A cottage advertised as having a "ground-floor bedroom" is usually a normal house with stairs to the other bedrooms — no use if your dog can't manage them. So we set our single-level flag only where the <strong>whole property</strong> is on one floor.
+        </p>
+        <p>
+          We also separate two things people conflate: <strong>single-storey</strong> (the layout — everything on one level) and <strong>step-free</strong> (the access — no steps to get in). A lodge can be entirely single-storey inside and still have steps up to its deck. Both matter, so both are stated on every card: look for "ramp access" or "wheelchair accessible" if you need true step-free, and read the entrance note where there's a step.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Frequently asked questions</h2>
+      <FAQ items={faqItems} emitSchema={false} />
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Related guides</h2>
+      <ul class="mt-4 grid gap-3 sm:grid-cols-2 text-sm">
+        <li><a href="/dog-friendly-cottages-enclosed-gardens/">Cottages with enclosed gardens</a></li>
+        <li><a href="/dog-friendly-cottages-muddy-dogs/">Cottages set up for muddy dogs</a></li>
+        <li><a href="/dog-friendly-cottages-multiple-dogs/">Cottages that welcome 2+ dogs</a></li>
+        <li><a href="/cottages/">Dog-friendly cottages in the UK</a></li>
+      </ul>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12"><AuthorByline variant="full" /></section>
+  </article>
+</BaseLayout>

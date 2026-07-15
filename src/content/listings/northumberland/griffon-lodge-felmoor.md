@@ -33,6 +33,7 @@ enclosed_garden: null
 garden_note: Raised wraparound deck — listing doesn't state whether it's enclosed.
 dogs_allowed_in: Throughout the lodge
 dog_extras: None stated by provider
+single_level: "Single-level lodge — but 4 steps to the entrance"
 tags:
   - hot-tub
 featured: false

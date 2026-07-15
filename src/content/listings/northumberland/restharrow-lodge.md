@@ -33,6 +33,7 @@ enclosed_garden: true
 garden_note: Yes — enclosed decking on rear and side. Hot tub itself requires a separate £250 supplement at booking.
 dogs_allowed_in: Throughout the property
 dog_extras: None stated by provider
+single_level: "Ground-floor lodge — all one level"
 tags:
   - hot-tub
 featured: false

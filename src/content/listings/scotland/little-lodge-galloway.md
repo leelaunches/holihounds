@@ -32,6 +32,7 @@ enclosed_garden: false
 garden_note: Garden not enclosed — dogs need supervising.
 dogs_allowed_in: Throughout the lodge
 dog_extras: Bowls, treats, throws (per recent reviews)
+single_level: "Single-storey lodge with ramp access"
 tags:
   - hot-tub
 featured: false

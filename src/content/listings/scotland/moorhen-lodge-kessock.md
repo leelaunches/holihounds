@@ -34,6 +34,7 @@ enclosed_garden: true
 garden_note: Enclosed veranda. 3 hectares of private woodland on-site for walks.
 dogs_allowed_in: Throughout the lodge
 dog_extras: None stated by provider
+single_level: "Single-storey lodge — all one level"
 tags:
   - hot-tub
 featured: false

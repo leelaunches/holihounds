@@ -59,6 +59,16 @@ const listings = defineCollection({
     dogs_allowed_in: z.string().nullable().default(null),
     dog_extras: z.string().nullable().default(null),
     /**
+     * Honest single-level / step-free access descriptor, surfaced on
+     * /dog-friendly-cottages-ground-floor/ (older/less-mobile dogs). Set ONLY
+     * when the WHOLE property is single-storey/all-on-one-level — never for a
+     * multi-storey cottage that merely has a ground-floor bedroom, or a "dogs
+     * ground floor only" pet rule. State the real access truth including steps
+     * or ramp, e.g. "Single-storey lodge with ramp access", "Single-level — but
+     * 4 steps to the entrance". Null = does not qualify.
+     */
+    single_level: z.string().nullable().default(null),
+    /**
      * Free-form tags used to surface a property on cross-cutting pages.
      * Current values:
      *  - 'hot-tub' — appears on /dog-friendly-hot-tub-lodges/

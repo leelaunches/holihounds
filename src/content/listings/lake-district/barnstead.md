@@ -26,6 +26,7 @@ enclosed_garden: false
 garden_note: Not enclosed — open patio only.
 dogs_allowed_in: Living areas only — not bedrooms
 dog_extras: Bowls and towels
+single_level: "Single-level — all on the ground floor"
 tags: []
 featured: false
 ---

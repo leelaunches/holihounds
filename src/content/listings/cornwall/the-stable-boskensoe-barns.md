@@ -29,5 +29,6 @@ enclosed_garden: true
 garden_note: Yes — plus a dedicated 50×50-metre dog exercise area on site, fenced to six feet.
 dogs_allowed_in: Throughout the property
 dog_extras: Bowls, biscuits, waste bags
+single_level: "Single-storey barn conversion — one level"
 featured: true
 ---

@@ -26,5 +26,6 @@ max_dogs: 2
 enclosed_garden: true
 dogs_allowed_in: Throughout the property
 dog_extras: None stated by provider — bring your own
+single_level: "Single-storey — all on one level"
 featured: false
 ---
