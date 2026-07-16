@@ -1,0 +1,134 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import MoneyCottageCard from '~/components/MoneyCottageCard.astro';
+import AffiliateDisclosure from '~/components/AffiliateDisclosure.astro';
+import FAQ from '~/components/FAQ.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { article, breadcrumbList, faqPage, itemList } from '~/lib/schema';
+import { SITE_URL } from '~/lib/site';
+import { crumb } from '~/lib/nav';
+
+// Northumberland & North East hot-tub lodges — targets "dog friendly cottages in
+// newcastle with hot tubs" (43 imp, pos 39 in GSC) + the Northumberland hot-tub
+// cluster. Covers Northumberland + County Durham.
+const NE = ['northumberland', 'durham'];
+const lodges = (await getCollection('listings', (e) => e.data.tags.includes('hot-tub') && NE.includes(e.data.region)))
+  .sort((a, b) => (a.data.featured !== b.data.featured ? (a.data.featured ? -1 : 1) : a.data.name.localeCompare(b.data.name)));
+
+const slugFor = (id: string) => id.split('/').pop()!;
+const total = lodges.length;
+const dogsPhrase = (n: number | null) => (n != null ? `up to ${n} dog${n === 1 ? '' : 's'}` : 'dog limit not stated');
+
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Hot tub lodges', '/dog-friendly-hot-tub-lodges/'),
+  crumb('Northumberland & North East', '/dog-friendly-hot-tub-cottages-northumberland/'),
+];
+
+const faqItems = [
+  {
+    question: 'Are dogs allowed in the hot tub?',
+    answer:
+      "No — the tub is for humans only on essentially all booking-platform stock, because dog hair and oils throw the water chemistry off. Dogs are welcome in the lodge, garden and usually the decking around the tub; the water isn't. If a listing doesn't say, assume dogs stay out of the tub.",
+  },
+  {
+    question: "I searched for a Newcastle hot-tub cottage — are these near the city?",
+    answer:
+      "Yes. There isn't much dog-friendly hot-tub stock in Newcastle itself, but these Northumberland and County Durham lodges are the realistic version of that search — most are within 30–50 minutes of the city. Percy Wood at Swarland, Felmoor near Longframlington and the Otterburn and Durham options all make an easy base for the coast, the castles and a night out in Newcastle, with the hot tub and the dog waiting back at the lodge.",
+  },
+  {
+    question: 'What makes the North East good for a hot-tub dog break?',
+    answer:
+      "Space and quiet, mostly. Northumberland is England's least-crowded county, with huge empty beaches (Bamburgh, Beadnell, Embleton), castles on every headland, Hadrian's Wall, and the darkest skies in England over Kielder — a genuinely good place to be in a hot tub after dark. The coast beaches are far more relaxed about dogs than the Cornish ones, so summer is less of a planning exercise. It's a strong pairing: wild coast walk, then soak.",
+  },
+  {
+    question: "What's the difference between a lodge, a cabin and a cottage with a hot tub?",
+    answer:
+      "For a dog holiday, less than the labels suggest — all mean self-catering with a private hot tub. \"Lodge\" and \"log cabin\" usually mean a timber unit on a holiday park (often with facilities and dog-friendly clubhouses, as at Percy Wood and Felmoor); \"cottage\" means a standalone building. The North East options here are mostly the timber-lodge kind. For standalone cottages with hot tubs elsewhere, see our main UK guide.",
+  },
+];
+
+const pageUrl = '/dog-friendly-hot-tub-cottages-northumberland/';
+const pageTitle = 'Dog-friendly hot tub lodges in Northumberland & the North East';
+// 154 chars — under the 155-char Google truncation threshold.
+const pageDescription =
+  'Dog-friendly Northumberland & County Durham lodges with a private hot tub, near the coast, castles and Newcastle — verified dog policies and small print. By Rachel Polden.';
+
+const heroImage = lodges[0]?.data.image ?? '/images/og-default.jpg';
+
+const jsonLd = [
+  article({ headline: pageTitle, description: pageDescription, image: new URL(heroImage, SITE_URL).toString(), datePublished: '2026-07-15', url: pageUrl }),
+  faqPage(faqItems),
+  itemList(lodges.map((l) => ({ name: l.data.name, url: `${pageUrl}#${slugFor(l.id)}` }))),
+  breadcrumbList(breadcrumbs),
+];
+---
+<BaseLayout title={pageTitle} description={pageDescription} image={heroImage} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-8">
+      <p class="eyebrow">Hot tubs · Northumberland & the North East</p>
+      <h1 class="display mt-3">{pageTitle}</h1>
+      <div class="mt-6"><AuthorByline /></div>
+    </header>
+
+    <div class="border-t border-b border-edge py-3 my-6"><AffiliateDisclosure /></div>
+
+    <div class="prose-reading space-y-4 text-lg">
+      <p>
+        The North East is the quiet corner that rewards a hot tub best: England's emptiest beaches, a castle on every headland, Hadrian's Wall, and the darkest skies in the country over Kielder to soak under. And unlike Cornwall, the Northumberland coast is relaxed about dogs, so a summer break here isn't a timing puzzle — you walk the sand, then warm up in the tub, dog asleep on the decking.
+      </p>
+      <p>
+        This is the Northumberland and County Durham cut of our national guide — the lodges we've verified as both dog-friendly and privately hot-tubbed, most within an easy drive of Newcastle. Each has a private hot tub in your unit and a dog policy checked against the listing. For more across the UK, see our <a href="/dog-friendly-hot-tub-lodges/">UK hot tub lodges guide</a>.
+      </p>
+    </div>
+
+    {total > 0 && (
+      <section class="mt-14">
+        <div class="grid gap-6 sm:grid-cols-2">
+          {lodges.map((c) => (
+            <MoneyCottageCard listing={c} highlightLabel="Hot tub &amp; dogs" highlightValue={`Private hot tub · ${dogsPhrase(c.data.max_dogs)}`} />
+          ))}
+        </div>
+      </section>
+    )}
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Coast, castles and dark skies</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          Three things make the North East a strong hot-tub base for a dog.
+        </p>
+        <p>
+          <strong>The coast is dog-relaxed.</strong> Bamburgh, Beadnell, Embleton and Alnmouth are vast and, for the most part, far more welcoming to dogs year-round than the Cornish resort beaches — so a summer break doesn't hinge on a ban calendar. Walk the sand under the castle, then drive back to the tub.
+        </p>
+        <p>
+          <strong>The dark skies.</strong> Kielder and much of inland Northumberland sit under the darkest skies in England. A hot tub under a genuinely black, star-thick sky is a different thing from a suburban one — and winter is prime time for it.
+        </p>
+        <p>
+          <strong>It's close to the city.</strong> Most of these lodges are 30–50 minutes from Newcastle, so you can pair the wild stuff with a night out and a day in town, without giving up the hot tub or leaving the dog far behind.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Frequently asked questions</h2>
+      <FAQ items={faqItems} emitSchema={false} />
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Related guides</h2>
+      <ul class="mt-4 grid gap-3 sm:grid-cols-2 text-sm">
+        <li><a href="/dog-friendly-hot-tub-lodges/">Dog-friendly hot tub lodges UK (all regions)</a></li>
+        <li><a href="/dog-friendly-hot-tub-cottages-scotland/">Hot tub lodges in Scotland</a></li>
+        <li><a href="/dog-friendly-hot-tub-cottages-lake-district/">Hot tub cottages in the Lake District</a></li>
+        <li><a href="/dog-friendly-hot-tub-cottages-yorkshire-dales/">Hot tub cottages in the Yorkshire Dales</a></li>
+      </ul>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12"><AuthorByline variant="full" /></section>
+  </article>
+</BaseLayout>

@@ -75,6 +75,7 @@ export const LIVE_ROUTES: ReadonlySet<string> = new Set([
   '/dog-friendly-hot-tub-cottages-scotland/',
   '/dog-friendly-hot-tub-cottages-cornwall/',
   '/dog-friendly-hot-tub-cottages-yorkshire-dales/',
+  '/dog-friendly-hot-tub-cottages-northumberland/',
   '/dog-friendly-cottages-enclosed-gardens/',
   '/dog-friendly-cottages-multiple-dogs/',
   '/dog-friendly-cottages-muddy-dogs/',
