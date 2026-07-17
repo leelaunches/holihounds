@@ -1,0 +1,123 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import FAQ from '~/components/FAQ.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { article, breadcrumbList, faqPage } from '~/lib/schema';
+import { crumb } from '~/lib/nav';
+
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Lake District', '/lake-district/'),
+  crumb('Can dogs swim in Windermere?', '/can-dogs-swim-in-windermere/'),
+];
+
+const faqItems = [
+  {
+    question: 'Is blue-green algae in Windermere dangerous to dogs?',
+    answer:
+      "Yes — potentially fatally. Blue-green algae (cyanobacteria) blooms on Windermere in warm, still spells, usually late summer, and the toxins can kill a dog within hours of swimming in or drinking the water. It looks like pea-green soup, a bluish scum, or turquoise paint streaks along the shore. If you see it, keep the dog out and away. If your dog has been in suspect water and starts vomiting, drooling, twitching or seizing, treat it as an emergency and get to a vet straight away — there's no antidote, so speed matters.",
+  },
+  {
+    question: 'Can dogs go on Windermere lake cruises?',
+    answer:
+      "Yes — Windermere Lake Cruises welcome well-behaved dogs on their boats, which is a lovely way to see the lake without the swimming risks. Policies and any small charge change, so check the current pet policy when you book. Dogs stay on a lead on deck.",
+  },
+  {
+    question: 'Where can dogs swim safely in the Lake District?',
+    answer:
+      "Quieter shores away from boat traffic and river mouths are safest — the southern end of Windermere around Fell Foot, or smaller, calmer waters like Rydal, Buttermere or Loweswater, tend to be gentler than the busy central lake. Always check for blue-green algae first, avoid fast-flowing river inflows and weirs, and rinse the dog with fresh water afterwards. Our Lake District guides note dog-friendly shore access.",
+  },
+  {
+    question: 'Is it safe for a dog to swim in a cold lake?',
+    answer:
+      "Lake water stays cold year-round, and cold-water shock affects dogs too — keep swims short in cool conditions, dry the dog off afterwards, and don't let an older or unfit dog swim out of its depth. A tired dog in cold, deep water is a real risk, so stay close to the shore.",
+  },
+];
+
+const pageUrl = '/can-dogs-swim-in-windermere/';
+const pageTitle = 'Can dogs swim in Windermere? Safety, algae and access';
+const pageDescription =
+  'Yes, dogs can swim in Windermere — but blue-green algae, cold water and boat traffic make where and when matter. An honest safety guide. By Rachel Polden.';
+
+const ogImage = 'https://images.unsplash.com/photo-1641119269354-1a112f25793f?w=1200&h=630&fit=crop&q=85';
+
+const jsonLd = [
+  article({ headline: pageTitle, description: pageDescription, image: ogImage, datePublished: '2026-07-15', url: pageUrl }),
+  faqPage(faqItems),
+  breadcrumbList(breadcrumbs),
+];
+---
+<BaseLayout title={pageTitle} description={pageDescription} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-8">
+      <p class="eyebrow">Lake District · dog advice</p>
+      <h1 class="display mt-3">Can dogs swim in Windermere?</h1>
+      <div class="mt-6"><AuthorByline /></div>
+    </header>
+
+    <div class="prose-reading space-y-4 text-lg">
+      <p>
+        <strong>Yes — dogs can swim in Windermere, and plenty do.</strong> There's no blanket ban on dogs in the lake, and much of the shore is open to them. But the honest answer isn't really about <em>whether</em> — it's about <em>where</em> and <em>when</em>, because Windermere carries a few genuine risks that catch dog owners out every summer. Here's what to know before you let the dog in.
+      </p>
+    </div>
+
+    <section class="mt-14 border-t border-edge pt-10">
+      <h2>The one that matters most: blue-green algae</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          Windermere has a recurring problem with <strong>blue-green algae</strong> (cyanobacteria), which blooms in warm, still weather — most often from mid- to late summer. It's the single biggest danger to a swimming dog, because the toxins it releases can be <strong>fatal within hours</strong>, and dogs are especially exposed because they swallow water and lick it off their coats afterwards.
+        </p>
+        <p>
+          Learn what it looks like: <strong>pea-green soup, a blue-green scum, or streaks like spilled turquoise paint</strong> along the shore and surface, often collecting at the downwind edge. If you see anything like it, keep the dog out of the water and away from the shoreline entirely — don't even let them drink at the edge. Symptoms of poisoning come on fast: vomiting, drooling, weakness, twitching or seizures. There is no antidote, so if you suspect it, get to a vet immediately. Councils post warnings when blooms are confirmed, but they can appear between checks, so trust your own eyes.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10">
+      <h2>The other risks — cold, boats and bugs</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          <strong>Cold water.</strong> Even in a July heatwave, Windermere is cold below the surface, and cold-water shock affects dogs as well as people. Keep swims short, stay near the shore, and be especially careful with older, young or unfit dogs — a tired dog out of its depth in cold water is how accidents happen.
+        </p>
+        <p>
+          <strong>Boat traffic.</strong> Windermere is one of the busiest lakes in the country, with cruisers, ferries, kayaks and speedboats. The central lake and the main jetties are no place for a swimming dog. Pick quiet bays well away from the boat lanes.
+        </p>
+        <p>
+          <strong>Leptospirosis and river inflows.</strong> Standing and slow water can carry leptospirosis (Weil's disease) — keep vaccinations up to date. Avoid the fast water near river mouths and weirs, where the current is stronger than it looks. And always rinse the dog with clean water and offer a fresh drink afterwards, so they're not tempted by the lake.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10">
+      <h2>Where to let a dog in — and the boats</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          The gentler, quieter shores are the ones to aim for — the southern end around <strong>Fell Foot</strong>, or smaller, calmer lakes nearby like Rydal, Buttermere and Loweswater, which are kinder than the busy heart of Windermere. Check for algae first, keep clear of the boat lanes, and you've the makings of a good swim.
+        </p>
+        <p>
+          Prefer to stay dry? <strong>Windermere Lake Cruises welcome dogs on board</strong> — a genuinely nice way to do the lake with none of the water risks (check the current pet policy and any small charge when you book). For where to base yourselves, see our <a href="/lake-district/beaches/">Lake District lake shores for dogs</a> and <a href="/lake-district/cottages/">dog-friendly Lake District cottages</a>.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10">
+      <h2>Frequently asked questions</h2>
+      <FAQ items={faqItems} emitSchema={false} />
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10">
+      <h2>Related guides</h2>
+      <ul class="mt-4 grid gap-3 sm:grid-cols-2 text-sm">
+        <li><a href="/lake-district/beaches/">Lake District lake shores for dogs</a></li>
+        <li><a href="/lake-district/cottages/">Dog-friendly cottages in the Lake District</a></li>
+        <li><a href="/dog-friendly-hot-tub-cottages-lake-district/">Hot tub cottages in the Lake District</a></li>
+        <li><a href="/lake-district/">Dog-friendly Lake District guide</a></li>
+      </ul>
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10"><AuthorByline variant="full" /></section>
+  </article>
+</BaseLayout>

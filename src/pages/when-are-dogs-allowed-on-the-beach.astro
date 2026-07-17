@@ -1,0 +1,120 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import FAQ from '~/components/FAQ.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { article, breadcrumbList, faqPage } from '~/lib/schema';
+import { crumb } from '~/lib/nav';
+
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Beaches', '/beaches/'),
+  crumb('When are dogs allowed on the beach?', '/when-are-dogs-allowed-on-the-beach/'),
+];
+
+const faqItems = [
+  {
+    question: 'Can I walk my dog on the beach before 10am in summer?',
+    answer:
+      "Almost always, yes. The standard seasonal restriction only runs 10am–6pm, so on the great majority of banned beaches dogs are welcome before 10am and after 6pm even at the height of summer. An early-morning or evening beach walk is the reliable way to use a 'banned' beach in July and August — and it's the best time to have the sand to yourselves anyway.",
+  },
+  {
+    question: 'Which UK beaches allow dogs all year?',
+    answer:
+      "Every region has them — typically the quieter coves and the local dog-walking beaches rather than the flagship resort sands. They're the ones to seek out for a summer trip, because there's no calendar to plan around. Our regional beach guides lead with the year-round dog beaches and state each beach's rule plainly.",
+  },
+  {
+    question: 'Are dogs allowed on Cornwall beaches in summer?',
+    answer:
+      "On many, not during the day. Cornwall runs one of the strictest regimes: most restricted beaches ban dogs 10am–6pm from 1 July to 31 August, and Blue Flag / Seaside Award beaches for longer, 15 May to 30 September. But a good number of Cornish beaches stay dog-friendly all year, and the before-10am / after-6pm window applies on the rest. See our Cornwall dog beaches guide for which is which.",
+  },
+  {
+    question: 'What happens if I ignore a beach dog ban?',
+    answer:
+      "Beach dog restrictions are enforced under Public Spaces Protection Orders, and breaching one can mean a fixed penalty notice — £100 on Cornwall's beaches, for example. Enforcement officers do patrol the popular beaches in season. The beach signage is the legal source of truth, so if in doubt, read the sign.",
+  },
+];
+
+const pageUrl = '/when-are-dogs-allowed-on-the-beach/';
+const pageTitle = 'When are dogs allowed on the beach? UK beach dog rules';
+const pageDescription =
+  'UK beach dog bans explained — the summer 10am–6pm rule, the before-10am loophole, year-round dog beaches and how to check before you travel. By Rachel Polden.';
+
+const ogImage = 'https://images.unsplash.com/photo-1641119269354-1a112f25793f?w=1200&h=630&fit=crop&q=85';
+
+const jsonLd = [
+  article({ headline: pageTitle, description: pageDescription, image: ogImage, datePublished: '2026-07-15', url: pageUrl }),
+  faqPage(faqItems),
+  breadcrumbList(breadcrumbs),
+];
+---
+<BaseLayout title={pageTitle} description={pageDescription} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-8">
+      <p class="eyebrow">Beaches · dog advice</p>
+      <h1 class="display mt-3">When are dogs allowed on the beach?</h1>
+      <div class="mt-6"><AuthorByline /></div>
+    </header>
+
+    <div class="prose-reading space-y-4 text-lg">
+      <p>
+        <strong>It depends on the beach and the time of year — but the pattern is more predictable than it looks.</strong> Many UK beaches restrict dogs during the summer, plenty allow them all year, and there's one timing rule that lets you use almost any beach even in peak season. Here's how it works, and how to check before you set off.
+      </p>
+    </div>
+
+    <section class="mt-14 border-t border-edge pt-10">
+      <h2>The summer ban — and the loophole</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          Most seaside councils restrict dogs on their busiest beaches over summer, using a Public Spaces Protection Order. The usual shape is a daytime ban — <strong>10am to 6pm</strong> — running either <strong>1 July to 31 August</strong>, or, on Blue Flag and Seaside Award beaches, the longer <strong>mid-May to the end of September</strong>.
+        </p>
+        <p>
+          The part that catches people out — in a good way — is that the ban is <strong>daytime only</strong>. On the great majority of restricted beaches, dogs are welcome <strong>before 10am and after 6pm</strong>, every day of the summer. An early walk on empty sand, or an evening one as the crowds thin, turns a "no dogs" beach into a perfectly usable one. And outside the season — roughly October to Easter — most restrictions lift entirely, which is exactly when a dog beach is at its best.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10">
+      <h2>Year-round dog beaches, and on-lead beaches</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          Not every beach has a ban. <strong>Every stretch of coast has year-round dog beaches</strong> — usually the quieter coves and the local dog-walking sands rather than the flagship resort beaches. For a summer trip, these are the ones worth seeking out, because there's no calendar to work around at all.
+        </p>
+        <p>
+          Watch, too, for the difference between a <strong>ban</strong> and an <strong>on-lead rule</strong>. Some beaches don't exclude dogs in summer at all — they simply require them on a lead during the day. That's a much softer restriction, and worth knowing when you're comparing beaches.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10">
+      <h2>Regional differences, and how to check</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          The rules vary a lot by region. <strong>Cornwall</strong> is among the strictest, with dozens of beaches restricted over summer. <strong>Northumberland and Scotland</strong> are far more relaxed — many of their big beaches take dogs year-round, so summer is barely a planning exercise.
+        </p>
+        <p>
+          Before you travel, three checks: the council's PSPO / dogs-on-beaches page for exact dates; the <strong>signage at the beach</strong>, which is the legal source of truth; and our regional guides, which list each beach's dog rule and dates in plain terms. The orders are reviewed yearly, so it's always worth a fresh look. Start with our <a href="/cornwall/beaches/">Cornwall dog beaches</a>, <a href="/lake-district/beaches/">Lake District lake shores</a> and <a href="/yorkshire-dales/beaches/">Yorkshire Dales wild-swimming</a> guides.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10">
+      <h2>Frequently asked questions</h2>
+      <FAQ items={faqItems} emitSchema={false} />
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10">
+      <h2>Dog beach guides</h2>
+      <ul class="mt-4 grid gap-3 sm:grid-cols-2 text-sm">
+        <li><a href="/beaches/">Dog-friendly beaches in the UK</a></li>
+        <li><a href="/cornwall/beaches/">Dog-friendly beaches in Cornwall</a></li>
+        <li><a href="/lake-district/beaches/">Lake District lake shores for dogs</a></li>
+        <li><a href="/yorkshire-dales/beaches/">Yorkshire Dales wild-swimming for dogs</a></li>
+      </ul>
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10"><AuthorByline variant="full" /></section>
+  </article>
+</BaseLayout>

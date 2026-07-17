@@ -1,0 +1,114 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import FAQ from '~/components/FAQ.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { article, breadcrumbList, faqPage } from '~/lib/schema';
+import { crumb } from '~/lib/nav';
+
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Hot tub lodges', '/dog-friendly-hot-tub-lodges/'),
+  crumb('Can dogs go in hot tubs?', '/can-dogs-go-in-hot-tubs/'),
+];
+
+const faqItems = [
+  {
+    question: 'Why are dogs not allowed in hot tubs?',
+    answer:
+      "Two reasons — one for the dog, one for the tub. For the dog, hot tub water is heated to 37–40°C and dosed with chlorine or bromine, a combination that risks overheating and irritates skin, eyes and stomach (dogs then lick it off their coats). For the tub, dog hair, oils and dander clog the filters and throw the water chemistry off, which is expensive to put right and unfair on the next guests. That's why essentially every holiday-lodge hot tub bans dogs from the water.",
+  },
+  {
+    question: 'Is hot tub water dangerous for dogs?',
+    answer:
+      "It can be. The heat is the main danger — dogs can't sweat to cool down, so a hot tub can push them towards heatstroke far faster than it would a person, even in a few minutes. On top of that, the sanitising chemicals can upset a dog's stomach and irritate its skin and eyes. It's not a safe place for a dog, however much they'd like to join in.",
+  },
+  {
+    question: 'Can I still book a hot tub lodge if I have a dog?',
+    answer:
+      "Absolutely — that's exactly what a dog-friendly hot tub lodge is for. The dog is welcome in the lodge, the garden and usually the decking around the tub; it just doesn't go in the water. You soak, the dog dozes nearby. We've a whole set of <a href=\"/dog-friendly-hot-tub-lodges/\">verified dog-friendly hot tub lodges</a> where the dog policy holds up.",
+  },
+  {
+    question: 'What should I do if my dog gets into the hot tub?',
+    answer:
+      "Get them out promptly, rinse them thoroughly with fresh, cool water to remove the chemicals, and offer a drink so they're not tempted to lick their coat. Watch for any stomach upset over the next day. And tell the owner — the tub will likely need draining or rebalancing, and it's the fair thing to do.",
+  },
+];
+
+const pageUrl = '/can-dogs-go-in-hot-tubs/';
+const pageTitle = 'Can dogs go in hot tubs? The honest answer for owners';
+const pageDescription =
+  'No — dogs should not go in hot tubs, and holiday lodges do not allow it. Why (heat and chemistry), and what it means for a hot-tub break with a dog. By Rachel Polden.';
+
+const ogImage = 'https://images.unsplash.com/photo-1641119269354-1a112f25793f?w=1200&h=630&fit=crop&q=85';
+
+const jsonLd = [
+  article({ headline: pageTitle, description: pageDescription, image: ogImage, datePublished: '2026-07-15', url: pageUrl }),
+  faqPage(faqItems),
+  breadcrumbList(breadcrumbs),
+];
+---
+<BaseLayout title={pageTitle} description={pageDescription} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-8">
+      <p class="eyebrow">Hot tubs · dog advice</p>
+      <h1 class="display mt-3">Can dogs go in hot tubs?</h1>
+      <div class="mt-6"><AuthorByline /></div>
+    </header>
+
+    <div class="prose-reading space-y-4 text-lg">
+      <p>
+        <strong>No — dogs shouldn't go in hot tubs, and on holiday-lodge tubs it isn't allowed.</strong> It's tempting to picture the whole family, dog included, piling into the bubbles, but it's genuinely not safe for the dog and not fair on the tub. The good news: it takes nothing away from a hot-tub break with a dog, once you know how it actually works.
+      </p>
+    </div>
+
+    <section class="mt-14 border-t border-edge pt-10">
+      <h2>Why the dog stays out of the water</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          <strong>The heat is the real danger.</strong> Hot tubs run at 37–40°C. Dogs can't sweat to shed heat the way we do — they rely on panting — so hot water pushes them towards overheating and heatstroke remarkably fast, in minutes rather than the half-hour you might happily soak for. That alone makes it a no.
+        </p>
+        <p>
+          <strong>The chemistry doesn't suit them either.</strong> The chlorine or bromine that keeps the water safe for people is an irritant to a dog's skin, eyes and stomach — and dogs make it worse by licking it off their coats afterwards. So even a cooler tub isn't a dog-safe one.
+        </p>
+        <p>
+          <strong>And it wrecks the tub.</strong> Dog hair, oils and dander clog the filtration and knock the water balance out, which is costly to fix and leaves the tub out of action for the next guests. That's why the ban is universal across holiday-lodge stock — it's etiquette and hygiene as much as safety.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10">
+      <h2>What a dog-friendly hot tub lodge actually means</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          It means the dog is welcome everywhere that matters — the lodge, the garden, and nearly always the decking around the tub — just not in the water. You get your soak; the dog stretches out on the boards beside you or dozes by the wood burner. That's the normal shape of a hot-tub holiday with a dog, and it works beautifully.
+        </p>
+        <p>
+          The thing to check when you book isn't whether the dog can swim in the tub (it can't, anywhere) but whether the <em>outdoor space</em> is enclosed, so the dog can be loose near the tub rather than held on a lead. That's exactly the detail we surface on our <a href="/dog-friendly-hot-tub-lodges/">dog-friendly hot tub lodges guide</a> — verified private tubs with dog policies that stand up, by region.
+        </p>
+        <p>
+          If your dog loves water, pack a cheap paddling pool for the garden in summer — a far better idea than the tub, and most dogs prefer it anyway.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10">
+      <h2>Frequently asked questions</h2>
+      <FAQ items={faqItems} emitSchema={false} />
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10">
+      <h2>Find a dog-friendly hot tub lodge</h2>
+      <ul class="mt-4 grid gap-3 sm:grid-cols-2 text-sm">
+        <li><a href="/dog-friendly-hot-tub-lodges/">Dog-friendly hot tub lodges UK (all regions)</a></li>
+        <li><a href="/dog-friendly-hot-tub-cottages-lake-district/">Hot tub cottages in the Lake District</a></li>
+        <li><a href="/dog-friendly-hot-tub-cottages-scotland/">Hot tub lodges in Scotland</a></li>
+        <li><a href="/dog-friendly-hot-tub-cottages-cornwall/">Hot tub cottages in Cornwall</a></li>
+      </ul>
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10"><AuthorByline variant="full" /></section>
+  </article>
+</BaseLayout>
