@@ -1,0 +1,162 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import MoneyCottageCard from '~/components/MoneyCottageCard.astro';
+import AffiliateDisclosure from '~/components/AffiliateDisclosure.astro';
+import FAQ from '~/components/FAQ.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { article, breadcrumbList, faqPage, itemList } from '~/lib/schema';
+import { SITE_URL } from '~/lib/site';
+import { crumb } from '~/lib/nav';
+
+// Log cabins with hot tubs — targets the big under-served "log cabin" / "cabin"
+// synonym cluster (dog friendly log cabins with hot tubs 118 imp, cabins with
+// hot tubs 65, hot tub cabins 37...). The timber-lodge subset of our hot-tub
+// stock (type: lodge), which is what "log cabin" actually means — not the
+// stone cottages.
+const cabins = (await getCollection('listings', (e) => e.data.tags.includes('hot-tub') && e.data.type === 'lodge'));
+
+const slugFor = (id: string) => id.split('/').pop()!;
+const total = cabins.length;
+const dogsPhrase = (n: number | null) => (n != null ? `up to ${n} dog${n === 1 ? '' : 's'}` : 'dog limit not stated');
+
+const REGION_ORDER = ['cumbria', 'scotland', 'northumberland', 'cornwall', 'yorkshire-dales', 'durham'] as const;
+const REGION_LABEL: Record<string, string> = {
+  cumbria: 'Lake District',
+  scotland: 'Scotland',
+  northumberland: 'Northumberland',
+  cornwall: 'Cornwall',
+  'yorkshire-dales': 'Yorkshire Dales',
+  durham: 'County Durham',
+};
+const byName = (a: (typeof cabins)[number], b: (typeof cabins)[number]) => {
+  if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
+  return a.data.name.localeCompare(b.data.name);
+};
+const groups: { label: string; items: typeof cabins }[] = [];
+for (const r of REGION_ORDER) {
+  const items = cabins.filter((c) => c.data.region === r).sort(byName);
+  if (items.length) groups.push({ label: REGION_LABEL[r], items });
+}
+const elsewhere = cabins.filter((c) => !REGION_ORDER.includes(c.data.region as any)).sort(byName);
+if (elsewhere.length) groups.push({ label: 'Elsewhere in the UK', items: elsewhere });
+
+const anchorFor = (label: string) => label.toLowerCase().replace(/[^a-z]+/g, '-');
+
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Hot tub lodges', '/dog-friendly-hot-tub-lodges/'),
+  crumb('Log cabins with hot tubs', '/dog-friendly-log-cabins-with-hot-tubs/'),
+];
+
+const faqItems = [
+  {
+    question: 'Are log cabins with hot tubs dog-friendly?',
+    answer:
+      "Many are — timber lodges and log cabins on holiday parks are some of the most dog-welcoming self-catering there is, with easy-clean floors, their own decking and woodland or lakeside walking from the door. But not every cabin on a park takes dogs, and the ones that do are often specific 'pet' units, so it always pays to book the dog-designated cabin by name. Every cabin on this page is one we've verified as both dog-friendly and privately hot-tubbed.",
+  },
+  {
+    question: "What's the difference between a log cabin, a lodge and a cabin?",
+    answer:
+      "For a dog holiday, almost nothing — the terms are used interchangeably. \"Log cabin\", \"lodge\" and \"cabin\" all mean a timber-built, self-catering unit, usually on a holiday park, typically with its own deck and (here) a private hot tub. \"Cottage\" is the one that's genuinely different — that's a standalone, usually older, often stone building. So if you're searching for a log cabin, a lodge is the same thing; if you specifically want a standalone stone cottage with a tub, see our main hot tub guide.",
+  },
+  {
+    question: 'Can dogs stay inside a log cabin?',
+    answer:
+      "Yes — dogs stay in the cabin with you (that's the whole point), typically with the run of the living areas, and the decking around the hot tub. Where they're allowed varies by cabin — some keep dogs off the bedrooms or furniture — and the tub itself is always out of bounds to dogs. Each cabin's card and full review state the specific policy we could verify.",
+  },
+  {
+    question: 'Are the hot tubs private to the cabin?',
+    answer:
+      "On every cabin here, yes — the hot tub is private to your unit, usually on your own decking, not a shared park facility. That's a deliberate filter: a shared spa isn't the same experience, and it's harder to use with a dog waiting. We only include cabins with a genuinely private tub.",
+  },
+];
+
+const pageUrl = '/dog-friendly-log-cabins-with-hot-tubs/';
+const pageTitle = `${total} dog-friendly log cabins with hot tubs (UK)`;
+// 151 chars — under the 155-char Google truncation threshold.
+const pageDescription =
+  'Dog-friendly log cabins with a private hot tub across the UK — verified timber lodges with dog policies that hold up, by region. The cabin small print spelled out. By Rachel Polden.';
+
+const heroImage = groups[0]?.items[0]?.data.image ?? '/images/og-default.jpg';
+
+const jsonLd = [
+  article({ headline: pageTitle, description: pageDescription, image: new URL(heroImage, SITE_URL).toString(), datePublished: '2026-07-15', url: pageUrl }),
+  faqPage(faqItems),
+  itemList(cabins.map((l) => ({ name: l.data.name, url: `${pageUrl}#${slugFor(l.id)}` }))),
+  breadcrumbList(breadcrumbs),
+];
+---
+<BaseLayout title={pageTitle} description={pageDescription} image={heroImage} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-8">
+      <p class="eyebrow">Log cabins · hot tubs</p>
+      <h1 class="display mt-3">Dog-friendly log cabins with hot tubs</h1>
+      <div class="mt-6"><AuthorByline /></div>
+    </header>
+
+    <div class="border-t border-b border-edge py-3 my-6"><AffiliateDisclosure /></div>
+
+    <div class="prose-reading space-y-4 text-lg">
+      <p>
+        A timber cabin in the woods, a private hot tub steaming on the deck, and a dog stretched out beside you — it's one of the best shapes a UK dog holiday takes. Log cabins suit dogs particularly well: hard, easy-clean floors for muddy paws, their own decking, and, on the parks where most of them sit, woodland or lakeside walking straight from the door.
+      </p>
+      <p>
+        This is the log-cabin cut of our hot tub guide — {total} timber lodges and cabins we've verified as both dog-friendly and privately hot-tubbed, grouped by region. (If you're after a standalone <em>stone cottage</em> with a tub rather than a timber cabin, our <a href="/dog-friendly-hot-tub-lodges/">main hot tub guide</a> has those too.) Each cabin has a private hot tub on or by its own deck, and a dog policy checked against the listing.
+      </p>
+    </div>
+
+    <nav aria-label="By region" class="mt-12 border-t border-edge pt-8">
+      <p class="eyebrow mb-4">Jump to a region</p>
+      <ul class="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+        {groups.map((g) => (<li><a href={`#${anchorFor(g.label)}`} class="text-text">{g.label} ({g.items.length})</a></li>))}
+      </ul>
+    </nav>
+
+    {groups.map((g) => (
+      <section class="mt-16 border-t border-edge pt-12" id={anchorFor(g.label)}>
+        <h2>{g.label}</h2>
+        <div class="mt-8 grid gap-6 sm:grid-cols-2">
+          {g.items.map((c) => (
+            <MoneyCottageCard listing={c} highlightLabel="Log cabin &amp; hot tub" highlightValue={`Private hot tub · ${dogsPhrase(c.data.max_dogs)}`} />
+          ))}
+        </div>
+      </section>
+    ))}
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <h2>Log cabin, lodge or cottage — which are you after?</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          The labels trip people up, so here's the plain version. <strong>Log cabin</strong>, <strong>lodge</strong> and <strong>cabin</strong> all mean the same thing for a holiday: a timber-built, self-catering unit, usually on a holiday park, with its own deck and — on this page — a private hot tub. Parks use the words interchangeably, so don't read too much into which one a listing picks.
+        </p>
+        <p>
+          <strong>Cottage</strong> is the one that genuinely differs — a standalone, usually older and often stone building, rather than a timber cabin on a park. Both can be brilliant with a dog; they're just a different feel. If the woodland-cabin-with-a-deck picture is what you want, this is your list. If you'd rather a stone cottage with a tub and a garden, the <a href="/dog-friendly-hot-tub-lodges/">main guide</a> covers those, and our regional pages mix both.
+        </p>
+        <p>
+          One constant across all of them: the hot tub is for humans only — <a href="/can-dogs-go-in-hot-tubs/">dogs don't go in the water</a>, on any UK stock. They're welcome everywhere else the cabin allows.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Frequently asked questions</h2>
+      <FAQ items={faqItems} emitSchema={false} />
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Hot tub cabins by region</h2>
+      <ul class="mt-4 grid gap-3 sm:grid-cols-2 text-sm">
+        <li><a href="/dog-friendly-hot-tub-lodges/">Dog-friendly hot tub lodges UK (all regions)</a></li>
+        <li><a href="/dog-friendly-hot-tub-cottages-lake-district/">Hot tub cabins in the Lake District</a></li>
+        <li><a href="/dog-friendly-hot-tub-cottages-scotland/">Hot tub lodges in Scotland</a></li>
+        <li><a href="/dog-friendly-hot-tub-cottages-northumberland/">Hot tub lodges in Northumberland</a></li>
+      </ul>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12"><AuthorByline variant="full" /></section>
+  </article>
+</BaseLayout>
