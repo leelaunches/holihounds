@@ -1,0 +1,187 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import BeachAccessBox from '~/components/BeachAccessBox.astro';
+import FAQ from '~/components/FAQ.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { article, itemList, faqPage, breadcrumbList } from '~/lib/schema';
+import { SITE_URL } from '~/lib/site';
+import { crumb } from '~/lib/nav';
+
+const all = await getCollection('beaches', (b) => b.data.region === 'northumberland');
+
+const ACCESS_RANK: Record<string, number> = { 'year-round': 0, 'lake-shore': 0, partial: 1, seasonal: 2 };
+const beaches = all.sort((a, b) => {
+  const r = (ACCESS_RANK[a.data.dog_access] ?? 9) - (ACCESS_RANK[b.data.dog_access] ?? 9);
+  if (r !== 0) return r;
+  if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
+  return a.data.name.localeCompare(b.data.name);
+});
+
+// The North East has no standalone /cottages/ page — its dog-friendly stock is
+// the hot-tub lodges — so nearby_cottages funnels to the NE hot-tub page.
+const listings = await getCollection('listings');
+const slugFor = (id: string) => id.split('/').pop()!;
+const stayHref = (id: string) => `/dog-friendly-hot-tub-cottages-northumberland/#${slugFor(id)}`;
+const nearbyFor = (ids: string[]) =>
+  ids
+    .map((id) => {
+      const l = listings.find((x) => x.id === id);
+      return l ? { name: l.data.name, href: stayHref(id) } : null;
+    })
+    .filter((x): x is { name: string; href: string } => Boolean(x));
+
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Beaches', '/beaches/'),
+  crumb('Northumberland', '/northumberland/beaches/'),
+];
+
+const faqItems = [
+  {
+    question: 'Which Northumberland beaches allow dogs all year?',
+    answer:
+      "Most of them — and that's the point of the region. Unlike Cornwall's summer bans, Northumberland's great beaches are overwhelmingly dog-friendly year-round: Bamburgh, Embleton Bay, Druridge Bay, Alnmouth and Low Newton all take dogs every day of the year, Druridge off the lead. It's one of the most dog-relaxed coastlines in England, which makes a summer trip here far simpler than down south.",
+  },
+  {
+    question: 'Are dogs allowed on Bamburgh beach?',
+    answer:
+      "Yes, year-round — there's no seasonal dog ban on Bamburgh's vast sands under the castle. Keep an eye out for small marked zones near the village or dunes in the bird-breeding season and heed the signage, but by and large it's one of the best big-sky dog beaches in the country, any month you like.",
+  },
+  {
+    question: 'Do any Northumberland beaches have restrictions?',
+    answer:
+      "A few have conservation restrictions rather than tourist-season bans. Beadnell Bay has a little-tern breeding colony where dogs must be on a lead over summer; Low Newton has a fenced nesting area to the north (Long Nanny) to avoid; and remote Ross Back Sands closes to dogs during the seabird breeding season. These protect ground-nesting birds — respect the roped areas and leads, and the rest of each beach is open.",
+  },
+  {
+    question: 'Where should I stay for a Northumberland dog beach holiday?',
+    answer:
+      'Base yourself inland of the coast with a hot tub for the evenings — our <a href="/dog-friendly-hot-tub-cottages-northumberland/">dog-friendly Northumberland hot tub lodges</a> at Percy Wood and Felmoor are a short drive from these beaches, and each beach below links to the nearest ones under "where to stay".',
+  },
+];
+
+const pageUrl = '/northumberland/beaches/';
+const pageTitle = 'Dog-friendly beaches in Northumberland';
+// 150 chars — under the 155-char Google truncation threshold.
+const pageDescription =
+  'Dog-friendly Northumberland beaches — Bamburgh, Embleton, Druridge and more, almost all year-round with no summer ban. The honest small print. By Rachel Polden.';
+
+const heroImage = beaches[0]?.data.image ?? '/images/og-default.jpg';
+
+const jsonLd = [
+  article({ headline: pageTitle, description: pageDescription, image: new URL(heroImage, SITE_URL).toString(), datePublished: '2026-07-15', url: pageUrl }),
+  itemList(beaches.map((b) => ({ name: b.data.name, url: `${pageUrl}#${slugFor(b.id)}` }))),
+  faqPage(faqItems),
+  breadcrumbList(breadcrumbs),
+];
+---
+<BaseLayout title={pageTitle} description={pageDescription} image={heroImage} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-8">
+      <p class="eyebrow">Northumberland</p>
+      <h1 class="display mt-3">{pageTitle}</h1>
+      <div class="mt-6"><AuthorByline /></div>
+    </header>
+
+    <div class="prose-reading space-y-4 text-lg">
+      <p>
+        If Cornwall is the coast you have to plan around, Northumberland is the one you don't. Its beaches are among the most dog-relaxed in England — vast, empty, castle-backed sweeps of sand where dogs are welcome <strong>all year</strong>, no summer ban to work around. For a warm-weather trip with a dog, that alone makes the North East worth the drive.
+      </p>
+      <p>
+        Below are the coast's best, sorted with the year-round beaches first (which here is nearly all of them). Each has the access in plain terms, parking, a dog-friendly pub where we found one, and where to stay within reach — our <a href="/dog-friendly-hot-tub-cottages-northumberland/">North East hot tub lodges</a> sit a short drive inland. The few restrictions that exist protect nesting birds, not tourists — we flag those honestly.
+      </p>
+    </div>
+
+    {beaches.length > 0 && (
+      <nav aria-label="Beach list" class="mt-12 border-t border-edge pt-8">
+        <p class="eyebrow mb-4">Jump to a beach</p>
+        <ol class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm">
+          {beaches.map((b, i) => (
+            <li>
+              <a href={`#${slugFor(b.id)}`} class="text-text">
+                {i + 1}. {b.data.name}
+                <span class="text-muted"> — {b.data.location}</span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+    )}
+
+    <section class="mt-16 space-y-20">
+      {beaches.map((b, i) => {
+        const nearby = nearbyFor(b.data.nearby_cottages);
+        return (
+          <article id={slugFor(b.id)} class="scroll-mt-8 border-t border-edge pt-12">
+            <p class="eyebrow">{b.data.location}</p>
+            <h2 class="mt-2">{i + 1}. {b.data.name}</h2>
+
+            <div class="mt-6 aspect-[16/11] overflow-hidden bg-cream-soft border border-edge">
+              <img src={b.data.image} alt={b.data.image_alt ?? b.data.name} loading="lazy" class="h-full w-full object-cover" />
+            </div>
+
+            <div class="prose-reading mt-6">
+              <p>{b.data.description}</p>
+            </div>
+
+            <BeachAccessBox
+              dogAccess={b.data.dog_access}
+              dogRestriction={b.data.dog_restriction}
+              restrictionDetail={b.data.restriction_detail}
+              parking={b.data.parking}
+              facilities={b.data.facilities}
+              nearestPub={b.data.nearest_pub}
+              safetyNote={b.data.safety_note}
+            />
+
+            {nearby.length > 0 && (
+              <p class="text-sm mt-4">
+                <span class="text-muted">Where to stay nearby: </span>
+                {nearby.map((c, j) => (
+                  <>
+                    <a href={c.href} class="text-text">{c.name}</a>{j < nearby.length - 1 ? ', ' : ''}
+                  </>
+                ))}
+              </p>
+            )}
+          </article>
+        );
+      })}
+    </section>
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <h2>Why Northumberland is the easy coast for dogs</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          Two things set the North East apart for a dog beach holiday.
+        </p>
+        <p>
+          <strong>No summer ban to plan around.</strong> Where much of the Cornish and southern coast shuts dogs out of the daytime from May to September, Northumberland's beaches stay open to them year-round. You can turn up at Bamburgh or Druridge in August without checking a calendar — a genuine rarity, and the single best reason to point the car north.
+        </p>
+        <p>
+          <strong>Space, and lots of it.</strong> These are some of the biggest, emptiest beaches in England — Druridge alone runs seven miles. Even in peak season there's room to give a dog a proper off-lead gallop. The only rules that bite are the conservation ones — nesting little terns at Beadnell and Long Nanny — and those are easy to respect once you know where they are.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <h2>Frequently asked questions</h2>
+      <FAQ items={faqItems} emitSchema={false} />
+    </section>
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <h2>Related guides</h2>
+      <ul class="mt-4 grid gap-3 sm:grid-cols-2 text-sm">
+        <li><a href="/dog-friendly-hot-tub-cottages-northumberland/">Northumberland &amp; North East hot tub lodges</a></li>
+        <li><a href="/beaches/">Dog-friendly beaches in the UK</a></li>
+        <li><a href="/when-are-dogs-allowed-on-the-beach/">When are dogs allowed on the beach?</a></li>
+        <li><a href="/cornwall/beaches/">Dog-friendly beaches in Cornwall</a></li>
+      </ul>
+    </section>
+
+    <section class="mt-20 border-t border-edge pt-12"><AuthorByline variant="full" /></section>
+  </article>
+</BaseLayout>

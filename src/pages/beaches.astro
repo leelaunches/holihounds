@@ -24,7 +24,9 @@ const beachHref = (id: string) => {
     ? '/cornwall/beaches/'
     : id.startsWith('lake-district/')
       ? '/lake-district/beaches/'
-      : '/yorkshire-dales/beaches/';
+      : id.startsWith('northumberland/')
+        ? '/northumberland/beaches/'
+        : '/yorkshire-dales/beaches/';
   return `${base}#${slugFor(id)}`;
 };
 
@@ -117,7 +119,7 @@ const jsonLd = [
         "Dog-friendly beach" is one of the most misleading phrases in UK travel. Most of the famous ones ban dogs across the entire summer — the exact window set beach-by-beach by the council, reviewed every year, and often spelled out nowhere but the sign at the top of the steps. Turn up on the wrong day and you're walking back to the car. This guide does the boring, essential thing: it states the access for each beach, and leads with the ones you can use all year.
       </p>
       <p>
-        Three regions so far, and they're a study in contrast. Cornwall has England's best beach coast for dogs but the most restrictions to navigate; the Lake District and Yorkshire Dales have no sea at all — lake shores and river pools instead, with no seasonal bans, just the water itself to respect. More regions follow as their guides ship.
+        Four regions so far, and they're a study in contrast. Cornwall has England's best beach coast for dogs but the most restrictions to navigate; <a href="/northumberland/beaches/">Northumberland</a> is the opposite — vast, empty, castle-backed sands that are almost all dog-friendly year-round, with no summer ban to plan around; and the Lake District and Yorkshire Dales have no sea at all — lake shores and river pools instead, with no seasonal bans, just the water itself to respect. More regions follow as their guides ship.
       </p>
     </div>
 
