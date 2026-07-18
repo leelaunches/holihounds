@@ -13,7 +13,9 @@ import { crumb } from '~/lib/nav';
 // Lake District hot-tub lodges — the hot-tub-tagged Cumbria properties. Targets
 // the "dog friendly cottages with hot tubs lake district" cluster (a big share
 // of the site's search impressions).
-const lodges = (await getCollection('listings', (e) => e.data.tags.includes('hot-tub') && e.data.region === 'cumbria'))
+// Cumbria + lake-district both cover the Lakes in our data (the split is
+// historic), so this page takes hot-tub stock from either.
+const lodges = (await getCollection('listings', (e) => e.data.tags.includes('hot-tub') && ['cumbria', 'lake-district'].includes(e.data.region)))
   .sort((a, b) => (a.data.featured !== b.data.featured ? (a.data.featured ? -1 : 1) : a.data.name.localeCompare(b.data.name)));
 
 const slugFor = (id: string) => id.split('/').pop()!;
