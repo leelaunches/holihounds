@@ -85,6 +85,8 @@ export const LIVE_ROUTES: ReadonlySet<string> = new Set([
   '/can-dogs-swim-in-windermere/',
   '/can-dogs-go-in-hot-tubs/',
   '/when-are-dogs-allowed-on-the-beach/',
+  '/are-dogs-allowed-on-windermere-lake-cruises/',
+  '/are-dogs-allowed-in-pubs-uk/',
   '/about/',
   '/contact/',
   '/privacy/',

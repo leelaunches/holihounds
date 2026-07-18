@@ -1,0 +1,108 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import FAQ from '~/components/FAQ.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { article, breadcrumbList, faqPage } from '~/lib/schema';
+import { crumb } from '~/lib/nav';
+
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Lake District', '/lake-district/'),
+  crumb('Are dogs allowed on Windermere lake cruises?', '/are-dogs-allowed-on-windermere-lake-cruises/'),
+];
+
+const faqItems = [
+  {
+    question: 'Do dogs have to pay on Windermere lake cruises?',
+    answer:
+      "Dogs are welcome on Windermere Lake Cruises, and any charge for them is small — often free or a token fare, though it changes, so check the current pet policy and fares when you book or board. They travel on a lead, and there's no booking quota for dogs on the scheduled boats. It's one of the easiest, best-value things you can do with a dog in the Lakes.",
+  },
+  {
+    question: 'Can dogs go on Ullswater Steamers too?',
+    answer:
+      "Yes — Ullswater Steamers also welcome dogs on a lead, and the Ullswater 'Steamer and walk' (sail one way, walk the shore path back via Aira Force) is a classic dog day out. As with Windermere, check the current pet fare when you board. Between the two lakes, boat trips are one of the Lake District's most reliably dog-friendly activities.",
+  },
+  {
+    question: 'Are dogs allowed on the Windermere car ferry?',
+    answer:
+      "Yes. The Windermere Ferry — the little chain ferry across the lake between Bowness and the Sawrey side — takes dogs with no fuss on the short crossing, whether you're in the car or on foot. It's a handy shortcut to the quieter western shore and the walks around Claife Heights.",
+  },
+  {
+    question: 'What should I bring for a dog on a lake cruise?',
+    answer:
+      "Keep the dog on a short lead on deck, especially at the busy jetties, and bring water and a travel bowl for a warm day. A nervous or excitable dog is happiest on the open deck rather than the enclosed saloon. Otherwise, very little — the boats are used to dogs, and most dogs settle quickly once you're moving.",
+  },
+];
+
+const pageUrl = '/are-dogs-allowed-on-windermere-lake-cruises/';
+const pageTitle = 'Are dogs allowed on Windermere lake cruises?';
+const pageDescription =
+  'Yes — Windermere Lake Cruises, Ullswater Steamers and the Windermere car ferry all welcome dogs on a lead. Fares, tips and the best trips. By Rachel Polden.';
+
+const ogImage = 'https://images.unsplash.com/photo-1641119269354-1a112f25793f?w=1200&h=630&fit=crop&q=85';
+
+const jsonLd = [
+  article({ headline: pageTitle, description: pageDescription, image: ogImage, datePublished: '2026-07-15', url: pageUrl }),
+  faqPage(faqItems),
+  breadcrumbList(breadcrumbs),
+];
+---
+<BaseLayout title={pageTitle} description={pageDescription} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-8">
+      <p class="eyebrow">Lake District · dog advice</p>
+      <h1 class="display mt-3">Are dogs allowed on Windermere lake cruises?</h1>
+      <div class="mt-6"><AuthorByline /></div>
+    </header>
+
+    <div class="prose-reading space-y-4 text-lg">
+      <p>
+        <strong>Yes — dogs are welcome on Windermere Lake Cruises</strong>, on a lead, and it's one of the loveliest and easiest things to do with a dog in the Lake District. No swimming risks, no fell slog, just an hour on the water with the fells sliding past — and most dogs take to it happily. Here's how it works, and the other boats that welcome dogs too.
+      </p>
+    </div>
+
+    <section class="mt-14 border-t border-edge pt-10">
+      <h2>Windermere Lake Cruises with a dog</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          Dogs travel on the scheduled cruises on a lead, and the charge for them is small — often free or a token fare (it changes, so check the current pet policy when you book or board). There's no need to reserve a spot for the dog on the regular sailings. The boats run the length of the lake between Ambleside, Bowness and Lakeside, so you can build a whole day around a one-way sail and a shore walk back.
+        </p>
+        <p>
+          Keep the dog on a short lead at the jetties, which get busy, and bring water for a warm day. Nervous dogs are usually calmer out on the open deck than in the enclosed saloon — and once you're moving, most settle straight away.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10">
+      <h2>Ullswater Steamers and the Windermere ferry</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          Windermere isn't the only option. <strong>Ullswater Steamers</strong> welcome dogs too, and the classic outing there is to sail one way and walk the shore path back past Aira Force — a proper dog adventure. And the little <strong>Windermere car ferry</strong> between Bowness and the Sawrey side takes dogs with no fuss, car or foot, as a shortcut to the quieter western shore.
+        </p>
+        <p>
+          Boat trips are, honestly, one of the most reliably dog-friendly things in the whole national park — worth planning a day around, especially if the weather's turned and the fells are off.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10">
+      <h2>Frequently asked questions</h2>
+      <FAQ items={faqItems} emitSchema={false} />
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10">
+      <h2>Related guides</h2>
+      <ul class="mt-4 grid gap-3 sm:grid-cols-2 text-sm">
+        <li><a href="/can-dogs-swim-in-windermere/">Can dogs swim in Windermere?</a></li>
+        <li><a href="/lake-district/beaches/">Lake District lake shores for dogs</a></li>
+        <li><a href="/lake-district/cottages/">Dog-friendly cottages in the Lake District</a></li>
+        <li><a href="/lake-district/">Dog-friendly Lake District guide</a></li>
+      </ul>
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10"><AuthorByline variant="full" /></section>
+  </article>
+</BaseLayout>

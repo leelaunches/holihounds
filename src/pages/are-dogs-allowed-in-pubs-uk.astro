@@ -1,0 +1,111 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import FAQ from '~/components/FAQ.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { article, breadcrumbList, faqPage } from '~/lib/schema';
+import { crumb } from '~/lib/nav';
+
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Pubs', '/pubs/'),
+  crumb('Are dogs allowed in pubs in the UK?', '/are-dogs-allowed-in-pubs-uk/'),
+];
+
+const faqItems = [
+  {
+    question: 'Is there a law against dogs in pubs in the UK?',
+    answer:
+      "No. There's no law banning dogs from pubs — the common belief that there is comes from a misreading of food-hygiene rules. Those rules let a pub decide whether to allow dogs in areas where food is prepared or served, but they don't prohibit dogs from the premises. So whether a dog is welcome is entirely the landlord's call, and a great many British pubs — especially rural and country ones — actively welcome them.",
+  },
+  {
+    question: 'Are dogs allowed in the part of the pub where food is served?',
+    answer:
+      "Sometimes — it's at the licensee's discretion. Many pubs welcome dogs in the bar and by the fire but keep them out of a separate restaurant area; others let dogs go anywhere. Food-hygiene regulations give the pub the choice, and they set their own rule. If in doubt, ask at the bar, and keep the dog settled under the table rather than roaming near other diners.",
+  },
+  {
+    question: 'Are assistance dogs allowed in all pubs?',
+    answer:
+      "Yes. Assistance dogs are a different matter entirely: under the Equality Act 2010, a pub (like any business serving the public) must allow a trained assistance dog, including in food areas, and turning one away is unlawful discrimination. That right applies regardless of a pub's general pet policy.",
+  },
+  {
+    question: 'How do I find genuinely dog-friendly pubs?',
+    answer:
+      "Look for pubs that go beyond merely tolerating dogs — water bowls at the door, treats behind the bar, dogs allowed by the fire. Our regional pub guides list the ones we've verified as properly dog-friendly, with the detail on where the dog can go and whether they take dogs in the dining area: see our <a href=\"/pubs/\">dog-friendly pubs guides</a> for Cornwall, the Lake District and the Yorkshire Dales.",
+  },
+];
+
+const pageUrl = '/are-dogs-allowed-in-pubs-uk/';
+const pageTitle = 'Are dogs allowed in pubs in the UK?';
+const pageDescription =
+  'No law bans dogs from UK pubs — it is the landlord’s choice, and most country pubs welcome them. The rules on food areas and assistance dogs, explained. By Rachel Polden.';
+
+const ogImage = 'https://images.unsplash.com/photo-1641119269354-1a112f25793f?w=1200&h=630&fit=crop&q=85';
+
+const jsonLd = [
+  article({ headline: pageTitle, description: pageDescription, image: ogImage, datePublished: '2026-07-15', url: pageUrl }),
+  faqPage(faqItems),
+  breadcrumbList(breadcrumbs),
+];
+---
+<BaseLayout title={pageTitle} description={pageDescription} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-8">
+      <p class="eyebrow">Pubs · dog advice</p>
+      <h1 class="display mt-3">Are dogs allowed in pubs in the UK?</h1>
+      <div class="mt-6"><AuthorByline /></div>
+    </header>
+
+    <div class="prose-reading space-y-4 text-lg">
+      <p>
+        <strong>Often, yes — and there's no law stopping them.</strong> The idea that dogs are banned from pubs is one of the most persistent myths in British hospitality, and it's simply wrong. Whether a dog is welcome comes down to the landlord, and a huge number of UK pubs — country pubs especially — not only allow dogs but roll out the water bowl and the treats jar. Here's how the rules actually work.
+      </p>
+    </div>
+
+    <section class="mt-14 border-t border-edge pt-10">
+      <h2>No law, just the landlord's call</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          There is no legislation banning dogs from pubs. The confusion comes from food-hygiene regulations, which let a business decide whether to allow animals in areas where food is prepared or served — but that's a <em>choice granted to the pub</em>, not a prohibition. A landlord can welcome dogs throughout, keep them to the bar, or not at all, and it's entirely up to them.
+        </p>
+        <p>
+          In practice, the split you'll most often meet is dogs welcome in the <strong>bar and snug</strong>, by the fire, but not in a separate <strong>restaurant</strong> area. Plenty of pubs allow them everywhere. If it's not signposted, just ask at the bar — and keep the dog settled under the table rather than wandering near other diners.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10">
+      <h2>Assistance dogs, and good dog-pub etiquette</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          <strong>Assistance dogs are the exception to all of the above.</strong> Under the Equality Act 2010, a pub must admit a trained assistance dog, food areas included — refusing one is unlawful discrimination, whatever the general pet policy.
+        </p>
+        <p>
+          For an ordinary dog, the etiquette is simple and goes a long way to keeping pubs dog-friendly: keep them on a lead, settle them quietly out of the walkway, don't feed them at the table, and clear up any mess. Many good dog pubs provide water bowls and treats; take them up on it, and leave the place glad you brought the dog.
+        </p>
+        <p>
+          To find the ones that genuinely welcome dogs — water bowls, fireside spots, dogs allowed in the dining room or not — see our <a href="/pubs/">dog-friendly pub guides</a>, which state each pub's policy plainly.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10">
+      <h2>Frequently asked questions</h2>
+      <FAQ items={faqItems} emitSchema={false} />
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10">
+      <h2>Dog-friendly pub guides</h2>
+      <ul class="mt-4 grid gap-3 sm:grid-cols-2 text-sm">
+        <li><a href="/pubs/">Dog-friendly pubs in the UK</a></li>
+        <li><a href="/cornwall/pubs/">Dog-friendly pubs in Cornwall</a></li>
+        <li><a href="/lake-district/pubs/">Dog-friendly pubs in the Lake District</a></li>
+        <li><a href="/yorkshire-dales/pubs/">Dog-friendly pubs in the Yorkshire Dales</a></li>
+      </ul>
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10"><AuthorByline variant="full" /></section>
+  </article>
+</BaseLayout>
