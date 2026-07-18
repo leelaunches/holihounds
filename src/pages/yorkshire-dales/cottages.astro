@@ -16,6 +16,7 @@ const all = await getCollection('listings', (entry) => entry.data.region === 'yo
 // Ribblesdale → Sedbergh. Explicit order, like the other regional listicles.
 const order = [
   'yorkshire-dales/the-cobbles',
+  'yorkshire-dales/hilltop-barn',
   'yorkshire-dales/low-mill-cottage',
   'yorkshire-dales/sandywood',
   'yorkshire-dales/oak-cottage',
@@ -27,6 +28,7 @@ const order = [
   'yorkshire-dales/woodside-cottage',
   'yorkshire-dales/the-stables',
   'yorkshire-dales/3-mountain-view',
+  'yorkshire-dales/yellison-broughton-hall',
 ];
 const cottages = order
   .map((id) => all.find((c) => c.id === id))
