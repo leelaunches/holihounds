@@ -32,5 +32,6 @@ garden_note: Lawned garden with two patios; full enclosure not stated — and do
 dogs_allowed_in: Not stated by provider
 dog_extras: None stated by provider
 tags: []
+walk_to_pub: "Village pub within a mile"
 featured: true
 ---

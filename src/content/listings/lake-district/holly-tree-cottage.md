@@ -27,5 +27,6 @@ garden_note: Yes — enclosed lawned garden with patio. Mon/Fri check-ins only.
 dogs_allowed_in: Throughout the property
 dog_extras: None officially listed (guests mention an outdoor hose)
 tags: []
+walk_to_pub: "The Black Bull a 5-minute walk"
 featured: false
 ---

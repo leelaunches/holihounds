@@ -1,0 +1,161 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import MoneyCottageCard from '~/components/MoneyCottageCard.astro';
+import AffiliateDisclosure from '~/components/AffiliateDisclosure.astro';
+import FAQ from '~/components/FAQ.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { article, breadcrumbList, faqPage, itemList } from '~/lib/schema';
+import { SITE_URL } from '~/lib/site';
+import { crumb } from '~/lib/nav';
+
+// Cottages within a genuine walk of a pub — driven off the explicit
+// walk_to_pub field (set only where a pub is ~a mile or less, never a drive).
+const all = await getCollection('listings');
+const nearPub = all.filter((c) => c.data.walk_to_pub != null);
+
+const slugFor = (id: string) => id.split('/').pop()!;
+const groupKey = (region: string) => (region === 'cumbria' ? 'lake-district' : region);
+const REGION_ORDER = ['lake-district', 'cornwall', 'yorkshire-dales', 'scotland', 'northumberland'] as const;
+const REGION_LABEL: Record<string, string> = {
+  'lake-district': 'Lake District',
+  cornwall: 'Cornwall',
+  'yorkshire-dales': 'Yorkshire Dales',
+  scotland: 'Scotland',
+  northumberland: 'Northumberland',
+};
+const byName = (a: (typeof all)[number], b: (typeof all)[number]) => {
+  if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
+  return a.data.name.localeCompare(b.data.name);
+};
+const groups: { label: string; items: typeof nearPub }[] = [];
+for (const r of REGION_ORDER) {
+  const items = nearPub.filter((c) => groupKey(c.data.region) === r).sort(byName);
+  if (items.length) groups.push({ label: REGION_LABEL[r], items });
+}
+const elsewhere = nearPub.filter((c) => !REGION_ORDER.includes(groupKey(c.data.region) as any)).sort(byName);
+if (elsewhere.length) groups.push({ label: 'Elsewhere in the UK', items: elsewhere });
+
+const anchorFor = (label: string) => label.toLowerCase().replace(/[^a-z]+/g, '-');
+const total = nearPub.length;
+
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Cottages', '/cottages/'),
+  crumb('Near a pub', '/dog-friendly-cottages-near-a-pub/'),
+];
+
+const faqItems = [
+  {
+    question: 'What counts as "near a pub" on this list?',
+    answer:
+      "A genuine walk — roughly a mile or less, so you can leave the car and stroll to dinner with the dog. We state the real distance on every card (from fifty yards to about a mile), because \"near a pub\" is used loosely elsewhere to mean a ten-minute drive. If it's a drive, it's not on this page.",
+  },
+  {
+    question: 'Are the pubs themselves dog-friendly?',
+    answer:
+      "Usually — country pubs within walking distance of a holiday cottage are among the most dog-welcoming there are, often with water bowls at the door and dogs allowed in the bar. But a pub's policy is the landlord's to set and can change, so it's worth a quick check. Our guide to <a href=\"/are-dogs-allowed-in-pubs-uk/\">dogs in UK pubs</a> explains how the rules work, and our <a href=\"/pubs/\">regional pub guides</a> list ones we've verified as properly dog-friendly.",
+  },
+  {
+    question: 'Why does a walkable pub matter on a dog holiday?',
+    answer:
+      "Because it solves the evening. With a dog you often can't leave them to drive out for dinner, and many restaurants won't take them — but a good dog-friendly pub a short walk away means you all go, the dog settles under the table, and nobody's left behind or driving. It quietly makes or breaks a self-catering week, which is why it's worth planning around.",
+  },
+  {
+    question: 'Which is the closest of all?',
+    answer:
+      "Town End Barn at Satterthwaite, near Coniston — the village pub is fifty yards from the door, which is about as close as it gets. Barnstead at Pooley Bridge is a minute's walk from the Pooley Bridge Inn, and Watendlath's owners actually run the pub five minutes away. Each card states the exact distance.",
+  },
+];
+
+const pageUrl = '/dog-friendly-cottages-near-a-pub/';
+const pageTitle = `${total} dog-friendly cottages within a walk of a pub`;
+// 150 chars — under the 155-char Google truncation threshold.
+const pageDescription =
+  'Dog-friendly UK cottages within a genuine walk of a pub — the real distance stated on each, from 50 yards to about a mile. Leave the car, take the dog. By Rachel Polden.';
+
+const heroImage = groups[0]?.items[0]?.data.image ?? '/images/og-default.jpg';
+
+const jsonLd = [
+  article({ headline: pageTitle, description: pageDescription, image: new URL(heroImage, SITE_URL).toString(), datePublished: '2026-07-15', url: pageUrl }),
+  faqPage(faqItems),
+  itemList(nearPub.map((l) => ({ name: l.data.name, url: `${pageUrl}#${slugFor(l.id)}` }))),
+  breadcrumbList(breadcrumbs),
+];
+---
+<BaseLayout title={pageTitle} description={pageDescription} image={heroImage} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-8">
+      <p class="eyebrow">Cottages · near a pub</p>
+      <h1 class="display mt-3">{pageTitle}</h1>
+      <div class="mt-6"><AuthorByline /></div>
+    </header>
+
+    <div class="border-t border-b border-edge py-3 my-6"><AffiliateDisclosure /></div>
+
+    <div class="prose-reading space-y-4 text-lg">
+      <p>
+        A walkable pub is one of the most underrated things on a dog holiday. You often can't leave the dog to drive out for dinner, and plenty of restaurants won't have them — so a good dog-friendly pub a short stroll from the cottage means the whole party goes, the dog settles under the table, and the evening sorts itself out. It quietly makes a self-catering week.
+      </p>
+      <p>
+        These {total} cottages are within a genuine walk of a pub — and we state the real distance on each, from fifty yards to about a mile, because "near a pub" gets stretched to mean a ten-minute drive elsewhere. If it's a drive, it's not here. Grouped by region below.
+      </p>
+    </div>
+
+    <nav aria-label="By region" class="mt-12 border-t border-edge pt-8">
+      <p class="eyebrow mb-4">Jump to a region</p>
+      <ul class="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+        {groups.map((g) => (<li><a href={`#${anchorFor(g.label)}`} class="text-text">{g.label} ({g.items.length})</a></li>))}
+      </ul>
+    </nav>
+
+    {groups.map((g) => (
+      <section class="mt-16 border-t border-edge pt-12" id={anchorFor(g.label)}>
+        <h2>{g.label}</h2>
+        <div class="mt-8 grid gap-6 sm:grid-cols-2">
+          {g.items.map((c) => (
+            <MoneyCottageCard listing={c} highlightLabel="Walk to the pub" highlightValue={c.data.walk_to_pub!} />
+          ))}
+        </div>
+      </section>
+    ))}
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <h2>The walkable-pub test</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          It sounds like a small thing until you're on a wet Tuesday with a tired dog and nowhere to eat. Three things make a pub genuinely useful from a holiday cottage.
+        </p>
+        <p>
+          <strong>It has to be walkable in the dark and the rain.</strong> Fifty yards is a coat-on dash; a mile along an unlit lane with no pavement is a different proposition in November. We give the distance and, where it matters, the nature of the walk, so you can judge it for your dog and the season.
+        </p>
+        <p>
+          <strong>The pub has to take dogs.</strong> A walkable pub that won't have the dog inside is no use on a cold night. The ones here are, as far as we could verify, dog-welcoming — but policies are the landlord's and they change, so confirm it. Our <a href="/are-dogs-allowed-in-pubs-uk/">guide to dogs in UK pubs</a> covers the rules.
+        </p>
+        <p>
+          <strong>Best of all: the owners run it.</strong> A couple of these cottages come with a pub run by the same people — Watendlath and its Pheasant Inn among them — which tends to mean the whole set-up is built around walkers and dogs.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Frequently asked questions</h2>
+      <FAQ items={faqItems} emitSchema={false} />
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Related guides</h2>
+      <ul class="mt-4 grid gap-3 sm:grid-cols-2 text-sm">
+        <li><a href="/pubs/">Dog-friendly pubs in the UK</a></li>
+        <li><a href="/are-dogs-allowed-in-pubs-uk/">Are dogs allowed in UK pubs?</a></li>
+        <li><a href="/dog-friendly-cottages-enclosed-gardens/">Cottages with enclosed gardens</a></li>
+        <li><a href="/cottages/">Dog-friendly cottages in the UK</a></li>
+      </ul>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12"><AuthorByline variant="full" /></section>
+  </article>
+</BaseLayout>

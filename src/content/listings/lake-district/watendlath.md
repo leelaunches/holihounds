@@ -28,5 +28,6 @@ garden_note: Yes — enclosed side garden with decking and furniture.
 dogs_allowed_in: Throughout the property
 dog_extras: Bowls, towels and biscuits
 tags: []
+walk_to_pub: "The Pheasant Inn (the owners' pub) a 5-minute walk"
 featured: false
 ---

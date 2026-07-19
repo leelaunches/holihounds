@@ -31,5 +31,6 @@ garden_note: Yes — front enclosed terraced garden with patio, garden furniture
 dogs_allowed_in: Not stated by provider
 dog_extras: Doggy extras provided
 tags: []
+walk_to_pub: "Two dog-friendly pubs a mile away in Askham"
 featured: true
 ---

@@ -31,5 +31,6 @@ garden_note: Yes — enclosed rear garden with patio, garden furniture and barbe
 dogs_allowed_in: Not stated by provider
 dog_extras: Doggy extras provided; ground-floor utility for drying off muddy dogs
 tags: []
+walk_to_pub: "Village pub 50 yards away"
 featured: true
 ---

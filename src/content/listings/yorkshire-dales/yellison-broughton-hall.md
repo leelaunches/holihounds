@@ -31,5 +31,6 @@ garden_note: Yes — enclosed lawned garden, plus a patio with gas barbecue.
 dogs_allowed_in: Not stated by provider
 dog_extras: None stated by provider
 tags: []
+walk_to_pub: "Pub within a mile"
 featured: false
 ---

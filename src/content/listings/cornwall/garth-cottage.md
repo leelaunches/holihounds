@@ -33,5 +33,6 @@ max_dogs: 1
 enclosed_garden: true
 dogs_allowed_in: Throughout the property
 dog_extras: None stated by provider
+walk_to_pub: "The Cornish Arms on the walk into St Ives"
 featured: false
 ---

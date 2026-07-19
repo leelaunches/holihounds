@@ -28,5 +28,6 @@ garden_note: Not enclosed — open front garden with lawn and patio.
 dogs_allowed_in: Ground floor only — not upstairs or on furniture
 dog_extras: Outdoor hose and drying towel
 tags: []
+walk_to_pub: "The dog-friendly Boot Inn a 15-minute walk"
 featured: false
 ---

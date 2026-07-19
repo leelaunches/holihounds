@@ -28,5 +28,6 @@ dogs_allowed_in: Living areas only — not bedrooms
 dog_extras: Bowls and towels
 single_level: "Single-level — all on the ground floor"
 tags: []
+walk_to_pub: "Pooley Bridge Inn a minute's walk"
 featured: false
 ---

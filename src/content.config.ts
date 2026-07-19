@@ -69,6 +69,14 @@ const listings = defineCollection({
      */
     single_level: z.string().nullable().default(null),
     /**
+     * Honest "walk to the pub" descriptor, surfaced on
+     * /dog-friendly-cottages-near-a-pub/. Set ONLY where a pub is a genuine
+     * walk (roughly a mile or less), quoting the real distance, e.g.
+     * "Village pub 50 yards away", "The Boot Inn a 15-minute walk". Do NOT set
+     * for a pub that's a drive away (2+ miles). Null = doesn't qualify.
+     */
+    walk_to_pub: z.string().nullable().default(null),
+    /**
      * Free-form tags used to surface a property on cross-cutting pages.
      * Current values:
      *  - 'hot-tub' — appears on /dog-friendly-hot-tub-lodges/

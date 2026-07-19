@@ -27,5 +27,6 @@ max_dogs: 2
 enclosed_garden: true
 dogs_allowed_in: Throughout the property
 dog_extras: Dog treats in welcome pack
+walk_to_pub: "Village pub a 5-minute walk"
 featured: false
 ---
