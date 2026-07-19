@@ -1,0 +1,166 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import MoneyCottageCard from '~/components/MoneyCottageCard.astro';
+import AffiliateDisclosure from '~/components/AffiliateDisclosure.astro';
+import FAQ from '~/components/FAQ.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { article, breadcrumbList, faqPage, itemList } from '~/lib/schema';
+import { SITE_URL } from '~/lib/site';
+import { crumb } from '~/lib/nav';
+
+// Cottages where the dog stays free — no pet supplement. Driven off the
+// verified pet_charge field rather than a marketing claim.
+const FREE_RE = /stay free|free of charge|no charge/i;
+const all = await getCollection('listings');
+const free = all.filter((c) => c.data.pet_charge && FREE_RE.test(c.data.pet_charge));
+
+const slugFor = (id: string) => id.split('/').pop()!;
+// cumbria and lake-district both mean the Lakes in our data — merge for readers.
+const groupKey = (region: string) => (region === 'cumbria' ? 'lake-district' : region);
+const REGION_ORDER = ['lake-district', 'scotland', 'cornwall', 'yorkshire-dales', 'northumberland', 'durham', 'wales'] as const;
+const REGION_LABEL: Record<string, string> = {
+  'lake-district': 'Lake District',
+  scotland: 'Scotland',
+  cornwall: 'Cornwall',
+  'yorkshire-dales': 'Yorkshire Dales',
+  northumberland: 'Northumberland',
+  durham: 'County Durham',
+  wales: 'Wales',
+};
+const byName = (a: (typeof all)[number], b: (typeof all)[number]) => {
+  if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
+  return a.data.name.localeCompare(b.data.name);
+};
+const groups: { label: string; items: typeof free }[] = [];
+for (const r of REGION_ORDER) {
+  const items = free.filter((c) => groupKey(c.data.region) === r).sort(byName);
+  if (items.length) groups.push({ label: REGION_LABEL[r], items });
+}
+const elsewhere = free.filter((c) => !REGION_ORDER.includes(groupKey(c.data.region) as any)).sort(byName);
+if (elsewhere.length) groups.push({ label: 'Elsewhere in the UK', items: elsewhere });
+
+const anchorFor = (label: string) => label.toLowerCase().replace(/[^a-z]+/g, '-');
+const total = free.length;
+const dogsPhrase = (n: number | null) => (n != null ? `up to ${n} dog${n === 1 ? '' : 's'}` : 'dog limit not stated');
+
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Cottages', '/cottages/'),
+  crumb('Pets stay free', '/dog-friendly-cottages-pets-stay-free/'),
+];
+
+const faqItems = [
+  {
+    question: 'How much is a typical pet supplement in the UK?',
+    answer:
+      "Most self-catering places charge somewhere between £20 and £50 per dog per week, and a fair number charge per dog — so two dogs doubles it. Some holiday parks charge per short break as well as per week, and a few charge per night, which adds up fast. Against that, a genuinely free pet policy is worth £25–£100 on a week's stay, more with two dogs.",
+  },
+  {
+    question: 'Does "pets stay free" mean there are no other dog costs?',
+    answer:
+      "It means no per-dog supplement, which is the main one. But always check two other things at booking: a refundable security or good-housekeeping deposit (common on larger properties, and not dog-specific), and any end-of-stay cleaning expectation. None of that is a hidden pet fee, but it's worth knowing before you book. Everything on this page has a pet charge we've verified as free on the listing itself.",
+  },
+  {
+    question: 'Do free-pet cottages limit how many dogs you can bring?',
+    answer:
+      "Usually yes — most cap at one or two dogs, and the cap matters more than the fee. Each card states the verified maximum, so you can see at a glance which take two. If you have three or more, our <a href=\"/dog-friendly-cottages-multiple-dogs/\">multiple-dogs guide</a> is the better starting point.",
+  },
+  {
+    question: 'Are the free-pet places lower quality?',
+    answer:
+      "Not in our experience — it tends to reflect the owner's attitude rather than the standard of the property. Several on this list are among the best-equipped places we've verified, with enclosed gardens, dog beds and bowls, or a utility for drying off a muddy dog. Waiving the fee is often a signal that the owners genuinely want dogs there, not that they're cutting corners.",
+  },
+];
+
+const pageUrl = '/dog-friendly-cottages-pets-stay-free/';
+const pageTitle = `${total} dog-friendly cottages where pets stay free`;
+// 152 chars — under the 155-char Google truncation threshold.
+const pageDescription =
+  'Dog-friendly UK cottages and lodges with no pet supplement — pets stay free, verified on the listing. Saves £25–£100 a week, more with two dogs. By Rachel Polden.';
+
+const heroImage = groups[0]?.items[0]?.data.image ?? '/images/og-default.jpg';
+
+const jsonLd = [
+  article({ headline: pageTitle, description: pageDescription, image: new URL(heroImage, SITE_URL).toString(), datePublished: '2026-07-15', url: pageUrl }),
+  faqPage(faqItems),
+  itemList(free.map((l) => ({ name: l.data.name, url: `${pageUrl}#${slugFor(l.id)}` }))),
+  breadcrumbList(breadcrumbs),
+];
+---
+<BaseLayout title={pageTitle} description={pageDescription} image={heroImage} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-8">
+      <p class="eyebrow">Cottages · pets stay free</p>
+      <h1 class="display mt-3">{pageTitle}</h1>
+      <div class="mt-6"><AuthorByline /></div>
+    </header>
+
+    <div class="border-t border-b border-edge py-3 my-6"><AffiliateDisclosure /></div>
+
+    <div class="prose-reading space-y-4 text-lg">
+      <p>
+        The pet supplement is the small, slightly irritating tax on taking a dog away. Most places charge £20–£50 per dog per week, plenty charge it <em>per dog</em>, and a few charge per night — so a fortnight with two dogs can quietly add a hundred pounds or more to the bill before you've bought a single bag of chips.
+      </p>
+      <p>
+        These {total} cottages and lodges don't charge it at all. Every one has a pet policy we've read on the listing and verified as free — not "dogs welcome" marketing, but an actual stated no-supplement policy. They're grouped by region below, with the verified dog limit on each, because the cap usually matters more than the fee.
+      </p>
+    </div>
+
+    <nav aria-label="By region" class="mt-12 border-t border-edge pt-8">
+      <p class="eyebrow mb-4">Jump to a region</p>
+      <ul class="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+        {groups.map((g) => (<li><a href={`#${anchorFor(g.label)}`} class="text-text">{g.label} ({g.items.length})</a></li>))}
+      </ul>
+    </nav>
+
+    {groups.map((g) => (
+      <section class="mt-16 border-t border-edge pt-12" id={anchorFor(g.label)}>
+        <h2>{g.label}</h2>
+        <div class="mt-8 grid gap-6 sm:grid-cols-2">
+          {g.items.map((c) => (
+            <MoneyCottageCard listing={c} highlightLabel="Pet charge" highlightValue={`Pets stay free · ${dogsPhrase(c.data.max_dogs)}`} />
+          ))}
+        </div>
+      </section>
+    ))}
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <h2>What "pets stay free" is actually worth</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          It's the one dog-holiday cost that's pure admin — you're not getting anything for it, and it varies wildly for no obvious reason. Here's how to read it.
+        </p>
+        <p>
+          <strong>Per dog, not per booking.</strong> The commonest structure is £25–£30 <em>per dog</em> per week. With two dogs that's £50–£60 on a week, and holiday parks often repeat the charge for a short break, so two short breaks cost the same as two weeks' worth of supplement.
+        </p>
+        <p>
+          <strong>The cap matters more than the fee.</strong> A free policy that allows one dog is no use to a two-dog household. We state the verified maximum on every card here — and for three or more, start with our <a href="/dog-friendly-cottages-multiple-dogs/">multiple-dogs guide</a> instead.
+        </p>
+        <p>
+          <strong>Check the deposit, not the pet fee.</strong> Larger properties often ask for a refundable security deposit. That isn't a dog charge and you get it back, but it's the thing most likely to surprise you at booking on a place that advertises free pets.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Frequently asked questions</h2>
+      <FAQ items={faqItems} emitSchema={false} />
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Related guides</h2>
+      <ul class="mt-4 grid gap-3 sm:grid-cols-2 text-sm">
+        <li><a href="/dog-friendly-cottages-enclosed-gardens/">Cottages with enclosed gardens</a></li>
+        <li><a href="/dog-friendly-cottages-multiple-dogs/">Cottages that welcome 2+ dogs</a></li>
+        <li><a href="/dog-friendly-cottages-muddy-dogs/">Cottages set up for muddy dogs</a></li>
+        <li><a href="/cottages/">Dog-friendly cottages in the UK</a></li>
+      </ul>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12"><AuthorByline variant="full" /></section>
+  </article>
+</BaseLayout>
