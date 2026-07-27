@@ -1,0 +1,117 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import FAQ from '~/components/FAQ.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { article, breadcrumbList, faqPage } from '~/lib/schema';
+import { crumb } from '~/lib/nav';
+
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Cottages', '/cottages/'),
+  crumb('Can you leave a dog alone in a holiday cottage?', '/can-you-leave-a-dog-alone-in-a-holiday-cottage/'),
+];
+
+const faqItems = [
+  {
+    question: 'Do holiday cottages allow you to leave a dog unattended?',
+    answer:
+      "Most don't, or allow it only briefly and settled. A large number of dog-friendly cottages state in their terms that dogs must not be left alone in the property at all; others permit it for a short period if the dog is calm or crated. It's set per property and it's binding, so read the specific listing's pet terms before you book — don't assume.",
+  },
+  {
+    question: 'Why are the rules so strict?',
+    answer:
+      "Three reasons, all reasonable. A dog alone in an unfamiliar place is more likely to be stressed — barking, chewing, toileting or scratching at doors — which risks damage the owner has to deal with and disturbance to neighbours. There's also welfare: a panicking dog on its own isn't having a good holiday either. And many owners' insurance or letting-agency rules simply require it. The strict-sounding clause is usually about protecting the dog as much as the sofa.",
+  },
+  {
+    question: 'Can I leave my dog while I go out for dinner?',
+    answer:
+      "The better answer is usually to take them. A short walk to a <a href=\"/pubs/\">dog-friendly pub</a> where the dog settles under the table solves the evening without leaving anyone behind — it's one of the real advantages of basing yourself somewhere with a pub within walking distance. If you do need to leave them briefly and the cottage allows it, a familiar crate, a long walk beforehand and something to chew make it far less stressful.",
+  },
+  {
+    question: 'What if my dog has separation anxiety?',
+    answer:
+      "Then a self-catering holiday is actually a good fit, because you can structure the days around the dog — but plan the outings that don't allow dogs (some castles, indoor attractions, certain restaurants) around a sitter or daycare. Many holiday areas have dog day-care and home-boarding services; book ahead in peak season. Building the trip around dog-friendly places to begin with is the real fix.",
+  },
+];
+
+const pageUrl = '/can-you-leave-a-dog-alone-in-a-holiday-cottage/';
+const pageTitle = 'Can you leave a dog alone in a holiday cottage?';
+const pageDescription =
+  'Usually not — most dog-friendly cottages forbid leaving dogs unattended, or allow only brief settled periods. What the rules mean, why, and how to plan around it. By Rachel Polden.';
+
+const ogImage = 'https://images.unsplash.com/photo-1641119269354-1a112f25793f?w=1200&h=630&fit=crop&q=85';
+
+const jsonLd = [
+  article({ headline: pageTitle, description: pageDescription, image: ogImage, datePublished: '2026-07-15', url: pageUrl }),
+  faqPage(faqItems),
+  breadcrumbList(breadcrumbs),
+];
+---
+<BaseLayout title={pageTitle} description={pageDescription} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-8">
+      <p class="eyebrow">Cottages · dog advice</p>
+      <h1 class="display mt-3">Can you leave a dog alone in a holiday cottage?</h1>
+      <div class="mt-6"><AuthorByline /></div>
+    </header>
+
+    <div class="prose-reading space-y-4 text-lg">
+      <p>
+        <strong>Usually not — and where it's allowed, only briefly.</strong> It's one of the most common surprises for first-time dog-holiday-goers: a great many dog-friendly cottages state plainly in their terms that dogs must not be left unattended, and it's a binding rule, not a suggestion. It sounds strict, but there's good sense behind it, and it's easy to plan around once you know.
+      </p>
+    </div>
+
+    <section class="mt-14 border-t border-edge pt-10">
+      <h2>What the rules actually say</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          It varies by property, and the range is real. At one end, cottages that say <em>"dogs must not be left alone in the property at any time"</em>. At the other, ones that allow it <em>"for short periods, provided the dog is settled or crated"</em>. Very few give a blanket yes. Because it's set per property and forms part of the booking terms, the only reliable move is to read the specific listing's pet policy before you book — it's exactly the kind of small print we surface on our listings, and it's worth checking rather than assuming.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10">
+      <h2>Why — and it's mostly about the dog</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          A dog left alone in an unfamiliar house is far more likely to be anxious than at home — and an anxious dog barks, chews, scratches at doors or has accidents. That risks damage the owner has to put right and disturbance for neighbours, which is the practical reason. But the bigger one is welfare: a dog distressed and alone in a strange place isn't on holiday, it's enduring one. Add that many owners' insurance and letting agencies require the rule, and the clause that looks fussy is really protecting the dog as much as the property.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10">
+      <h2>How to plan around it</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          <strong>Take them, mostly.</strong> The point of a dog-friendly break is that the dog comes along — to the beach, up the fell, into the pub. A dog-friendly pub within walking distance sorts out the evening meal without leaving anyone behind, which is why it's worth <a href="/dog-friendly-cottages-near-a-pub/">basing yourself near one</a>.
+        </p>
+        <p>
+          <strong>For the outings that don't allow dogs</strong> — the odd indoor attraction or dog-free restaurant — line up a local dog day-care or home-boarding service, and book it ahead in peak season. And if you must leave them briefly where the cottage permits it, a familiar crate, a good long walk first and something to chew turn a fraught hour into a nap.
+        </p>
+        <p>
+          Choose the trip well and it rarely comes up: build the days around <a href="/beaches/">dog beaches</a>, <a href="/pubs/">dog-friendly pubs</a> and walks, and the dog is with you for the good bits anyway.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10">
+      <h2>Frequently asked questions</h2>
+      <FAQ items={faqItems} emitSchema={false} />
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10">
+      <h2>Related guides</h2>
+      <ul class="mt-4 grid gap-3 sm:grid-cols-2 text-sm">
+        <li><a href="/dog-friendly-cottages-near-a-pub/">Cottages within a walk of a pub</a></li>
+        <li><a href="/are-dogs-allowed-in-pubs-uk/">Are dogs allowed in UK pubs?</a></li>
+        <li><a href="/cottages/">Dog-friendly cottages in the UK</a></li>
+        <li><a href="/pubs/">Dog-friendly pubs in the UK</a></li>
+      </ul>
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10"><AuthorByline variant="full" /></section>
+  </article>
+</BaseLayout>

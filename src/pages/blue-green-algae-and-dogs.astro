@@ -1,0 +1,128 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import FAQ from '~/components/FAQ.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { article, breadcrumbList, faqPage } from '~/lib/schema';
+import { crumb } from '~/lib/nav';
+
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Lake District', '/lake-district/'),
+  crumb('Blue-green algae and dogs', '/blue-green-algae-and-dogs/'),
+];
+
+const faqItems = [
+  {
+    question: 'How quickly does blue-green algae affect dogs?',
+    answer:
+      "Fast — that's what makes it so dangerous. Symptoms can appear within 15 minutes to a few hours of a dog swimming in or drinking affected water, and the toxins can be fatal within hours. There is no antidote, so treatment is about speed and supportive care. Never wait to see if your dog is 'off' — if you think they've been in suspect water, go to a vet immediately.",
+  },
+  {
+    question: 'Can you always see blue-green algae?',
+    answer:
+      "No, and that's the trap. At its worst it's obvious — pea-green soup, a blue-green or turquoise scum, or paint-like streaks and foam collecting at the downwind edge of the water. But toxins can be present when there's little to see, and a bloom can clear and return within a day. Treat any discoloured, scummy or unusually murky still water as suspect, and heed warning signs even if the water looks fine to you.",
+  },
+  {
+    question: 'Is blue-green algae only a summer problem?',
+    answer:
+      "It's most common in warm, still, nutrient-rich conditions — so late summer and early autumn are the peak — but blooms can occur at any time of year, including winter, especially in mild spells. Don't assume a cold-weather walk is automatically safe; the same visual checks apply year-round.",
+  },
+  {
+    question: 'My dog swam in water that might have algae — what should I do?',
+    answer:
+      "Get them out of the water straight away and don't let them lick their coat. Rinse them thoroughly with clean, fresh water. Then treat it as an emergency: contact a vet immediately, even before symptoms appear, and tell them you suspect blue-green algae. If symptoms start — vomiting, drooling, weakness, twitching, seizures, difficulty breathing, disorientation — get to the vet without delay. Bring a note of where and when if you can.",
+  },
+  {
+    question: 'Where can I check for blue-green algae warnings?',
+    answer:
+      "The UK Centre for Ecology & Hydrology runs a public 'Bloomin' Algae' reporting app and map; the Lake District National Park and local councils post notices at affected waters; and the Environment Agency tracks bigger blooms. But reports lag reality, so your own eyes at the water's edge are the final check.",
+  },
+];
+
+const pageUrl = '/blue-green-algae-and-dogs/';
+const pageTitle = 'Blue-green algae and dogs: the warning every owner should know';
+const pageDescription =
+  'Blue-green algae can kill a dog within hours and there is no antidote. What it looks like, the symptoms, what to do, and how to keep your dog safe near water. By Rachel Polden.';
+
+const ogImage = 'https://images.unsplash.com/photo-1641119269354-1a112f25793f?w=1200&h=630&fit=crop&q=85';
+
+const jsonLd = [
+  article({ headline: pageTitle, description: pageDescription, image: ogImage, datePublished: '2026-07-15', url: pageUrl }),
+  faqPage(faqItems),
+  breadcrumbList(breadcrumbs),
+];
+---
+<BaseLayout title={pageTitle} description={pageDescription} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-8">
+      <p class="eyebrow">Dog safety · water</p>
+      <h1 class="display mt-3">Blue-green algae and dogs</h1>
+      <div class="mt-6"><AuthorByline /></div>
+    </header>
+
+    <div class="prose-reading space-y-4 text-lg">
+      <p>
+        Of all the water risks on a dog holiday, this is the one that kills — quietly, quickly, and with no antidote. <strong>Blue-green algae can be fatal to a dog within hours of a swim</strong>, and it turns up in lakes, tarns, ponds, canals and slow rivers across the UK, not just the famous spots. It's worth two minutes to learn what it looks like and what to do, because with this one, speed is everything.
+      </p>
+    </div>
+
+    <section class="mt-14 border-t border-edge pt-10">
+      <h2>What it is, and why it's so dangerous to dogs</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          "Blue-green algae" is really cyanobacteria — microscopic organisms that multiply into blooms in warm, still, nutrient-rich water. Some blooms release toxins that attack the liver or nervous system, and dogs are hit far harder than people for three reasons: they swim in it, they <strong>swallow</strong> it, and they <strong>lick it off their coats</strong> afterwards. A dog can ingest a serious dose from a single swim, or even from drinking at the edge.
+        </p>
+        <p>
+          There is no antidote. Vets can only treat the symptoms and support the dog, so survival depends on how fast you act. That's the whole reason this page exists.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10">
+      <h2>What to look for</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          At its worst it's unmistakable: <strong>pea-green soup, a blue-green or turquoise scum, paint-like streaks on the surface, or foam gathering at the downwind edge</strong> of the water. But — and this is the dangerous part — the toxins can be present when there's very little to see, and a bloom can clear overnight and come back. So treat <em>any</em> still water that looks discoloured, scummy or unusually murky as suspect, and obey warning notices even when the water looks clean to you.
+        </p>
+        <p>
+          <strong>The symptoms of poisoning</strong> come on fast and are frightening: vomiting, diarrhoea, drooling, weakness or collapse, muscle twitching, seizures, breathing difficulty and disorientation. If you see any of these after your dog has been near water, it's a dash-to-the-vet emergency.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10">
+      <h2>What to do — and how to prevent it</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          <strong>If your dog has been in suspect water:</strong> get them out immediately, stop them licking their coat, rinse them thoroughly with clean fresh water, and contact a vet straight away — <em>before</em> symptoms appear, not after. Tell the vet you suspect blue-green algae. Minutes matter.
+        </p>
+        <p>
+          <strong>To prevent it:</strong> check for warning signs and the UK Centre for Ecology & Hydrology's "Bloomin' Algae" reports before you let a dog swim; avoid any scummy, discoloured or foamy water; keep dogs on a lead near suspect water; rinse them after every swim; and always carry fresh drinking water so they're never tempted to drink from a lake or pond. Blooms peak in late summer but can appear year-round, so the checks never really go off-duty.
+        </p>
+        <p>
+          None of this should put you off water — a swim is one of the great joys of a dog holiday. It just means looking before they leap. Our <a href="/can-dogs-swim-in-windermere/">guide to swimming a dog in Windermere</a> and our <a href="/lake-district/beaches/">Lake District lake shores</a> guide flag the safe spots and the seasonal cautions.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10">
+      <h2>Frequently asked questions</h2>
+      <FAQ items={faqItems} emitSchema={false} />
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10">
+      <h2>Related guides</h2>
+      <ul class="mt-4 grid gap-3 sm:grid-cols-2 text-sm">
+        <li><a href="/can-dogs-swim-in-windermere/">Can dogs swim in Windermere?</a></li>
+        <li><a href="/lake-district/beaches/">Lake District lake shores for dogs</a></li>
+        <li><a href="/when-are-dogs-allowed-on-the-beach/">When are dogs allowed on the beach?</a></li>
+        <li><a href="/lake-district/cottages/">Dog-friendly cottages in the Lake District</a></li>
+      </ul>
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10"><AuthorByline variant="full" /></section>
+  </article>
+</BaseLayout>

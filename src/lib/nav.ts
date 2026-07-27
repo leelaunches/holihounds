@@ -90,6 +90,8 @@ export const LIVE_ROUTES: ReadonlySet<string> = new Set([
   '/when-are-dogs-allowed-on-the-beach/',
   '/are-dogs-allowed-on-windermere-lake-cruises/',
   '/are-dogs-allowed-in-pubs-uk/',
+  '/blue-green-algae-and-dogs/',
+  '/can-you-leave-a-dog-alone-in-a-holiday-cottage/',
   '/about/',
   '/contact/',
   '/privacy/',
