@@ -9,13 +9,14 @@ import AuthorByline from '~/components/AuthorByline.astro';
 import { article, breadcrumbList, faqPage, itemList } from '~/lib/schema';
 import { SITE_URL } from '~/lib/site';
 import { crumb } from '~/lib/nav';
+import { earningRank } from '~/lib/affiliate';
 
 // Northumberland & North East hot-tub lodges — targets "dog friendly cottages in
 // newcastle with hot tubs" (43 imp, pos 39 in GSC) + the Northumberland hot-tub
 // cluster. Covers Northumberland + County Durham.
 const NE = ['northumberland', 'durham'];
 const lodges = (await getCollection('listings', (e) => e.data.tags.includes('hot-tub') && NE.includes(e.data.region)))
-  .sort((a, b) => (a.data.featured !== b.data.featured ? (a.data.featured ? -1 : 1) : a.data.name.localeCompare(b.data.name)));
+  .sort((a, b) => (earningRank(a.data.affiliate_provider) !== earningRank(b.data.affiliate_provider) ? earningRank(a.data.affiliate_provider) - earningRank(b.data.affiliate_provider) : (a.data.featured !== b.data.featured ? (a.data.featured ? -1 : 1) : a.data.name.localeCompare(b.data.name))));
 
 const slugFor = (id: string) => id.split('/').pop()!;
 const total = lodges.length;

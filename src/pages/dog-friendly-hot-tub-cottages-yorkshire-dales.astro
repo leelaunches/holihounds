@@ -9,12 +9,13 @@ import AuthorByline from '~/components/AuthorByline.astro';
 import { article, breadcrumbList, faqPage, itemList } from '~/lib/schema';
 import { SITE_URL } from '~/lib/site';
 import { crumb } from '~/lib/nav';
+import { earningRank } from '~/lib/affiliate';
 
 // Yorkshire Dales hot-tub properties — targets "dog friendly cottages with hot
 // tubs yorkshire dales" / "hot tub lodge dales dog friendly". Genuinely thin
 // stock: only a handful clear both dog-friendly AND a private tub inside the Dales.
 const lodges = (await getCollection('listings', (e) => e.data.tags.includes('hot-tub') && e.data.region === 'yorkshire-dales'))
-  .sort((a, b) => (a.data.featured !== b.data.featured ? (a.data.featured ? -1 : 1) : a.data.name.localeCompare(b.data.name)));
+  .sort((a, b) => (earningRank(a.data.affiliate_provider) !== earningRank(b.data.affiliate_provider) ? earningRank(a.data.affiliate_provider) - earningRank(b.data.affiliate_provider) : (a.data.featured !== b.data.featured ? (a.data.featured ? -1 : 1) : a.data.name.localeCompare(b.data.name))));
 
 const slugFor = (id: string) => id.split('/').pop()!;
 const total = lodges.length;

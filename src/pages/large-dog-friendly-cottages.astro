@@ -9,6 +9,7 @@ import AuthorByline from '~/components/AuthorByline.astro';
 import { article, breadcrumbList, faqPage, itemList } from '~/lib/schema';
 import { SITE_URL } from '~/lib/site';
 import { crumb } from '~/lib/nav';
+import { earningRank } from '~/lib/affiliate';
 
 // Large dog-friendly cottages — sleeping 8 or more, for groups and multi-family
 // dog holidays.
@@ -17,7 +18,7 @@ const large = await getCollection('listings', (e) => (e.data.sleeps ?? 0) >= 8);
 const slugFor = (id: string) => id.split('/').pop()!;
 const REGION_ORDER = ['cornwall', 'lake-district', 'yorkshire-dales'] as const;
 const REGION_LABEL: Record<string, string> = { cornwall: 'Cornwall', 'lake-district': 'Lake District', 'yorkshire-dales': 'Yorkshire Dales' };
-const bySize = (a: (typeof large)[number], b: (typeof large)[number]) => (b.data.sleeps ?? 0) - (a.data.sleeps ?? 0) || a.data.name.localeCompare(b.data.name);
+const bySize = (a: (typeof large)[number], b: (typeof large)[number]) => earningRank(a.data.affiliate_provider) - earningRank(b.data.affiliate_provider) || (b.data.sleeps ?? 0) - (a.data.sleeps ?? 0) || a.data.name.localeCompare(b.data.name);
 const groups: { label: string; items: typeof large }[] = [];
 for (const r of REGION_ORDER) {
   const items = large.filter((c) => c.data.region === r).sort(bySize);

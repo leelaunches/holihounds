@@ -9,6 +9,7 @@ import AuthorByline from '~/components/AuthorByline.astro';
 import { article, breadcrumbList, faqPage, itemList } from '~/lib/schema';
 import { SITE_URL } from '~/lib/site';
 import { crumb } from '~/lib/nav';
+import { earningRank } from '~/lib/affiliate';
 
 // Cottages set up for wet, muddy dogs — a dog-wash station, boot room, outdoor
 // hose or drying space. Matched across the dog-extras, amenities and policy
@@ -34,6 +35,8 @@ const slugFor = (id: string) => id.split('/').pop()!;
 const REGION_ORDER = ['cornwall', 'lake-district', 'yorkshire-dales'] as const;
 const REGION_LABEL: Record<string, string> = { cornwall: 'Cornwall', 'lake-district': 'Lake District', 'yorkshire-dales': 'Yorkshire Dales' };
 const byName = (a: (typeof all)[number], b: (typeof all)[number]) => {
+  const _er = earningRank(a.data.affiliate_provider) - earningRank(b.data.affiliate_provider);
+  if (_er !== 0) return _er;
   if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
   return a.data.name.localeCompare(b.data.name);
 };

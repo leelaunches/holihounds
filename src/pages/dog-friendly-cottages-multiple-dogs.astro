@@ -9,6 +9,7 @@ import AuthorByline from '~/components/AuthorByline.astro';
 import { article, breadcrumbList, faqPage, itemList } from '~/lib/schema';
 import { SITE_URL } from '~/lib/site';
 import { crumb } from '~/lib/nav';
+import { earningRank } from '~/lib/affiliate';
 
 // Cottages that take two or more dogs (a verified max_dogs of 2+). Excludes the
 // single-dog caps and the unstated ones — only properties that definitely
@@ -23,6 +24,8 @@ const REGION_LABEL: Record<string, string> = {
   'yorkshire-dales': 'Yorkshire Dales',
 };
 const byName = (a: (typeof multi)[number], b: (typeof multi)[number]) => {
+  const _er = earningRank(a.data.affiliate_provider) - earningRank(b.data.affiliate_provider);
+  if (_er !== 0) return _er;
   if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
   return a.data.name.localeCompare(b.data.name);
 };

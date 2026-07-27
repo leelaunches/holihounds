@@ -9,6 +9,7 @@ import AuthorByline from '~/components/AuthorByline.astro';
 import { article, breadcrumbList, faqPage, itemList } from '~/lib/schema';
 import { SITE_URL } from '~/lib/site';
 import { crumb } from '~/lib/nav';
+import { earningRank } from '~/lib/affiliate';
 
 // Log cabins with hot tubs — targets the big under-served "log cabin" / "cabin"
 // synonym cluster (dog friendly log cabins with hot tubs 118 imp, cabins with
@@ -31,6 +32,8 @@ const REGION_LABEL: Record<string, string> = {
   durham: 'County Durham',
 };
 const byName = (a: (typeof cabins)[number], b: (typeof cabins)[number]) => {
+  const _er = earningRank(a.data.affiliate_provider) - earningRank(b.data.affiliate_provider);
+  if (_er !== 0) return _er;
   if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
   return a.data.name.localeCompare(b.data.name);
 };

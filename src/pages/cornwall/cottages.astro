@@ -10,6 +10,7 @@ import AuthorByline from '~/components/AuthorByline.astro';
 import { article, itemList, faqPage, breadcrumbList } from '~/lib/schema';
 import { SITE_URL } from '~/lib/site';
 import { crumb } from '~/lib/nav';
+import { earningRank } from '~/lib/affiliate';
 
 // Pull all Cornwall listings (cottages + the two lodge-typed entries).
 // Order is set explicitly so the geographic flow on the page matches the
@@ -33,7 +34,8 @@ const order = [
 ];
 const cottages = order
   .map((id) => all.find((c) => c.id === id))
-  .filter((c): c is NonNullable<typeof c> => Boolean(c));
+  .filter((c): c is NonNullable<typeof c> => Boolean(c))
+  .sort((a, b) => earningRank(a.data.affiliate_provider) - earningRank(b.data.affiliate_provider));
 
 const slugFor = (id: string) => id.split('/').pop()!;
 

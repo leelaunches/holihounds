@@ -51,3 +51,13 @@ export function affiliateHref(provider: string | null, externalUrl: string | nul
 export function isTracked(provider: string | null): boolean {
   return Boolean(provider && AWIN_MERCHANT_IDS[provider]);
 }
+
+/**
+ * Sort rank that floats earning (commission-paying) listings to the top:
+ * 0 = tracked/earning, 1 = everything else. Use as the FIRST key in a
+ * listicle comparator so pages lead with the properties that actually pay,
+ * while non-earning listings stay on the page for their search value.
+ */
+export function earningRank(provider: string | null): number {
+  return isTracked(provider) ? 0 : 1;
+}

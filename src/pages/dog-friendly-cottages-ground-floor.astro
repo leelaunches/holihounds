@@ -9,6 +9,7 @@ import AuthorByline from '~/components/AuthorByline.astro';
 import { article, breadcrumbList, faqPage, itemList } from '~/lib/schema';
 import { SITE_URL } from '~/lib/site';
 import { crumb } from '~/lib/nav';
+import { earningRank } from '~/lib/affiliate';
 
 // Single-level / ground-floor / step-free cottages — for older or less mobile
 // dogs (and owners). Driven by the explicit `single_level` field, which is set
@@ -27,6 +28,8 @@ const REGION_LABEL: Record<string, string> = {
   northumberland: 'Northumberland',
 };
 const byName = (a: (typeof all)[number], b: (typeof all)[number]) => {
+  const _er = earningRank(a.data.affiliate_provider) - earningRank(b.data.affiliate_provider);
+  if (_er !== 0) return _er;
   if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
   return a.data.name.localeCompare(b.data.name);
 };
