@@ -68,6 +68,7 @@ export const LIVE_ROUTES: ReadonlySet<string> = new Set([
   '/yorkshire-dales/beaches/',
   '/yorkshire-dales/pubs/',
   '/northumberland/beaches/',
+  '/scotland/beaches/',
   '/cottages/',
   '/beaches/',
   '/pubs/',

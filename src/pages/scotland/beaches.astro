@@ -1,0 +1,187 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import BeachAccessBox from '~/components/BeachAccessBox.astro';
+import FAQ from '~/components/FAQ.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { article, itemList, faqPage, breadcrumbList } from '~/lib/schema';
+import { SITE_URL } from '~/lib/site';
+import { crumb } from '~/lib/nav';
+
+const all = await getCollection('beaches', (b) => b.data.region === 'scotland');
+
+const ACCESS_RANK: Record<string, number> = { 'year-round': 0, 'lake-shore': 0, partial: 1, seasonal: 2 };
+const beaches = all.sort((a, b) => {
+  const r = (ACCESS_RANK[a.data.dog_access] ?? 9) - (ACCESS_RANK[b.data.dog_access] ?? 9);
+  if (r !== 0) return r;
+  if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
+  return a.data.name.localeCompare(b.data.name);
+});
+
+// Scotland's dog-friendly stock (in our data) is the hot-tub lodges, so
+// nearby_cottages funnels to the Scotland hot-tub page.
+const listings = await getCollection('listings');
+const slugFor = (id: string) => id.split('/').pop()!;
+const stayHref = (id: string) => `/dog-friendly-hot-tub-cottages-scotland/#${slugFor(id)}`;
+const nearbyFor = (ids: string[]) =>
+  ids
+    .map((id) => {
+      const l = listings.find((x) => x.id === id);
+      return l ? { name: l.data.name, href: stayHref(id) } : null;
+    })
+    .filter((x): x is { name: string; href: string } => Boolean(x));
+
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Beaches', '/beaches/'),
+  crumb('Scotland', '/scotland/beaches/'),
+];
+
+const faqItems = [
+  {
+    question: 'Which Scottish beaches allow dogs all year?',
+    answer:
+      "Almost all of them — Scotland is one of the most dog-relaxed coasts in Britain. Every beach on this list takes dogs year-round; Dumfries & Galloway operates no seasonal dog bans at all, and the west-coast and Highland beaches are the same. The only rules you'll meet are conservation ones — leads for nesting birds in the dunes — and the odd on-lead town beach, both of which we flag per beach.",
+  },
+  {
+    question: 'Are there any dog bans on Scottish beaches?',
+    answer:
+      "A handful of busy resort beaches elsewhere in Scotland — parts of Ayrshire, some East Lothian and Fife sands — carry summer restrictions under local bylaws. But none of the beaches here do. The restrictions on this list are conservation-based: Nairn's East Beach is on-lead, the Culbin RSPB dunes ask for leads in the nesting season, and Balmedie's dunes the same. Respect those and the rest of each beach is open.",
+  },
+  {
+    question: "What's the tide like — is it safe for a dog to swim?",
+    answer:
+      "It varies a lot. The Solway coast in Galloway (Sandyhills, Rockcliffe, Brighouse) has one of the fastest, furthest-reaching tides in Britain, and Rough Island at Rockcliffe cuts off quickly — check the tide table and keep dogs clear of fast water. The east-coast and west-coast beaches are cold North Sea and Atlantic water with currents. None have a year-round lifeguard, so use your judgement.",
+  },
+  {
+    question: 'Where should I stay for a Scottish dog beach holiday?',
+    answer:
+      'Match the lodge to the coast: our <a href="/dog-friendly-hot-tub-cottages-scotland/">dog-friendly Scotland hot tub lodges</a> include a Galloway house near the Solway beaches, a Deeside cottage for the Aberdeenshire coast, Loch Lomond lodges for the west, and Aviemore bases within reach of the Moray Firth. Each beach below links to the nearest one under "where to stay".',
+  },
+];
+
+const pageUrl = '/scotland/beaches/';
+const pageTitle = 'Dog-friendly beaches in Scotland';
+// 151 chars — under the 155-char Google truncation threshold.
+const pageDescription =
+  'Dog-friendly Scottish beaches — Galloway, Aberdeenshire, Oban and the Moray Firth — almost all year-round with no summer ban. The honest small print. By Rachel Polden.';
+
+const heroImage = beaches[0]?.data.image ?? '/images/og-default.jpg';
+
+const jsonLd = [
+  article({ headline: pageTitle, description: pageDescription, image: new URL(heroImage, SITE_URL).toString(), datePublished: '2026-07-15', url: pageUrl }),
+  itemList(beaches.map((b) => ({ name: b.data.name, url: `${pageUrl}#${slugFor(b.id)}` }))),
+  faqPage(faqItems),
+  breadcrumbList(breadcrumbs),
+];
+---
+<BaseLayout title={pageTitle} description={pageDescription} image={heroImage} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-8">
+      <p class="eyebrow">Scotland</p>
+      <h1 class="display mt-3">{pageTitle}</h1>
+      <div class="mt-6"><AuthorByline /></div>
+    </header>
+
+    <div class="prose-reading space-y-4 text-lg">
+      <p>
+        Scotland is one of the easiest coasts in Britain for a dog. Its beaches are, almost without exception, dog-friendly <strong>all year</strong> — no summer ban to plan around, right-to-roam freedom on the wilder stretches, and some of the emptiest, most spectacular sand in the country. For a warm-weather trip with a dog, the Scottish coast barely needs planning.
+      </p>
+      <p>
+        Below are beaches across the south-west, the north-east and the west, chosen partly because they sit within reach of our <a href="/dog-friendly-hot-tub-cottages-scotland/">Scotland hot tub lodges</a> — a Galloway house by the Solway sands, a Deeside cottage for the Aberdeenshire coast, Loch Lomond lodges for the west. Each has the access in plain terms, and the few restrictions that exist protect nesting birds, not tourists.
+      </p>
+    </div>
+
+    {beaches.length > 0 && (
+      <nav aria-label="Beach list" class="mt-12 border-t border-edge pt-8">
+        <p class="eyebrow mb-4">Jump to a beach</p>
+        <ol class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm">
+          {beaches.map((b, i) => (
+            <li>
+              <a href={`#${slugFor(b.id)}`} class="text-text">
+                {i + 1}. {b.data.name}
+                <span class="text-muted"> — {b.data.location}</span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+    )}
+
+    <section class="mt-16 space-y-20">
+      {beaches.map((b, i) => {
+        const nearby = nearbyFor(b.data.nearby_cottages);
+        return (
+          <article id={slugFor(b.id)} class="scroll-mt-8 border-t border-edge pt-12">
+            <p class="eyebrow">{b.data.location}</p>
+            <h2 class="mt-2">{i + 1}. {b.data.name}</h2>
+
+            <div class="mt-6 aspect-[16/11] overflow-hidden bg-cream-soft border border-edge">
+              <img src={b.data.image} alt={b.data.image_alt ?? b.data.name} loading="lazy" class="h-full w-full object-cover" />
+            </div>
+
+            <div class="prose-reading mt-6">
+              <p>{b.data.description}</p>
+            </div>
+
+            <BeachAccessBox
+              dogAccess={b.data.dog_access}
+              dogRestriction={b.data.dog_restriction}
+              restrictionDetail={b.data.restriction_detail}
+              parking={b.data.parking}
+              facilities={b.data.facilities}
+              nearestPub={b.data.nearest_pub}
+              safetyNote={b.data.safety_note}
+            />
+
+            {nearby.length > 0 && (
+              <p class="text-sm mt-4">
+                <span class="text-muted">Where to stay nearby: </span>
+                {nearby.map((c, j) => (
+                  <>
+                    <a href={c.href} class="text-text">{c.name}</a>{j < nearby.length - 1 ? ', ' : ''}
+                  </>
+                ))}
+              </p>
+            )}
+          </article>
+        );
+      })}
+    </section>
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <h2>Why Scotland is easy coast for a dog</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          Two things make the Scottish coast a strong dog-beach destination.
+        </p>
+        <p>
+          <strong>Barely any summer bans.</strong> Where much of the English and Welsh coast shuts dogs out of the daytime from May to September, Scotland's beaches stay open to them year-round. Dumfries & Galloway has no beach dog bans at all; the west and north are the same. You can turn up in August without checking a calendar.
+        </p>
+        <p>
+          <strong>Right to roam, and space.</strong> Scotland's access laws give dogs wide freedom on the wilder coast under close control, and the beaches — Balmedie's endless dunes, the empty Solway sands, the island views at Ganavan — have room to spare. The rules that do apply are conservation ones: leads for ground-nesting birds in the dunes, spring to mid-summer. Respect those and the coast is yours.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <h2>Frequently asked questions</h2>
+      <FAQ items={faqItems} emitSchema={false} />
+    </section>
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <h2>Related guides</h2>
+      <ul class="mt-4 grid gap-3 sm:grid-cols-2 text-sm">
+        <li><a href="/dog-friendly-hot-tub-cottages-scotland/">Dog-friendly Scotland hot tub lodges</a></li>
+        <li><a href="/beaches/">Dog-friendly beaches in the UK</a></li>
+        <li><a href="/when-are-dogs-allowed-on-the-beach/">When are dogs allowed on the beach?</a></li>
+        <li><a href="/northumberland/beaches/">Dog-friendly beaches in Northumberland</a></li>
+      </ul>
+    </section>
+
+    <section class="mt-20 border-t border-edge pt-12"><AuthorByline variant="full" /></section>
+  </article>
+</BaseLayout>
