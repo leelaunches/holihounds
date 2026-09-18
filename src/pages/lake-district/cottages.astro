@@ -82,10 +82,12 @@ const faqItems = [
 ];
 
 const pageUrl = '/lake-district/cottages/';
-const pageTitle = '17 best dog-friendly cottages in the Lake District';
-// 152 chars — under the 155-char Google truncation threshold.
+// Leads with the exact phrase — "dog friendly cottages lake district" is the
+// page's biggest query (GSC Sep 2026: 291 imp / 28 days, pos ~40).
+const pageTitle = 'Dog-friendly cottages in the Lake District: 17 verified picks';
+// 155 chars — at the 155-char Google truncation threshold.
 const pageDescription =
-  '17 verified dog-friendly Lake District cottages — Sykes, Hoseasons, cottages.com — with the dog-policy specifics most sites leave out. By Rachel Polden.';
+  'Dog-friendly cottages in the Lake District, checked against the small print — max dogs, pet charges, enclosed gardens. 17 verified picks. By Rachel Polden.';
 
 const heroImage = cottages[0]?.data.image ?? '/images/og-default.jpg';
 
@@ -130,7 +132,7 @@ const jsonLd = [
 
     <div class="prose-reading space-y-4 text-lg">
       <p>
-        The Lake District does dog-walking better than anywhere in England, and the self-catering stock has caught up. Boot rooms, drying space and enclosed gardens are the norm rather than the exception here — because the owners know exactly what a Cumbrian fell day does to a dog, and to a hallway floor.
+        Dog-friendly cottages in the Lake District are some of the best-equipped in England — the fells do dog-walking better than anywhere else, and the self-catering stock has caught up. Boot rooms, drying space and enclosed gardens are the norm rather than the exception here — because the owners know exactly what a Cumbrian fell day does to a dog, and to a hallway floor.
       </p>
       <p>
         The seventeen below are the best of what's currently bookable through Sykes, Hoseasons, cottages.com and a couple of others — chosen for the specifics rather than the marketing copy. Every one has been verified against the listing's small print: max dogs, pet charges, garden status, what's actually provided. Where a listing is vague — an unstated enclosure, an unspecified "doggy extra" — we say so rather than guess.
