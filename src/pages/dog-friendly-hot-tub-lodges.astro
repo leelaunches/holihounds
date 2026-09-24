@@ -10,6 +10,7 @@ import AuthorByline from '~/components/AuthorByline.astro';
 import { article, breadcrumbList, faqPage, itemList } from '~/lib/schema';
 import { SITE_URL } from '~/lib/site';
 import { crumb } from '~/lib/nav';
+import { earningRank } from '~/lib/affiliate';
 
 /**
  * Dog-friendly hot tub lodges money page — Phase 2.7.
@@ -27,32 +28,69 @@ const allHotTubProperties = await getCollection(
 );
 
 // Explicit geographic order — Lake District / Cumbria → Pennines → Northumberland
-// → Scotland → Wales → Cornwall. The 14 not-yet-shipped entries land here as
-// .md files are added post-verification.
+// → Scotland → Wales → Cornwall.
 const lodgeOrder = [
+  // Lake District / Cumbria
   'cumbria/black-dog-lodge',
   'cumbria/limefitt-lodge',
   'cumbria/brockwood-hall-windermere-lodge',
   'cumbria/fell-foot',
+  'cumbria/boston-house-terrace',
+  'cumbria/conn-cottage',
+  'cumbria/hartsop-lodge-escape',
+  'cumbria/little-knott',
+  'lake-district/bannerrigg',
+  // Yorkshire Dales / the Pennines
+  'yorkshire-dales/crown-hill-lodge',
+  'yorkshire-dales/malham-lodge-ribblesdale',
+  'yorkshire-dales/wensleydale-aysgarth-lodge',
+  // Northumberland & County Durham
   'durham/foxes-den',
   'northumberland/lodge-32-otterburn',
   'northumberland/restharrow-lodge',
   'northumberland/griffon-lodge-felmoor',
+  'northumberland/summers-lodge-percy-wood',
+  'northumberland/sunflower-retreat-percy-wood',
+  // Scotland
   'scotland/little-lodge-galloway',
   'scotland/moorhen-lodge-kessock',
   'scotland/loch-lomond-classic-4-bed',
+  'scotland/loch-lomond-classic-3-bed',
   'scotland/woodend-croft-pitmedden',
+  'scotland/croftside-house',
+  'scotland/lochside-house',
+  'scotland/logiemar-cottage',
+  'scotland/sunnyside-house',
+  // Wales
   'wales/y-felin-coed-cadw',
+  // Cornwall
   'cornwall/signature-cove-lodge',
   'cornwall/tregoad-luxury-3-bed',
   'cornwall/kernock-cottages',
+  'cornwall/st-ives-4-bed-platinum-lodge',
+  'cornwall/above-town-kilminorth',
+  'cornwall/scrumpy-cottage-kilminorth',
+  'cornwall/bowji',
+  'cornwall/caddys-corner-farmhouse',
+  'cornwall/the-old-mill-egloskerry',
 ];
 
-const sortedLodges = lodgeOrder
+// Curated order first, then a safety net: anything tagged `hot-tub` that isn't
+// listed above still gets shown. Without this the page silently omitted 21
+// verified properties (every one of them earning) as stock was added after the
+// original order array was written.
+const curated = lodgeOrder
   .map((id) => allHotTubProperties.find((l) => l.id === id))
   .filter((l): l is NonNullable<typeof l> => Boolean(l));
+const uncurated = allHotTubProperties
+  .filter((l) => !lodgeOrder.includes(l.id))
+  .sort((a, b) => a.data.name.localeCompare(b.data.name));
 
-const TARGET_LODGE_COUNT = 16;
+// Earning-first, as on every other booking page — stable, so the geographic
+// order above is preserved within each tier.
+const sortedLodges = [...curated, ...uncurated].sort(
+  (a, b) => earningRank(a.data.affiliate_provider) - earningRank(b.data.affiliate_provider),
+);
 
 const slugFor = (id: string) => id.split('/').pop()!;
 
@@ -100,10 +138,13 @@ const faqItems = [
 ];
 
 const pageUrl = '/dog-friendly-hot-tub-lodges/';
-const pageTitle = 'Dog-friendly hot tub lodges UK: 2026 guide';
-// 131 chars — under the 155-char Google truncation threshold.
+// Count and title are derived, not hardcoded — this page claimed "16" while the
+// order array had silently fallen behind the content collection. No year in the
+// title either, so it can't go stale in January.
+const pageTitle = `${sortedLodges.length} dog-friendly lodges with hot tubs (UK)`;
+// 150 chars — under the 155-char Google truncation threshold.
 const pageDescription =
-  '16 verified UK lodges, cabins & cottages with private hot tubs and dog policies that actually hold up — with the small print checked. By Rachel Polden.';
+  'Verified UK lodges, cabins and cottages with private hot tubs and dog policies that actually hold up — with the small print checked. By Rachel Polden.';
 
 // Fallback hero image until the listings drop in and we use the first lodge's image.
 const heroImage = 'https://images.unsplash.com/photo-1633512424746-0cb5240e064d?w=1600&h=900&fit=crop&q=85';
@@ -157,13 +198,6 @@ const jsonLd = [
     </div>
 
     <section class="mt-16">
-      {sortedLodges.length < TARGET_LODGE_COUNT && (
-        <div class="border-2 border-dashed border-edge bg-cream-soft p-6 text-sm text-muted text-center">
-          {sortedLodges.length} of {TARGET_LODGE_COUNT} verified lodges currently shown — verification of the remaining
-          {' '}{TARGET_LODGE_COUNT - sortedLodges.length} is in progress. The full listicle lands once each clears the
-          {' '}source-URL verification pass.
-        </div>
-      )}
 
       {sortedLodges.length > 0 && (
         <div class="mt-12 space-y-20">
