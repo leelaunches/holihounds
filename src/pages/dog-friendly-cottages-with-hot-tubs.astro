@@ -1,0 +1,178 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import MoneyCottageCard from '~/components/MoneyCottageCard.astro';
+import AffiliateDisclosure from '~/components/AffiliateDisclosure.astro';
+import FAQ from '~/components/FAQ.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { article, breadcrumbList, faqPage, itemList } from '~/lib/schema';
+import { SITE_URL } from '~/lib/site';
+import { crumb } from '~/lib/nav';
+import { earningRank } from '~/lib/affiliate';
+
+// The COTTAGE cut of our hot-tub stock (type: cottage) — the standalone,
+// usually stone counterpart to /dog-friendly-log-cabins-with-hot-tubs/
+// (type: lodge). Targets "dog friendly cottages with hot tubs" (GSC Sep 2026:
+// 268 imp / 28 days, pos 46.6), which the lodge/cabin pages don't answer —
+// searchers asking for a "cottage" don't mean a timber unit on a park.
+const cottages = await getCollection('listings', (e) => e.data.tags.includes('hot-tub') && e.data.type === 'cottage');
+
+const slugFor = (id: string) => id.split('/').pop()!;
+const total = cottages.length;
+const dogsPhrase = (n: number | null) => (n != null ? `up to ${n} dog${n === 1 ? '' : 's'}` : 'dog limit not stated');
+// Verified enclosed gardens — the genuine cottage advantage over a park cabin.
+const enclosedCount = cottages.filter((c) => c.data.enclosed_garden === true).length;
+
+// cumbria and lake-district both mean the Lakes in our data — merge for readers.
+const groupKey = (region: string) => (region === 'cumbria' ? 'lake-district' : region);
+const REGION_ORDER = ['lake-district', 'cornwall', 'scotland', 'yorkshire-dales', 'wales'] as const;
+const REGION_LABEL: Record<string, string> = {
+  'lake-district': 'Lake District',
+  cornwall: 'Cornwall',
+  scotland: 'Scotland',
+  'yorkshire-dales': 'Yorkshire Dales',
+  wales: 'Wales',
+};
+const byName = (a: (typeof cottages)[number], b: (typeof cottages)[number]) => {
+  const _er = earningRank(a.data.affiliate_provider) - earningRank(b.data.affiliate_provider);
+  if (_er !== 0) return _er;
+  if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
+  return a.data.name.localeCompare(b.data.name);
+};
+const groups: { label: string; items: typeof cottages }[] = [];
+for (const r of REGION_ORDER) {
+  const items = cottages.filter((c) => groupKey(c.data.region) === r).sort(byName);
+  if (items.length) groups.push({ label: REGION_LABEL[r], items });
+}
+const elsewhere = cottages.filter((c) => !REGION_ORDER.includes(groupKey(c.data.region) as any)).sort(byName);
+if (elsewhere.length) groups.push({ label: 'Elsewhere in the UK', items: elsewhere });
+
+const anchorFor = (label: string) => label.toLowerCase().replace(/[^a-z]+/g, '-');
+
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Cottages', '/cottages/'),
+  crumb('Cottages with hot tubs', '/dog-friendly-cottages-with-hot-tubs/'),
+];
+
+const faqItems = [
+  {
+    question: 'Are the hot tubs private to the cottage?',
+    answer:
+      "On every cottage here, yes — the tub is private to your cottage, not a shared spa or a park facility, and not a paid add-on. That's a deliberate filter rather than a boast: we've dropped properties from this list where the hot tub turned out to be an optional extra you pay for separately, because a tub you might not get isn't the holiday you booked. Where a tub is covered or has a privacy screen, the individual entry says so.",
+  },
+  {
+    question: 'Can dogs go in the hot tub?',
+    answer:
+      "No — and no UK holiday let will allow it. Dog hair, claws and coat oils wreck the filtration and the chemical balance, so the tub is a humans-only part of the holiday everywhere. It isn't a problem in practice: the dog settles on the decking or just inside while you use it. Our guide to <a href=\"/can-dogs-go-in-hot-tubs/\">dogs and hot tubs</a> explains why, and the safety side of hot water and dogs.",
+  },
+  {
+    question: "What's the difference between a cottage and a lodge or log cabin with a hot tub?",
+    answer:
+      "A cottage is standalone — usually older, often stone, with its own garden and no neighbouring deck a few feet away. A lodge or log cabin is a timber unit, nearly always on a holiday park, with on-site facilities and near neighbours. Both work well with a dog, but they're different holidays. If you'd rather the timber-cabin-in-the-woods version, see our <a href=\"/dog-friendly-log-cabins-with-hot-tubs/\">dog-friendly log cabins with hot tubs</a>; this page is the standalone-cottage cut.",
+  },
+  {
+    question: 'Do hot tub cottages have enclosed gardens for dogs?',
+    answer:
+      "More often than park cabins do, which is the main reason to choose one. Of the cottages on this page, we've verified an enclosed garden at most of them — and we say plainly where we couldn't. Two things worth checking yourself at booking: whether the enclosure is genuinely dog-proof (a low wall isn't), and whether the hot tub sits inside that enclosed area, since a few have steps or an unfenced drop beside the tub. Each entry states what we could confirm.",
+  },
+];
+
+const pageUrl = '/dog-friendly-cottages-with-hot-tubs/';
+const pageTitle = `${total} dog-friendly cottages with hot tubs (UK)`;
+// 154 chars — under the 155-char Google truncation threshold.
+const pageDescription =
+  'Dog-friendly cottages with hot tubs across the UK — standalone, privately tubbed, with the dog policy and garden small print verified. By Rachel Polden.';
+
+const heroImage = groups[0]?.items[0]?.data.image ?? '/images/og-default.jpg';
+
+const jsonLd = [
+  article({ headline: pageTitle, description: pageDescription, image: new URL(heroImage, SITE_URL).toString(), datePublished: '2026-09-24', url: pageUrl }),
+  faqPage(faqItems),
+  itemList(cottages.map((l) => ({ name: l.data.name, url: `${pageUrl}#${slugFor(l.id)}` }))),
+  breadcrumbList(breadcrumbs),
+];
+---
+<BaseLayout title={pageTitle} description={pageDescription} image={heroImage} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-8">
+      <p class="eyebrow">Cottages · hot tubs</p>
+      <h1 class="display mt-3">Dog-friendly cottages with hot tubs</h1>
+      <div class="mt-6"><AuthorByline /></div>
+    </header>
+
+    <div class="border-t border-b border-edge py-3 my-6"><AffiliateDisclosure /></div>
+
+    <div class="prose-reading space-y-4 text-lg">
+      <p>
+        A hot tub is the one luxury that actually suits a dog holiday. You come off a wet fell or a cold beach, the dog gets towelled down by the door, and you get into hot water outside in the dark — no spa booking, no leaving the dog behind in the cottage while you go and find one.
+      </p>
+      <p>
+        These {total} are the <em>cottage</em> cut of our hot tub guide — standalone places, mostly stone, each with a hot tub private to the cottage rather than a shared park spa. That's the practical difference from a lodge or cabin, and so is the garden — we've verified an enclosed garden at {enclosedCount} of the {total}, which is the thing that makes the evening work when you'd rather not be holding a lead. Grouped by region below, with the dog policy on each checked against the listing's small print.
+      </p>
+    </div>
+
+    <nav aria-label="By region" class="mt-12 border-t border-edge pt-8">
+      <p class="eyebrow mb-4">Jump to a region</p>
+      <ul class="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+        {groups.map((g) => (<li><a href={`#${anchorFor(g.label)}`} class="text-text">{g.label} ({g.items.length})</a></li>))}
+      </ul>
+    </nav>
+
+    {groups.map((g) => (
+      <section class="mt-16 border-t border-edge pt-12" id={anchorFor(g.label)}>
+        <h2>{g.label}</h2>
+        <div class="mt-8 grid gap-6 sm:grid-cols-2">
+          {g.items.map((c) => (
+            <MoneyCottageCard
+              listing={c}
+              highlightLabel="Hot tub &amp; garden"
+              highlightValue={`Private hot tub · ${dogsPhrase(c.data.max_dogs)}${c.data.enclosed_garden === true ? ' · enclosed garden' : ''}`}
+            />
+          ))}
+        </div>
+      </section>
+    ))}
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <h2>Choosing a hot tub cottage with a dog</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          The listings all promise the same thing, so it comes down to four details that decide whether the week actually works.
+        </p>
+        <p>
+          <strong>Is the tub private, and is it included?</strong> "Hot tub" on a park listing can mean a shared spa, and on some cottages it's an optional extra with its own fee — occasionally one that has to be booked ahead. Every cottage here has a tub that's private and included; elsewhere, check both before you pay.
+        </p>
+        <p>
+          <strong>Is the garden enclosed, and is the tub inside it?</strong> These are two different questions and the second one catches people out. A cottage can have a properly dog-proof garden with the hot tub outside it on an open terrace — fine for some dogs, a nuisance for others. Where there are steps or an unfenced drop by the tub, we say so on the entry rather than leaving you to find out.
+        </p>
+        <p>
+          <strong>Where can the dog actually go indoors?</strong> Stone cottages are often stricter than park cabins — ground floor only, or no bedrooms, or off the furniture. None of that is a dealbreaker if you know before you arrive.
+        </p>
+        <p>
+          <strong>Is there somewhere to dry a filthy dog?</strong> A boot room, a utility with a hard floor, or an outside tap matters far more in practice than the welcome hamper. Our <a href="/dog-friendly-cottages-muddy-dogs/">cottages for muddy dogs</a> guide is built entirely around that.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Frequently asked questions</h2>
+      <FAQ items={faqItems} emitSchema={false} />
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Related guides</h2>
+      <ul class="mt-4 grid gap-3 sm:grid-cols-2 text-sm">
+        <li><a href="/dog-friendly-hot-tub-lodges/">Dog-friendly hot tub lodges UK (all regions)</a></li>
+        <li><a href="/dog-friendly-log-cabins-with-hot-tubs/">Dog-friendly log cabins with hot tubs</a></li>
+        <li><a href="/dog-friendly-cottages-enclosed-gardens/">Cottages with fully enclosed gardens</a></li>
+        <li><a href="/can-dogs-go-in-hot-tubs/">Can dogs go in hot tubs?</a></li>
+      </ul>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12"><AuthorByline variant="full" /></section>
+  </article>
+</BaseLayout>

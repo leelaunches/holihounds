@@ -84,6 +84,7 @@ export const LIVE_ROUTES: ReadonlySet<string> = new Set([
   '/large-dog-friendly-cottages/',
   '/dog-friendly-cottages-ground-floor/',
   '/dog-friendly-log-cabins-with-hot-tubs/',
+  '/dog-friendly-cottages-with-hot-tubs/',
   '/dog-friendly-cottages-pets-stay-free/',
   '/dog-friendly-cottages-near-a-pub/',
   '/can-dogs-swim-in-windermere/',
