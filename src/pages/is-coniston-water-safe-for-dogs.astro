@@ -1,0 +1,143 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import FAQ from '~/components/FAQ.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { article, breadcrumbList, faqPage } from '~/lib/schema';
+import { crumb } from '~/lib/nav';
+
+// Targets "is coniston water safe for dogs" — already our best-placed info
+// query (GSC Sep 2026: pos 8.2, 27 imp) with NO dedicated page until now; it
+// was ranking off the Brown Howe shore entry. Boat policies verified Sep 2026
+// (Coniston Launch: dogs in cabins, not on seats. NT Steam Yacht Gondola:
+// dogs on leads, non-carpeted areas / outer decks).
+
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Lake District', '/lake-district/'),
+  crumb('Is Coniston Water safe for dogs?', '/is-coniston-water-safe-for-dogs/'),
+];
+
+const faqItems = [
+  {
+    question: 'Can dogs swim in Coniston Water?',
+    answer:
+      "Yes — there's no ban on dogs swimming in Coniston Water, and much of the shore is open to them. The sensible spots are the gently shelving shingle beaches on the western shore, like Brown Howe, rather than anywhere the bank drops away steeply. Check for blue-green algae before they go in, keep the swim short because the water is cold year-round, and rinse them off afterwards.",
+  },
+  {
+    question: 'Is Coniston Water safer for dogs than Windermere?',
+    answer:
+      "In one respect, yes — it's a quieter lake with far less boat traffic than Windermere, so there's less risk of a swimming dog meeting a cruiser. The water itself is no safer: it's deep, cold and can carry blue-green algae just as Windermere can. So the honest answer is that Coniston removes one of the three main risks and leaves the other two exactly as they are.",
+  },
+  {
+    question: 'Are dogs allowed on the Coniston boats?',
+    answer:
+      "Yes, on both. Coniston Launch carries dogs on both of its boats and allows them in the cabins, though not up on the seats. The National Trust's Steam Yacht Gondola takes well-behaved dogs on leads in the non-carpeted areas — in practice, the outer decks. Policies and any small charge can change, so confirm when you book. Either is a good way to see the lake without your dog going anywhere near the water.",
+  },
+  {
+    question: 'How cold is Coniston Water for a dog?',
+    answer:
+      "Cold all year, and colder than it looks on a warm day — these are deep glacial lakes and the surface warmth is only a thin layer. Cold-water shock affects dogs as it does people. Keep swims short, stay in the shallows near the shore, and take particular care with puppies, older dogs and any dog that isn't fit. A tired dog in cold, deep water is how the genuinely bad days start.",
+  },
+];
+
+const pageUrl = '/is-coniston-water-safe-for-dogs/';
+const pageTitle = 'Is Coniston Water safe for dogs? Algae, cold and boats';
+const pageDescription =
+  'Is Coniston Water safe for dogs? Mostly yes — quieter than Windermere, but cold, deep and algae-prone. Where to swim, and the boat dog policies. By Rachel Polden.';
+
+const ogImage = 'https://images.unsplash.com/photo-1641119269354-1a112f25793f?w=1200&h=630&fit=crop&q=85';
+
+const jsonLd = [
+  article({ headline: pageTitle, description: pageDescription, image: ogImage, datePublished: '2026-09-25', url: pageUrl }),
+  faqPage(faqItems),
+  breadcrumbList(breadcrumbs),
+];
+---
+<BaseLayout title={pageTitle} description={pageDescription} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-8">
+      <p class="eyebrow">Lake District · dog advice</p>
+      <h1 class="display mt-3">Is Coniston Water safe for dogs?</h1>
+      <div class="mt-6"><AuthorByline /></div>
+    </header>
+
+    <div class="prose-reading space-y-4 text-lg">
+      <p>
+        <strong>Broadly, yes — and it's a gentler prospect than Windermere.</strong> Dogs can swim in Coniston Water, there's no ban, and the lake is far quieter for boat traffic than its famous neighbour. But "safe" depends on three things that have nothing to do with whether dogs are allowed: blue-green algae, cold, and depth. Here's the honest version.
+      </p>
+    </div>
+
+    <section class="mt-14 border-t border-edge pt-10">
+      <h2>The risk that actually matters: blue-green algae</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          <strong>Blue-green algae</strong> (cyanobacteria) is the one genuine danger, on Coniston as on any Lakeland water. It blooms in warm, still spells — most often late summer — and the toxins it releases can kill a dog within hours. Dogs are far more exposed than swimmers are, because they swallow lake water and then lick it out of their coats.
+        </p>
+        <p>
+          Learn the look of it: <strong>pea-green soup, a blue-green scum, or streaks like spilled turquoise paint</strong>, usually collecting along the downwind shore. If you see anything like it, keep the dog out of the water <em>and</em> off that shoreline — don't let them drink at the edge either. Poisoning comes on fast, with vomiting, drooling, weakness, twitching or seizures, and there's no antidote, so treat any suspicion as an emergency and get to a vet. Warnings get posted when a bloom is confirmed, but blooms can appear between checks, so trust your own eyes over a sign. Our guide to <a href="/blue-green-algae-and-dogs/">blue-green algae and dogs</a> covers identification and what to do.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10">
+      <h2>Cold and depth — the thing Coniston is famous for</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          Coniston is a long, deep, cold lake. That depth is precisely why Donald Campbell chose its five-mile straight run for his water speed record attempts, and why the 1967 attempt that killed him is still the thing most people know about it. For a dog, the practical version is simpler: the water shelves away quickly in places, and it's cold year-round beneath a thin warm surface layer.
+        </p>
+        <p>
+          <strong>Keep swims short and close to the shore.</strong> Cold-water shock is real for dogs, and a dog that tires out of its depth in cold water is in trouble quickly. Be especially careful with puppies, older dogs, and any dog that swims enthusiastically but not strongly — plenty will keep chasing a stick long past the point they should have turned back.
+        </p>
+        <p>
+          <strong>Leptospirosis</strong> is worth a mention too. Standing and slow-moving fresh water can carry it, so keep vaccinations current, and offer clean drinking water when you arrive so the lake looks less appealing.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10">
+      <h2>Where to let a dog in</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          The western shore is the friendliest side for a dog. <strong><a href="/lake-district/beaches/">Brown Howe</a></strong>, near Torver, is the pick of it — a shingle-and-grass shore with a car park, gentle entry into the water and room to throw a ball, which is exactly what you want and not something every Lakeland lake offers. The quieter northern end around Monk Coniston is good for a walk-and-paddle rather than a swim.
+        </p>
+        <p>
+          Avoid the jetties and the moorings at Coniston Pier, where the boats come and go, and steer clear of any stretch where the bank drops off sharply. And if the lake looks wrong — that green tinge, a scum along the edge — walk the dog instead and don't risk it.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10">
+      <h2>On the water instead — both boats take dogs</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          The nice thing about Coniston is that you don't have to let the dog swim at all to have a good day on the lake. <strong>Coniston Launch</strong> carries dogs on both of its boats, including inside the cabins — just not up on the seats. The National Trust's <strong>Steam Yacht Gondola</strong>, the restored Victorian steam launch, takes well-behaved dogs on leads in its non-carpeted areas, which in practice means the outer decks — arguably the better seats anyway.
+        </p>
+        <p>
+          Both are a genuinely good way to do the lake with a dog and none of the water risks. Policies and any small charge do change, so confirm when you book. If you're basing yourselves nearby, see our <a href="/lake-district/cottages/">dog-friendly cottages in the Lake District</a>, several of which sit within a few minutes of the Coniston shore.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10">
+      <h2>Frequently asked questions</h2>
+      <FAQ items={faqItems} emitSchema={false} />
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10">
+      <h2>Related guides</h2>
+      <ul class="mt-4 grid gap-3 sm:grid-cols-2 text-sm">
+        <li><a href="/is-derwent-water-safe-for-dogs/">Is Derwent Water safe for dogs?</a></li>
+        <li><a href="/can-dogs-swim-in-windermere/">Can dogs swim in Windermere?</a></li>
+        <li><a href="/blue-green-algae-and-dogs/">Blue-green algae and dogs</a></li>
+        <li><a href="/lake-district/beaches/">Lake District lake shores for dogs</a></li>
+        <li><a href="/lake-district/cottages/">Dog-friendly cottages in the Lake District</a></li>
+        <li><a href="/dog-friendly-hot-tub-cottages-lake-district/">Hot tub cottages in the Lake District</a></li>
+      </ul>
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10"><AuthorByline variant="full" /></section>
+  </article>
+</BaseLayout>

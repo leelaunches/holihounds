@@ -1,0 +1,139 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import FAQ from '~/components/FAQ.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { article, breadcrumbList, faqPage } from '~/lib/schema';
+import { crumb } from '~/lib/nav';
+
+// Targets "is derwent water safe for dogs" (GSC Sep 2026: pos 10.2) — we were
+// ranking page 1 off the Calfclose Bay shore entry with no dedicated page.
+// Keswick Launch dog policy verified Sep 2026 — dogs free of charge, on a
+// lead, hop-on/hop-off at the jetties; rowing boats take dogs too.
+
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Lake District', '/lake-district/'),
+  crumb('Is Derwent Water safe for dogs?', '/is-derwent-water-safe-for-dogs/'),
+];
+
+const faqItems = [
+  {
+    question: 'Can dogs swim in Derwent Water?',
+    answer:
+      "Yes — dogs swim in Derwentwater all year and there's no ban. It's one of the gentler big lakes for a dog, because it's relatively shallow and shelves slowly from several of its shingle bays rather than dropping away sharply. Calfclose Bay on the eastern shore is the classic spot. Check for blue-green algae first, keep the swim short because the water stays cold, and rinse the dog afterwards.",
+  },
+  {
+    question: 'Is Derwent Water shallower than the other lakes?',
+    answer:
+      "Yes — it's one of the shallowest of the major lakes, which is exactly why it suits dogs. The shore shelves gradually at several of the eastern bays, so a dog can wade and paddle without immediately being out of its depth, and the water warms a touch more than the deep lakes like Wastwater or Coniston. Shallower does not mean warm, though — it's still cold enough for cold-water shock.",
+  },
+  {
+    question: 'Are dogs allowed on the Keswick Launch?',
+    answer:
+      "Yes, and free of charge — well-behaved dogs are welcome on the Keswick Launch cruises on a lead. The hop-on, hop-off jetties around the lake make it one of the best dog days out in the Lakes: you can ride a stretch, get off for a shoreline walk, and pick up a later boat. Dogs are also allowed in the hired rowing boats. Policies can change, so confirm when you book.",
+  },
+  {
+    question: 'Where should dogs avoid on Derwentwater?',
+    answer:
+      "The Keswick jetties and the boat-landing area, where the launches come and go, and anywhere you can see algae — a green tinge to the water or a scum along the downwind edge. Great Bay at the southern end runs into marshy ground and the River Derwent inflow, where the current is stronger than it looks. And keep dogs under control around the nesting shoreline and the islands in spring.",
+  },
+];
+
+const pageUrl = '/is-derwent-water-safe-for-dogs/';
+const pageTitle = 'Is Derwent Water safe for dogs? Algae, cold and boats';
+const pageDescription =
+  'Is Derwent Water safe for dogs? Yes, and it is one of the gentler lakes — shallow, slow-shelving bays. Where to swim, plus the Keswick Launch dog policy. By Rachel Polden.';
+
+const ogImage = 'https://images.unsplash.com/photo-1641119269354-1a112f25793f?w=1200&h=630&fit=crop&q=85';
+
+const jsonLd = [
+  article({ headline: pageTitle, description: pageDescription, image: ogImage, datePublished: '2026-09-25', url: pageUrl }),
+  faqPage(faqItems),
+  breadcrumbList(breadcrumbs),
+];
+---
+<BaseLayout title={pageTitle} description={pageDescription} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-8">
+      <p class="eyebrow">Lake District · dog advice</p>
+      <h1 class="display mt-3">Is Derwent Water safe for dogs?</h1>
+      <div class="mt-6"><AuthorByline /></div>
+    </header>
+
+    <div class="prose-reading space-y-4 text-lg">
+      <p>
+        <strong>Yes — and of the big Lakeland waters, it's one of the kindest to a dog.</strong> Derwentwater is relatively shallow, several of its eastern bays shelve gently into shingle rather than dropping away, and Keswick sits at the top of it with a launch that takes dogs for free. There's no ban on dogs swimming. The caveats are the same three as everywhere in the Lakes — algae, cold and boats — but two of them bite less hard here.
+      </p>
+    </div>
+
+    <section class="mt-14 border-t border-edge pt-10">
+      <h2>The risk that actually matters: blue-green algae</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          <strong>Blue-green algae</strong> (cyanobacteria) is the one danger worth genuinely worrying about. It blooms in warm, still weather, usually late summer, and its toxins can kill a dog within hours. Dogs are much more exposed than people, because they swallow the water and then lick their coats dry.
+        </p>
+        <p>
+          It looks like <strong>pea-green soup, a blue-green scum, or streaks of spilled turquoise paint</strong>, and it gathers along whichever shore the wind is pushing it towards — which on a lake this shape can mean one bay is foul while another looks fine. If you see it, keep the dog out of the water and off that shoreline entirely, including the very edge where they'd drink. Symptoms come on fast — vomiting, drooling, weakness, twitching, seizures — and there is no antidote, so go straight to a vet on suspicion rather than waiting to be sure. Our <a href="/blue-green-algae-and-dogs/">blue-green algae guide</a> covers what to look for.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10">
+      <h2>Why it's gentler than the deep lakes</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          Derwentwater is among the shallowest of the major lakes, and it shows in how a dog can use it. Several of the eastern bays shelve away slowly over shingle, so a dog can wade, paddle and potter without finding itself out of its depth two strides from the shore — a real difference from Wastwater or Coniston, where the bottom can drop off sharply.
+        </p>
+        <p>
+          <strong>Shallower still isn't warm.</strong> The water stays cold enough for cold-water shock most of the year, so keep swims short, stay near the shore, and watch older or unfit dogs closely. Keep leptospirosis vaccinations current as well — it's a freshwater risk anywhere in the Lakes — and bring clean drinking water so the lake is less tempting.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10">
+      <h2>Where to let a dog in</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          <strong><a href="/lake-district/beaches/">Calfclose Bay</a></strong> on the eastern shore is the one to head for — shingle, a slow shelve, and the Hundred Year Stone sitting just off the beach. It's an easy walk or a short drive from Keswick, and the Borrowdale road runs along behind it for access. The eastern shore path gives you a string of similar small bays if it's busy.
+        </p>
+        <p>
+          Give the Keswick jetties and the boat landings a wide berth, and be wary at <strong>Great Bay</strong> at the southern end, where the lake runs into marsh and the River Derwent inflow and the current is stronger than the flat surface suggests. In spring, keep dogs under proper control along the quieter shoreline and near the islands, where birds nest.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10">
+      <h2>The best dog day on the lake doesn't involve swimming</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          The <strong>Keswick Launch</strong> takes well-behaved dogs on a lead, <strong>free of charge</strong>, and it circles the lake with hop-on, hop-off jetties. That combination makes it one of the genuinely great dog days out in the Lake District — ride a leg, get off at a jetty, walk a stretch of shoreline, pick up a later boat when you've had enough. Dogs are allowed in the hired rowing boats too, if you'd rather do it under your own steam.
+        </p>
+        <p>
+          Confirm the current policy when you book, as these things change. For somewhere to stay within reach of Keswick, see our <a href="/lake-district/cottages/">dog-friendly cottages in the Lake District</a>.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10">
+      <h2>Frequently asked questions</h2>
+      <FAQ items={faqItems} emitSchema={false} />
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10">
+      <h2>Related guides</h2>
+      <ul class="mt-4 grid gap-3 sm:grid-cols-2 text-sm">
+        <li><a href="/is-coniston-water-safe-for-dogs/">Is Coniston Water safe for dogs?</a></li>
+        <li><a href="/can-dogs-swim-in-windermere/">Can dogs swim in Windermere?</a></li>
+        <li><a href="/blue-green-algae-and-dogs/">Blue-green algae and dogs</a></li>
+        <li><a href="/lake-district/beaches/">Lake District lake shores for dogs</a></li>
+        <li><a href="/lake-district/cottages/">Dog-friendly cottages in the Lake District</a></li>
+        <li><a href="/lake-district/pubs/">Dog-friendly pubs in the Lake District</a></li>
+      </ul>
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10"><AuthorByline variant="full" /></section>
+  </article>
+</BaseLayout>
