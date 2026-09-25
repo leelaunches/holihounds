@@ -1,0 +1,49 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+
+// Without this page Cloudflare Pages fell back to serving the homepage with a
+// 200 for ANY unknown path — a soft 404. That kept dead URLs alive in Google's
+// index (including a batch of long-since-fixed {{AFFILIATE:...}} placeholder
+// paths crawled back in June) instead of letting them drop out. A real 404.html
+// makes Pages return a genuine 404 status.
+const pageTitle = 'Page not found';
+const pageDescription = 'That page has gone walkies — here are the guides worth picking up instead.';
+---
+<BaseLayout title={pageTitle} description={pageDescription}>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-20">
+    <p class="eyebrow">404</p>
+    <h1 class="display mt-3">That page has gone walkies</h1>
+
+    <div class="prose-reading mt-6 space-y-4 text-lg">
+      <p>
+        We can't find that one. It may have moved, or the link may have been mistyped — either way, no dead ends here. The guides below are the places most people are actually after.
+      </p>
+    </div>
+
+    <section class="mt-12 border-t border-edge pt-10">
+      <h2>Start here</h2>
+      <ul class="mt-6 grid gap-3 sm:grid-cols-2 text-sm">
+        <li><a href="/cottages/">Dog-friendly cottages</a></li>
+        <li><a href="/beaches/">Dog-friendly beaches and lake shores</a></li>
+        <li><a href="/pubs/">Dog-friendly pubs</a></li>
+        <li><a href="/dog-friendly-hot-tub-lodges/">Lodges and cottages with hot tubs</a></li>
+        <li><a href="/lake-district/">The Lake District with a dog</a></li>
+        <li><a href="/cornwall/">Cornwall with a dog</a></li>
+      </ul>
+    </section>
+
+    <section class="mt-12 border-t border-edge pt-10">
+      <h2>Popular questions</h2>
+      <ul class="mt-6 grid gap-3 sm:grid-cols-2 text-sm">
+        <li><a href="/when-are-dogs-allowed-on-the-beach/">When are dogs allowed on the beach?</a></li>
+        <li><a href="/are-dogs-allowed-in-pubs-uk/">Are dogs allowed in UK pubs?</a></li>
+        <li><a href="/blue-green-algae-and-dogs/">Blue-green algae and dogs</a></li>
+        <li><a href="/can-you-leave-a-dog-alone-in-a-holiday-cottage/">Can you leave a dog alone in a cottage?</a></li>
+      </ul>
+    </section>
+
+    <p class="mt-12 text-sm text-muted">
+      Think something's broken? <a href="/contact/">Tell us</a> and we'll fix it.
+    </p>
+  </article>
+</BaseLayout>
