@@ -10,7 +10,7 @@ best_for:
 related_regions:
   - lake-district
 meta_title: "Dog-friendly Yorkshire Dales: complete guide"
-meta_description: "Dog-friendly Yorkshire Dales cottages, river swimming spots and walkers' pubs — with the dog policy and water-safety specifics most sites leave out. By Rachel Polden."
+meta_description: "Dog-friendly Yorkshire Dales cottages, river swimming spots and walkers' pubs — with the dog policy and water-safety specifics most sites leave out. By Lee Launches."
 ---
 
 Phase fills the long-form regional hub copy from the page template.

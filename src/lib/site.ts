@@ -21,11 +21,11 @@ export const SITE_TAGLINE =
  * article() helper omits the field from JSON-LD when null.
  */
 export const AUTHOR = {
-  name: 'Rachel Polden',
-  description: "Rachel writes about dog-friendly UK travel from mid-Devon, where she lives with two retired racing greyhounds, Fern and Maisie. A former commissioning editor at a travel magazine, she now spends her time pacing coast paths and pub gardens, paying close attention to the small print of who is and isn't actually welcome.",
+  name: 'Lee Launches',
+  description: "Lee writes Holihounds from the Isle of Wight, where he lives with his dog Levi and walks and sits dogs for other people — which means a steady stream of other people's dogs, and a lot of different opinions about what makes a place work. He builds the site himself, and spends his time on coast paths and in pub gardens paying close attention to the small print of who is and isn't actually welcome.",
   url: '/about/',
   image: null as string | null,
-  shortBio: 'Mid-Devon, two retired greyhounds, ex-travel-magazine editor.',
+  shortBio: "Isle of Wight, his own dog Levi and plenty of other people's.",
 };
 
 export const AFFILIATE_DISCLOSURE =

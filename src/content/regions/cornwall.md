@@ -10,7 +10,7 @@ best_for:
 related_regions:
   - devon
 meta_title: "Dog-friendly Cornwall: complete guide"
-meta_description: "Dog-friendly cottages, pubs, beaches and walks in Cornwall — with the dog policy specifics most sites leave out. Reviewed by Rachel Polden."
+meta_description: "Dog-friendly cottages, pubs, beaches and walks in Cornwall — with the dog policy specifics most sites leave out. Reviewed by Lee Launches."
 ---
 
 Phase 3 fills the long-form regional hub copy here.

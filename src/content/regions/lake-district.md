@@ -10,7 +10,7 @@ best_for:
 related_regions:
   - yorkshire-dales
 meta_title: "Dog-friendly Lake District: complete guide"
-meta_description: "Dog-friendly Lake District cottages, pubs and fell walks — with the dog policy specifics most sites leave out. Reviewed by Rachel Polden."
+meta_description: "Dog-friendly Lake District cottages, pubs and fell walks — with the dog policy specifics most sites leave out. Reviewed by Lee Launches."
 ---
 
 Phase fills the long-form regional hub copy from the page template.
