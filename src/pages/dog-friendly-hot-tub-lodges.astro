@@ -10,6 +10,7 @@ import AuthorByline from '~/components/AuthorByline.astro';
 import { article, breadcrumbList, faqPage, itemList } from '~/lib/schema';
 import { SITE_URL } from '~/lib/site';
 import { crumb } from '~/lib/nav';
+import NarrowItDown from '~/components/NarrowItDown.astro';
 import { earningRank } from '~/lib/affiliate';
 
 /**
@@ -276,6 +277,8 @@ const jsonLd = [
         </a>
       </div>
     </section>
+
+    <NarrowItDown />
 
     <section class="mt-16 border-t border-edge pt-12">
       <h2>What to expect from a dog-friendly hot tub lodge</h2>

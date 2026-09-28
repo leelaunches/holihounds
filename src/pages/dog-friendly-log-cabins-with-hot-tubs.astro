@@ -9,6 +9,7 @@ import AuthorByline from '~/components/AuthorByline.astro';
 import { article, breadcrumbList, faqPage, itemList } from '~/lib/schema';
 import { SITE_URL } from '~/lib/site';
 import { crumb } from '~/lib/nav';
+import NarrowItDown from '~/components/NarrowItDown.astro';
 import { earningRank } from '~/lib/affiliate';
 
 // Log cabins with hot tubs — targets the big under-served "log cabin" / "cabin"
@@ -129,6 +130,8 @@ const jsonLd = [
         </div>
       </section>
     ))}
+
+    <NarrowItDown />
 
     <section class="mt-20 border-t border-edge pt-12">
       <h2>Log cabin, lodge or cottage — which are you after?</h2>

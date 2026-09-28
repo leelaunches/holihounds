@@ -10,6 +10,7 @@ import AuthorByline from '~/components/AuthorByline.astro';
 import { article, itemList, faqPage, breadcrumbList } from '~/lib/schema';
 import { SITE_URL } from '~/lib/site';
 import { crumb } from '~/lib/nav';
+import NarrowItDown from '~/components/NarrowItDown.astro';
 import { earningRank } from '~/lib/affiliate';
 
 // Pull all Cornwall listings (cottages + the two lodge-typed entries).
@@ -195,6 +196,8 @@ const jsonLd = [
         </article>
       ))}
     </section>
+
+    <NarrowItDown />
 
     <section class="mt-20 border-t border-edge pt-12">
       <h2>What to look for in a dog-friendly Cornish cottage</h2>

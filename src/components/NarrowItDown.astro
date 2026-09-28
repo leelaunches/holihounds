@@ -1,0 +1,65 @@
+---
+/**
+ * Contextual "narrow it down" card for pages that carry a lot of non-earning
+ * (Sykes / direct) stock.
+ *
+ * Those listings stay on the page for their search value, but every booking
+ * they send is untracked — so this points readers on to the feature guides
+ * that are both genuinely useful for narrowing a choice AND almost entirely
+ * bookable through the merchants we're approved with (pets-stay-free is 100%
+ * earning, cottages-with-hot-tubs 78%).
+ *
+ * Deliberately NOT a "book these instead" banner: it doesn't disparage the
+ * other properties, doesn't invent urgency, and doesn't tell the reader who
+ * pays us — it just helps them filter, which is the thing they actually came
+ * for. Defaults suit cottage pages; pass `links` to make it fit elsewhere.
+ */
+interface Link {
+  href: string;
+  label: string;
+  note: string;
+}
+interface Props {
+  heading?: string;
+  intro?: string;
+  links?: Link[];
+}
+
+const DEFAULT_LINKS: Link[] = [
+  {
+    href: '/dog-friendly-cottages-pets-stay-free/',
+    label: 'Pets stay free',
+    note: 'No pet supplement at all — worth £25–£100 on a week, more with two dogs.',
+  },
+  {
+    href: '/dog-friendly-cottages-with-hot-tubs/',
+    label: 'Cottages with hot tubs',
+    note: 'Standalone cottages with a tub private to the cottage, not a shared park spa.',
+  },
+  {
+    href: '/dog-friendly-cottages-enclosed-gardens/',
+    label: 'Enclosed gardens',
+    note: "Verified secure outdoor space, with the gaps and caveats flagged where they exist.",
+  },
+];
+
+const {
+  heading = 'Narrow it down',
+  intro = "If you're weighing up a long list, it's usually quicker to start from the one thing that has to be right. These are the same verified properties, filtered by the details that tend to decide it.",
+  links = DEFAULT_LINKS,
+} = Astro.props;
+---
+<aside class="mt-16 border border-edge bg-cream-soft p-6 sm:p-8">
+  <p class="eyebrow">{heading}</p>
+  <p class="prose-reading mt-3 text-sm">{intro}</p>
+  <ul class="mt-6 grid gap-4 sm:grid-cols-3">
+    {links.map((l) => (
+      <li>
+        <a href={l.href} class="group block no-underline">
+          <span class="block text-ink group-hover:text-clay-deep transition-colors">{l.label}</span>
+          <span class="mt-1 block text-sm text-muted">{l.note}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</aside>
