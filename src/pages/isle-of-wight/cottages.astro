@@ -1,0 +1,184 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import DogPolicyBox from '~/components/DogPolicyBox.astro';
+import AffiliateCTA from '~/components/AffiliateCTA.astro';
+import AffiliateDisclosure from '~/components/AffiliateDisclosure.astro';
+import FAQ from '~/components/FAQ.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import NarrowItDown from '~/components/NarrowItDown.astro';
+import { article, itemList, faqPage, breadcrumbList } from '~/lib/schema';
+import { SITE_URL } from '~/lib/site';
+import { crumb } from '~/lib/nav';
+import { earningRank } from '~/lib/affiliate';
+
+// Region #6, and the first one Lee can verify in person — he lives here.
+// Targets the "dog friendly cottages isle of wight" family (six near-identical
+// phrasings at ~1,000/mo each, all KD 0 — Ahrefs is grouping one query family,
+// so treat it as one prize, not six).
+//
+// Deliberately NOT titled with a count: four verified cottages is honest but a
+// weak number to lead a listicle with, and the phrase is the thing we want in
+// the title anyway. Grows as cottages.com stock is verified.
+const all = await getCollection('listings', (e) => e.data.region === 'isle-of-wight');
+const cottages = all.sort((a, b) => {
+  const er = earningRank(a.data.affiliate_provider) - earningRank(b.data.affiliate_provider);
+  if (er !== 0) return er;
+  if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
+  return a.data.name.localeCompare(b.data.name);
+});
+
+const slugFor = (id: string) => id.split('/').pop()!;
+
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Cottages', '/cottages/'),
+  crumb('Isle of Wight', '/isle-of-wight/cottages/'),
+];
+
+const faqItems = [
+  {
+    question: 'Are dogs allowed on Isle of Wight beaches?',
+    answer:
+      "On many of them, all year — but the island runs seasonal exclusions from 1 May to 30 September on parts of Colwell, Cowes, East Cowes, Freshwater Bay, Gurnard, Sandown, Shanklin, Springvale, Ventnor, Yaverland and Ryde. The crucial detail most guides flatten is that these are <em>zones within</em> beaches, not whole beaches — dogs are fine at Yaverland east of the car park, and at Ryde west of the pier. The council lists 14 beaches that welcome dogs year-round. Check the signs at the access point you're using, because the restricted stretch is often only the central, busiest part.",
+  },
+  {
+    question: 'How many dogs can you take to an Isle of Wight cottage?',
+    answer:
+      "Usually one, which is the island's main limitation. Most of the verified self-catering here caps at a single dog — including the larger cottages that sleep eight — so a household with two dogs has noticeably less to choose from. We state the verified cap on every entry. Where a property takes two, we say so plainly, because that's the genuinely scarce thing here rather than the number of bedrooms.",
+  },
+  {
+    question: 'Do you pay for the dog on the ferry?',
+    answer:
+      "Dogs travel free on the vehicle ferries and the catamarans to the island, and there's no quarantine or paperwork — it's domestic travel. What does cost is the crossing itself, which is the real budget line on an Isle of Wight holiday and worth booking early. Some holiday parks bundle discounted ferry travel into the booking, which can be worth more than a cheaper nightly rate.",
+  },
+  {
+    question: 'Is the Isle of Wight good for dogs out of season?',
+    answer:
+      "It's arguably better. The seasonal beach restrictions lift on 30 September, so from October the whole coast opens up — and the island's climate is among the mildest in Britain, so winter walking is genuinely pleasant rather than endured. The coastal path and the downs behind Ventnor work all year, rates drop outside the school holidays, and the beaches you'd have had to share in August are empty.",
+  },
+];
+
+const pageUrl = '/isle-of-wight/cottages/';
+const pageTitle = 'Dog-friendly cottages on the Isle of Wight';
+// 153 chars — under the 155-char Google truncation threshold.
+const pageDescription =
+  'Dog-friendly cottages on the Isle of Wight, checked against the listing small print — dog limits, pet charges, which gardens are genuinely enclosed.';
+
+const heroImage = cottages[0]?.data.image ?? '/images/og-default.jpg';
+
+const jsonLd = [
+  article({ headline: pageTitle, description: pageDescription, image: new URL(heroImage, SITE_URL).toString(), datePublished: '2026-09-28', url: pageUrl }),
+  itemList(cottages.map((c) => ({ name: c.data.name, url: `${pageUrl}#${slugFor(c.id)}` }))),
+  faqPage(faqItems),
+  breadcrumbList(breadcrumbs),
+];
+---
+<BaseLayout title={pageTitle} description={pageDescription} image={heroImage} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-8">
+      <p class="eyebrow">Isle of Wight</p>
+      <h1 class="display mt-3">Dog-friendly cottages on the Isle of Wight</h1>
+      <div class="mt-6"><AuthorByline /></div>
+    </header>
+
+    <div class="border-t border-b border-edge py-3 my-6"><AffiliateDisclosure /></div>
+
+    <div class="prose-reading space-y-4 text-lg">
+      <p>
+        I live here, which makes this the one region on the site I can check on foot rather than from a listing. The Isle of Wight suits a dog about as well as anywhere in England — a coastal path the whole way round, downs behind the southern coast, mild enough to walk in January, and small enough that you're never far from a beach that allows dogs.
+      </p>
+      <p>
+        The catch is the small print, and it's a specific one here. <strong>Most island self-catering caps at a single dog</strong>, including cottages that sleep eight — so the scarce thing isn't space, it's the second dog. And the beach rules are zoned rather than blanket, which trips people up constantly. Every cottage below has been checked against its actual listing for the dog limit, the pet charge and whether the garden is genuinely enclosed.
+      </p>
+      <p>
+        This is a new section and a short list — these are the ones that stood up. Three more island properties appear on booking sites as dog-friendly but turned out, on checking, to take no dogs at all, so they aren't here.
+      </p>
+    </div>
+
+    <nav aria-label="Cottage list" class="mt-12 border-t border-edge pt-8">
+      <p class="eyebrow mb-4">Jump to a cottage</p>
+      <ol class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm">
+        {cottages.map((c, i) => (
+          <li>
+            <a href={`#${slugFor(c.id)}`} class="text-text">
+              {i + 1}. {c.data.name}
+              <span class="text-muted"> — {c.data.town}</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+
+    <section class="mt-16 space-y-20">
+      {cottages.map((c, i) => (
+        <article id={slugFor(c.id)} class="scroll-mt-8 border-t border-edge pt-12">
+          <p class="eyebrow">{c.data.town}</p>
+          <h2 class="mt-2">{i + 1}. {c.data.name}</h2>
+
+          <div class="mt-6 aspect-[16/11] overflow-hidden bg-cream-soft border border-edge">
+            <img src={c.data.image} alt={c.data.image_alt ?? c.data.name} loading="lazy" class="h-full w-full object-cover" />
+          </div>
+
+          <div class="prose-reading mt-6"><p>{c.data.description}</p></div>
+
+          <DogPolicyBox
+            maxDogs={c.data.max_dogs}
+            petCharge={c.data.pet_charge}
+            enclosedGarden={c.data.enclosed_garden}
+            gardenNote={c.data.garden_note}
+            dogsAllowedIn={c.data.dogs_allowed_in}
+            dogExtras={c.data.dog_extras}
+          />
+
+          <p class="text-sm text-muted">
+            Sleeps {c.data.sleeps}
+            {c.data.bedrooms && ` · ${c.data.bedrooms} bed${c.data.bedrooms === 1 ? '' : 's'}`}
+            {c.data.price_indicator && ` · ${c.data.price_indicator}`}
+          </p>
+
+          <div class="mt-6">
+            <AffiliateCTA
+              provider={c.data.affiliate_provider ?? 'hoseasons'}
+              identifier={slugFor(c.id)}
+              fallbackUrl={c.data.external_url ?? undefined}
+            />
+          </div>
+        </article>
+      ))}
+    </section>
+
+    <NarrowItDown />
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <h2>What to check on an Isle of Wight booking</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          Four things decide whether an island week works with a dog, and only one of them is the cottage itself.
+        </p>
+        <p>
+          <strong>The dog limit, before anything else.</strong> One dog is the island norm, and it holds even on the big group cottages. If there are two of you with a dog each, filter on that first and the list gets short fast — it will save you falling for somewhere that was never going to work.
+        </p>
+        <p>
+          <strong>Which stretch of beach you're actually near.</strong> The summer restrictions run 1 May to 30 September and apply to <em>parts</em> of the main resort beaches, not all of them. Being five minutes from Sandown is no use if you're beside the restricted middle section and the dog-friendly end is two miles along. Out of season none of it applies.
+        </p>
+        <p>
+          <strong>Whether the garden is enclosed, in writing.</strong> Island listings lean on "garden" and "outside space" a lot, and plenty of it is open frontage onto a lane or a shared yard. We flag which are explicitly enclosed and which only claim a garden.
+        </p>
+        <p>
+          <strong>The ferry, early.</strong> It's the biggest single cost of the trip and it rises steeply close to the date. Dogs themselves travel free, so the crossing price is about the car and the timing, not the dog.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Frequently asked questions</h2>
+      <FAQ items={faqItems} emitSchema={false} />
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12"><AuthorByline variant="full" /></section>
+  </article>
+</BaseLayout>

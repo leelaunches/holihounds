@@ -131,25 +131,29 @@ const jsonLd = [
         {cornwall && (
           <RegionCard
             region={cornwall}
-            count={12}
+            count={16}
             href="/cornwall/cottages/"
           />
         )}
         {lakeDistrict && (
           <RegionCard
             region={lakeDistrict}
-            count={12}
+            count={17}
             href="/lake-district/cottages/"
           />
         )}
         {yorkshireDales && (
           <RegionCard
             region={yorkshireDales}
-            count={12}
+            count={14}
             href="/yorkshire-dales/cottages/"
           />
         )}
       </div>
+
+      <p class="mt-6 text-sm text-muted">
+        Newest section — <a href="/isle-of-wight/cottages/">dog-friendly cottages on the Isle of Wight</a>, the one region we can check on foot.
+      </p>
 
       {FOOTER_REGIONS.length === 1 && (
         <p class="mt-6 text-sm text-muted">
