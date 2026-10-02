@@ -1,0 +1,148 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Breadcrumbs from '~/components/Breadcrumbs.astro';
+import MoneyCottageCard from '~/components/MoneyCottageCard.astro';
+import AffiliateDisclosure from '~/components/AffiliateDisclosure.astro';
+import FAQ from '~/components/FAQ.astro';
+import AuthorByline from '~/components/AuthorByline.astro';
+import { article, breadcrumbList, faqPage, itemList } from '~/lib/schema';
+import { SITE_URL } from '~/lib/site';
+import { crumb } from '~/lib/nav';
+import { earningRank } from '~/lib/affiliate';
+
+// Targets "dog friendly cottages with enclosed garden lake district" — GSC Sep
+// 2026 has it at pos 10.0 on 120 imp with no page of its own, which is the
+// smallest gap to page one of any commercial query we have. It's the
+// local x feature intersection, which is the shape that actually ranks for us
+// (ground-floor pos 5.1, YD beaches 7.2) where broad head terms don't.
+//
+// cumbria + lake-district both mean the Lakes in our data (historic split), so
+// this takes enclosed-garden stock from either.
+const cottages = (
+  await getCollection(
+    'listings',
+    (e) => e.data.enclosed_garden === true && ['cumbria', 'lake-district'].includes(e.data.region),
+  )
+).sort((a, b) => {
+  const er = earningRank(a.data.affiliate_provider) - earningRank(b.data.affiliate_provider);
+  if (er !== 0) return er;
+  if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
+  return a.data.name.localeCompare(b.data.name);
+});
+
+const slugFor = (id: string) => id.split('/').pop()!;
+const total = cottages.length;
+const dogsPhrase = (n: number | null) => (n != null ? `up to ${n} dog${n === 1 ? '' : 's'}` : 'dog limit not stated');
+
+const breadcrumbs = [
+  crumb('Home', '/'),
+  crumb('Enclosed gardens', '/dog-friendly-cottages-enclosed-gardens/'),
+  crumb('Lake District', '/dog-friendly-cottages-enclosed-gardens-lake-district/'),
+];
+
+const faqItems = [
+  {
+    question: 'What counts as an enclosed garden on this page?',
+    answer:
+      "The listing has to say so explicitly — \"fully enclosed\", \"enclosed garden\", a stated secure boundary. We don't infer it from a photograph or from the word \"garden\" on its own, because in the Lakes that word covers paved courtyards, open patios and unfenced frontage onto a lane just as often as it covers a fenced lawn. Where a property only claims \"outside space\", it isn't on this list. Where an enclosure has a known weak point, the entry says so.",
+  },
+  {
+    question: 'Why are enclosed gardens harder to find in the Lake District?',
+    answer:
+      "Because of what the buildings are. A lot of Lakeland self-catering is converted barns, farm buildings and village terraces, where the outside space is a yard, a shared courtyard or a strip of fell-side that was never fenced. Add dry stone walls — handsome, but a determined terrier goes straight through a gap — and genuinely dog-proof boundaries are scarcer here than in, say, Cornwall. That's exactly why it's worth filtering on.",
+  },
+  {
+    question: 'Is a wall the same as a fence for a dog?',
+    answer:
+      "Not always, and this is the Lakeland-specific trap. Dry stone walls are the standard boundary here, and they're usually fine — but they develop gaps at the base, they have stiles and gates built into them, and a sheep-proof wall is not automatically a whippet-proof one. If your dog is a digger, a climber or a bolter, ask the owner specifically about the wall's condition and whether any gate is dog-proof rather than just closable.",
+  },
+  {
+    question: 'Can I let the dog off in an enclosed garden overnight?',
+    answer:
+      "Treat the garden as a daytime convenience rather than an unsupervised space, whatever the listing says. Lakeland gardens back onto grazing land, becks and lanes, and most owners will ask that dogs aren't left out unattended or left to bark — sound carries a long way in a valley. The real value of an enclosed garden is the five minutes before bed and the wet morning when you'd rather not get dressed, not overnight freedom.",
+  },
+];
+
+const pageUrl = '/dog-friendly-cottages-enclosed-gardens-lake-district/';
+const pageTitle = `Dog-friendly cottages with enclosed gardens in the Lake District`;
+// 152 chars — under the 155-char Google truncation threshold.
+const pageDescription =
+  'Dog-friendly Lake District cottages with a genuinely enclosed garden — stated on the listing, not guessed from a photo, with the weak spots flagged.';
+
+const heroImage = cottages[0]?.data.image ?? '/images/og-default.jpg';
+
+const jsonLd = [
+  article({ headline: pageTitle, description: pageDescription, image: new URL(heroImage, SITE_URL).toString(), datePublished: '2026-10-02', url: pageUrl }),
+  faqPage(faqItems),
+  itemList(cottages.map((c) => ({ name: c.data.name, url: `${pageUrl}#${slugFor(c.id)}` }))),
+  breadcrumbList(breadcrumbs),
+];
+---
+<BaseLayout title={pageTitle} description={pageDescription} image={heroImage} jsonLd={jsonLd}>
+  <article class="mx-auto max-w-(--container-prose) px-6 py-12">
+    <Breadcrumbs items={breadcrumbs} emitSchema={false} />
+
+    <header class="mt-8 mb-8">
+      <p class="eyebrow">Lake District · enclosed gardens</p>
+      <h1 class="display mt-3">Dog-friendly cottages with enclosed gardens in the Lake District</h1>
+      <div class="mt-6"><AuthorByline /></div>
+    </header>
+
+    <div class="border-t border-b border-edge py-3 my-6"><AffiliateDisclosure /></div>
+
+    <div class="prose-reading space-y-4 text-lg">
+      <p>
+        An enclosed garden is the single most useful thing a Lakeland cottage can have for a dog, and the hardest to verify from a listing. It's the difference between opening the door on a wet morning and getting dressed to stand in the rain holding a lead — and in a region where most self-catering is converted farm buildings and village terraces, a genuinely dog-proof boundary is scarcer than the photographs suggest.
+      </p>
+      <p>
+        These {total} Lake District cottages state an enclosed garden explicitly on the listing. We don't infer it from a photo, and we don't count "garden" on its own — in the Lakes that word covers paved courtyards, open patios and unfenced frontage onto a lane at least as often as it covers a fenced lawn. Where a boundary has a known weak point, the entry says so rather than leaving you to find out.
+      </p>
+    </div>
+
+    <div class="mt-12 grid gap-6 sm:grid-cols-2">
+      {cottages.map((c) => (
+        <MoneyCottageCard
+          listing={c}
+          highlightLabel="Enclosed garden"
+          highlightValue={`${c.data.garden_note ? 'Stated enclosed' : 'Enclosed'} · ${dogsPhrase(c.data.max_dogs)}`}
+        />
+      ))}
+    </div>
+
+    <section class="mt-20 border-t border-edge pt-12">
+      <h2>The Lakeland wall problem</h2>
+      <div class="prose-reading mt-6 space-y-4">
+        <p>
+          Everywhere else in the country, "enclosed" usually means a fence. Here it usually means a dry stone wall, and that distinction is worth understanding before you book.
+        </p>
+        <p>
+          <strong>A sheep-proof wall is not a dog-proof wall.</strong> Dry stone walls are built to turn livestock, and they do it beautifully for a century at a time — but they open up at the base, they shed stones, and the gaps that appear are at exactly the height a determined terrier cares about. If your dog digs, climbs or bolts, ask the owner about the wall's condition rather than trusting the word "enclosed".
+        </p>
+        <p>
+          <strong>Check the gate, not just the boundary.</strong> Most Lakeland gardens have a gate onto a lane, a yard or a field, and a gate that latches is not the same as a gate a dog can't nose open. It's a fair question to ask at booking, and owners who are genuinely set up for dogs answer it straight away.
+        </p>
+        <p>
+          <strong>Know what's on the other side.</strong> An enclosed garden backing onto grazing land is a different proposition from one backing onto a beck or a road. Sheep are the serious one here — worrying livestock is both a legal matter and a devastating one, and the lambing season from roughly March to May is when it matters most.
+        </p>
+      </div>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>Frequently asked questions</h2>
+      <FAQ items={faqItems} emitSchema={false} />
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12">
+      <h2>More Lake District guides</h2>
+      <ul class="mt-4 grid gap-3 sm:grid-cols-2 text-sm">
+        <li><a href="/lake-district/cottages/">Dog-friendly cottages in the Lake District</a></li>
+        <li><a href="/dog-friendly-hot-tub-cottages-lake-district/">Hot tub cottages in the Lake District</a></li>
+        <li><a href="/dog-friendly-cottages-enclosed-gardens/">Enclosed-garden cottages across the UK</a></li>
+        <li><a href="/lake-district/beaches/">Lake District lake shores for dogs</a></li>
+      </ul>
+    </section>
+
+    <section class="mt-16 border-t border-edge pt-12"><AuthorByline variant="full" /></section>
+  </article>
+</BaseLayout>
